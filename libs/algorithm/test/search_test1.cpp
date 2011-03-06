@@ -130,6 +130,9 @@ int test_main( int , char* [] )
 	std::string haystack2 ( "ABC ABCDAB ABCDABCDABDE" );
 	std::string needle11  ( "ABCDABD" );
 	
+	std::string haystack3 ( "abra abracad abracadabra" );
+	std::string needle12  ( "abracadabra" );
+
 	check_one ( haystack1, needle1, 26 );
 	check_one ( haystack1, needle2, 18 );
 	check_one ( haystack1, needle3,  9 );
@@ -142,6 +145,7 @@ int test_main( int , char* [] )
 	check_one ( haystack1, haystack1, 0 );	// find something in itself
 	
 	check_one ( haystack2, needle11, 15 );
+	check_one ( haystack3, needle12, 13 );
 
 	return 0;
 	}

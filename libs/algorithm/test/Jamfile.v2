@@ -15,7 +15,9 @@ project
     : requirements
       <source>/boost//unit_test_framework
       <include>../../../
+#      <include>/Marshall/Sources/adobe-root/adobe_source_libraries
       <include>$(BOOST_ROOT)
+      <optimization>speed
       <link>static
     :
     ;
