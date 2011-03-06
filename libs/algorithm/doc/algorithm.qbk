@@ -1,0 +1,48 @@
+[library The Boost Algorithm Library
+    [quickbook 1.5]
+    [id algorithm]
+    [dirname algorithm]
+    [purpose Library of useful algorithms]
+    [category algorithms]
+    [authors [Clow, Marshall]]
+    [copyright 2010 Marshall Clow]
+    [source-mode c++]
+    [license
+		Distributed under the Boost Software License, Version 1.0.
+		(See accompanying file LICENSE_1_0.txt or copy at
+		[@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+]
+
+[/ Logos ]
+
+[def __BOOST_BIMAP_LOGO__ [$images/bimap/boost.bimap.logo.png]]
+
+[/ Helpers ]
+
+[/ People ]
+
+[/ Icons ]
+
+[/ Boost Libraries ]
+
+[/ Extern Links ]
+
+[/ Code snippets ]
+
+[heading Description and Rationale]
+
+Boost.Algorithm is a collection of general purpose algorithms. While Boost contains many libraries of data structures, there is no single library for general purpose algorithms. Even though the algorithms are generally useful, many tend to be thought of as "too small" for boost.
+
+An implementation of Boyer-Moore searching, for example, might take a developer a weekend or so to implement, including test cases and documentation. However, scheduling a review to include that code into Boost might take several months, and run into resistance because "it is too small". Nevertheless, a library of tested, reviewed, documented algorithms can make the developer's life much easier, and that is the purpose of this library.
+
+[heading Future plans]
+I will be soliciting submissions from other developers, as well as looking through the literature for existing algorithms to include. The Adobe Source Library, for example, contains many useful algorithms that already have documentation and test cases. Knuth's _The Art of Computer Programming_ is chock-full of algorithm descriptions, too. 
+
+
+[/ link algorithm.all.none_of_if none_of_if1]
+
+[/ include toc.qbk]
+[include:algorithm search-hpp.qbk]
+[include:algorithm all-hpp.qbk]
+[include:algorithm clamp-hpp.qbk]

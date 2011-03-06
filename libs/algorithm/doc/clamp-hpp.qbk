@@ -1,0 +1,39 @@
+[/ QuickBook Document version 1.5 ]
+[section:clamp file 'clamp.hpp']
+
+[/license
+
+Copyright (c) 2010 Marshall Clow
+
+Distributed under the Boost Software License, Version 1.0.
+(See accompanying file LICENSE_1_0.txt or copy at
+http://www.boost.org/LICENSE_1_0.txt)
+
+]
+
+
+The header file clamp.hpp contains two functions for "clamping" a value between
+a pair of boundary values.
+
+[heading clamp]
+
+The function `clamp (v, lo, hi)` returns:
+
+* lo iff v < lo
+* hi iff hi < v
+* otherwise, v
+	
+There is also a version that allows the caller to specify a comparison predicate to use instead of operator<.
+
+``
+template<typename V> 
+V clamp ( V val, V lo, V hi );
+
+template<typename V, typename Pred> 
+V clamp ( V val, V lo, V hi, Pred p );
+``
+  
+Complexity:
+	clamp will make one or two comparisons before returning one of the three parameters.
+
+[endsect]

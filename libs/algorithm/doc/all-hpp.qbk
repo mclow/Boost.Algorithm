@@ -1,0 +1,208 @@
+[/ QuickBook Document version 1.5 ]
+
+[section:all header file 'all.hpp']
+
+[/license
+
+Copyright (c) 2010 Marshall Clow
+
+Distributed under the Boost Software License, Version 1.0.
+(See accompanying file LICENSE_1_0.txt or copy at
+http://www.boost.org/LICENSE_1_0.txt)
+
+]
+
+The header file 'all.hpp' contains a series of algorithms for testing properties
+of a sequence. They fall, broadly, into two types of tests:
+
+There are a set of algorithms that [link
+algorithm.all.element_properties tests individual
+elements] in a sequence to see if every element in a sequence has a
+particular property.
+
+The other algorithms test [link
+algorithm.all.sequence_properties the arrangement or
+ordering of the elements] in a sequence. 
+
+[h2 element properties]
+
+Complexity: Unless otherwise noted, these routines all run in O(N) (linear)
+time. Each of the routines in this file will either compare against the
+value or call the predicate for each element in the sequence. If any of the
+values in the range fails the test, the algorithm will return false
+immediately, without examining the remaining items in the sequence.
+
+[heading all_of]
+
+The function all_of returns true iff each value in the sequence compares
+equal to the value 'val':
+
+
+``
+template<typename I, typename V> 
+bool all_of ( I first, I last, const V &val );
+
+template<typename R, typename V> 
+bool all_of ( const R &range, const V &val );
+``
+
+[heading all_of_if]
+The function all_of_if is similar to all_of, except that for comparing
+with a value, it uses a predicate. It returns true iff the predicate returns
+true for each value in the sequence.
+
+``
+template<typename I, typename Pred> 
+bool all_of_if ( I first, I last, Pred p );
+
+template<typename R, typename Pred> 
+bool all_of_if ( const R &range, Pred p );
+``
+
+[heading none_of]
+The function none_of returns true iff no value in the sequence compares
+equal to the value 'val':
+
+``
+template<typename I, typename V> 
+bool none_of ( I first, I last, const V &val );
+
+template<typename R, typename V> 
+bool none_of ( const R &range, const V &val );
+``
+  
+[heading none_of_if]
+The function none_of_if is similar to none_of, except that for comparing
+with a value, it uses a predicate. It returns true iff the predicate returns
+false for each value in the sequence.
+
+``
+template<typename I, typename Pred> 
+bool none_of_if ( I first, I last, Pred p );
+
+template<typename R, typename Pred> 
+bool none_of_if ( const R &range, Pred p );
+``
+
+[heading any_of]
+The function any_of returns true iff any value in the sequence compares
+equal to the value 'val':
+
+``
+template<typename I, typename V> 
+bool any_of ( I first, I last, const V &val );
+
+template<typename R, typename V> 
+bool any_of ( const R &range, const V &val );
+``
+  
+[heading any_of_if]
+The function any_of_if is similar to any_of, except that for comparing
+with a value, it uses a predicate. It returns true iff the predicate returns
+true for any value in the sequence.
+
+``
+template<typename I, typename Pred> 
+bool any_of_if ( I first, I last, Pred p );
+
+template<typename R, typename Pred> 
+bool any_of_if ( const R &range, Pred p );
+``
+
+[heading one_of]
+The function one_of returns true iff the value 'val' occurs exactly
+once in the sequence.
+
+``
+template<typename I, typename V> 
+bool one_of ( I first, I last, const V &val );
+
+template<typename R, typename V> 
+bool one_of ( const R &range, const V &val );
+``
+
+[heading one_of_if]
+The function one_of_if is similar to one_of, except that for 
+comparing with a value, it uses a predicate. It returns true iff the predicate returns
+true for exactly one value in the sequence.
+
+``
+template<typename I, typename Pred> 
+bool one_of_if ( I first, I last, Pred p );
+
+template<typename R, typename Pred> 
+bool one_of_if ( const R &range, Pred p );
+``
+
+[h2 sequence properties]
+
+Complexity: Unless otherwise noted, these routines all run in O(N-1)
+(linear) time. Each of these routines examine each adjacent pair of
+elements in the sequence. If any of the pairs in the sequence fails the
+test, the algorithm will return false immediately, without examining the
+remaining pairs of items in the sequence.
+
+
+[heading is_ordered]
+The function is_ordered returns true if, for each pair of adjacent values in the
+sequence, the relationship pred ( a, b ) is true.
+
+``
+template <typename I, typename Pred>
+bool is_ordered ( FI first, FI last, Pred p );
+
+template <typename R, typename Pred>
+bool is_ordered ( R range, Pred p );
+``
+  
+[heading is_increasing]
+The function is_increasing returns true if, for each pair of adjacent values in the
+sequence, the relationship a <= b is true.
+
+``
+template <typename I>
+bool is_increasing ( I first, I last );
+
+template <typename R>
+bool is_increasing ( R range );
+``
+
+[heading is_strictly_increasing]
+The function is_strictly_increasing returns true if, for each pair of adjacent values in the
+sequence, the relationship a < b is true. This is more strict than is_increasing, which will
+return true on sequences that contain duplicate values.
+
+``
+template <typename I>
+bool is_strictly_increasing ( I first, I last );
+
+template <typename R>
+bool is_strictly_increasing ( R range );
+``
+
+[heading is_decreasing]
+The function is_decreasing returns true if, for each pair of adjacent values in the
+sequence, the relationship a >= b is true.
+
+``
+template <typename I>
+bool is_decreasing ( I first, I last );
+
+template <typename R>
+bool is_decreasing ( R range );
+``
+
+[heading is_strictly_decreasing]
+The function is_strictly_decreasing returns true if, for each pair of adjacent values in the
+sequence, the relationship a > b is true. This is more strict than is_decreasing, which will
+return true on sequences that contain duplicate values.
+
+``
+template <typename I>
+bool is_strictly_decreasing ( I first, I last );
+
+template <typename R>
+bool is_strictly_decreasing ( R range );
+``
+
+[endsect]

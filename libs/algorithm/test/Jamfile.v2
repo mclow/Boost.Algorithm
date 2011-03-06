@@ -1,0 +1,32 @@
+#  Boost algorithm library test suite Jamfile  ----------------------------
+#
+#  Copyright Marshall Clow 2010. Use, modification and
+#  distribution is subject to the Boost Software License, Version
+#  1.0. (See accompanying file LICENSE_1_0.txt or copy at
+#  http://www.boost.org/LICENSE_1_0.txt)
+#
+#  See http://www.boost.org for updates, documentation, and revision history.
+
+import os ;
+
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
+
+project
+    : requirements
+      <source>/boost//unit_test_framework
+      <include>../../../
+      <include>$(BOOST_ROOT)
+      <link>static
+    :
+    ;
+
+
+unit-test all_test : all_test.cpp ;
+
+unit-test clamp_test : clamp_test.cpp ;
+
+unit-test ordered_test : ordered_test.cpp ;
+
+unit-test search_test1 : search_test1.cpp ;
+
+unit-test search_test2 : search_test2.cpp ;
