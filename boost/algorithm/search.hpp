@@ -13,6 +13,7 @@
     
     05 Nov 2010 - Initial public version
     01 Mar 2011	- Refactored to use skip table objects
+    50 Mar 2011 - Created search objects to enable table reuse
 */
 
 #ifndef BOOST_ALGORITHM_SEARCH_HPP
@@ -283,67 +284,6 @@ Requirements:
         * The two iterator types (I1 and I2) must "point to" the same underlying type.
 */
 
-#if 0
-template <typename I1, typename I2, typename Pred>
-I1 boyer_moore_search ( I1 corpus_first, I1 corpus_last,
-                    I2 pat_first, I2 pat_last, Pred p ) {
-    BOOST_STATIC_ASSERT (( boost::is_same<typename I1::value_type, typename I2::value_type>::value ));
-    if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
-    if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
-    
-    const std::size_t k_pattern_length = std::distance ( pat_first, pat_last );
-    if ( static_cast<std::size_t> ( std::distance ( corpus_first, corpus_last )) < k_pattern_length ) 
-        return corpus_last;     // If the pattern is larger than the corpus....
-
-    detail::bm::skip_table<I2, USE_SKIP_TABLE_MAP> skip ( pat_first, pat_last );
-#ifdef B_ALGO_DEBUG
-    skip.PrintSkipTable ();
-#endif
-    
-/*  Prepare the suffix table */
-    std::vector <std::size_t> suffix ( k_pattern_length + 1 );
-    detail::bm::create_suffix_table ( pat_first, pat_last, suffix );
-#ifdef B_ALGO_DEBUG
-    detail::PrintTable ( suffix.begin (), suffix.end ());
-#endif
-
-/*  ---- Do the matching ---- */
-    I1 curPos = corpus_first;
-    const I1 lastPos = corpus_last - k_pattern_length;
-    std::size_t j;
-    int k;
-    int m;
-    while ( curPos <= lastPos ) {
-/*  while ( std::distance ( curPos, corpus_last ) >= k_pattern_length ) { */
-    //  Do we match right where we are?
-        j = k_pattern_length;
-        while ( p ( pat_first [j-1], curPos [j-1] )) {
-            j--;
-        //  We matched - we're done!
-            if ( j == 0 )
-                return curPos;
-            }
-        
-    //  Since we didn't match, figure out how far to skip forward
-        k = skip [ curPos [ j - 1 ]];
-        m = j - k - 1;
-        if ( k < (int) j && m > (int) suffix [ j ] )
-            curPos += m;
-        else
-            curPos += suffix [ j ];
-        }
-
-    return corpus_last;     // We didn't find anything
-    }
-
-//  Default predicate version
-template <typename I1, typename I2>
-I1 boyer_moore_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last ) {
-    return boost::algorithm::boyer_moore_search 
-        ( corpus_first, corpus_last, pat_first, pat_last, 
-            std::equal_to<typename I1::value_type> ());
-    }
-#else
 	template <typename patIter>
 	class boyer_moore {
 	public:
@@ -432,8 +372,6 @@ I1 boyer_moore_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_la
 		return bm ( corpus_first, corpus_last );
 		}
 
-#endif
-
 /*
     A templated version of the boyer-moore-horspool searching algorithm.
     
@@ -445,52 +383,7 @@ I1 boyer_moore_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_la
 http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
 */
-#if 0
-template <typename I1, typename I2, typename Pred>
-I1 boyer_moore_horspool_search ( I1 corpus_first, I1 corpus_last,
-                    I2 pat_first, I2 pat_last, Pred p ) {
-    BOOST_STATIC_ASSERT (( boost::is_same<typename I1::value_type, typename I2::value_type>::value ));
-    if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
-    if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
-    
-    const std::size_t k_pattern_length = std::distance ( pat_first, pat_last );
-    if ( static_cast <std::size_t> ( std::distance ( corpus_first, corpus_last )) < k_pattern_length ) 
-        return corpus_last;     // If the pattern is larger than the corpus....
 
-    detail::bmh::skip_table<I2, USE_SKIP_TABLE_MAP> skip ( pat_first, pat_last );
-#ifdef B_ALGO_DEBUG
-    skip.PrintSkipTable ();
-#endif
-
-/*  ---- Do the matching ---- */
-    I1 curPos = corpus_first;
-    const I1 lastPos = corpus_last - k_pattern_length;
-    while ( curPos <= lastPos ) {
-/*  while ( std::distance ( curPos, corpus_last ) >= k_pattern_length ) { */
-
-    //  Do we match right where we are?
-        std::size_t j = k_pattern_length - 1;
-        while ( p ( pat_first [j], curPos [j] )) {
-        //  We matched - we're done!
-            if ( j == 0 )
-                return curPos;
-            j--;
-            }
-
-        curPos += skip [ curPos [ k_pattern_length - 1 ]];
-        }
-    
-    return corpus_last;
-    }
-
-//  Default predicate version
-template <typename I1, typename I2>
-I1 boyer_moore_horspool_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last ) {
-    return boost::algorithm::boyer_moore_horspool_search 
-        ( corpus_first, corpus_last, pat_first, pat_last, 
-            std::equal_to<typename I1::value_type> ());
-    }
-#else
 	template <typename patIter>
 	class boyer_moore_horspool {
 	public:
@@ -562,9 +455,7 @@ I1 boyer_moore_horspool_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, 
 		boyer_moore_horspool<patIter> bmh ( pat_first, pat_last );
 		return bmh ( corpus_first, corpus_last );
 		}
-#endif
 
-#if 0
 /*
     A templated version of the Knuth-Pratt-Morris searching algorithm.
     
@@ -576,49 +467,6 @@ I1 boyer_moore_horspool_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, 
     http://www.inf.fh-flensburg.de/lang/algorithmen/pattern/kmpen.htm
 */
 
-template <typename I1, typename I2, typename Pred>
-I1 knuth_morris_pratt_search ( I1 corpus_first, I1 corpus_last,
-                    I2 pat_first, I2 pat_last, Pred p ) {
-    BOOST_STATIC_ASSERT (( boost::is_same<typename I1::value_type, typename I2::value_type>::value ));
-    if ( pat_first == pat_last ) return corpus_first;   // empty pattern matches at start
-    if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
-
-//  Build the skip table
-    const std::size_t k_pattern_length = (std::size_t) std::distance ( pat_first, pat_last );
-    const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
-    if ( k_corpus_length < k_pattern_length ) 
-        return corpus_last;     // If the pattern is larger than the corpus....
-
-    std::vector <int> skip ( k_pattern_length + 1 );
-    detail::create_kmp_table ( pat_first, pat_last, skip );
-    
-/*  ---- Do the matching ---- */
-    std::size_t idx = 0;
-    /* std::size_t*/ int j = 0;
-    I1 curPos = corpus_first;
-    const I1 lastPos = corpus_last - k_pattern_length;
-//  while ( curPos <= lastPos ) {
-    while ( idx < k_corpus_length ) {
-        while ( j >= 0 && !p ( pat_first [j], corpus_first[idx] ))
-            j = skip [ j ];
-        idx ++;
-        if ( ++j == (int) k_pattern_length )
-            return corpus_first + idx - j;
-        }
-    
-//  We didn't find anything
-    return corpus_last;
-    }
-
-//  Default predicate version
-template <typename I1, typename I2>
-I1 knuth_morris_pratt_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last ) {
-    return boost::algorithm::knuth_morris_pratt_search ( 
-        corpus_first, corpus_last, pat_first, pat_last, 
-            std::equal_to<typename I1::value_type> ());
-    }
-
-#else
 	template <typename patIter>
 	class knuth_morris_pratt {
 	public:
@@ -702,8 +550,6 @@ I1 knuth_morris_pratt_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2
 		knuth_morris_pratt<patIter> kmp ( pat_first, pat_last );
 		return kmp ( corpus_first, corpus_last );
 		}
-#endif
-
 }}
 
 #endif
