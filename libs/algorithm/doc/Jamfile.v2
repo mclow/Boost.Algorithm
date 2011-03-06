@@ -12,20 +12,30 @@
 
 using quickbook ;
 
-xml standalone_doc
-    :
-        algorithm.qbk
-    ;
+doxygen autodoc 
+    : 
+        ../../../boost/algorithm/all.hpp
+        ../../../boost/algorithm/clamp.hpp
+        ../../../boost/algorithm/ordered.hpp
+        ../../../boost/algorithm/search.hpp
+    : 
+        <doxygen:param>PREDEFINED=BOOST_PROCESS_DOXYGEN 
+        <doxygen:param>HIDE_UNDOC_CLASSES=YES 
+        <doxygen:param>HIDE_UNDOC_MEMBERS=YES 
+    ; 
 
-explicit standalone_doc ;
 
-path-constant images_location : ../../../doc/src ;
+xml algorithm : algorithm.qbk ;
+
+# path-constant images_location : ../../../../doc/src ;
 
 boostbook standalone
   :
-    standalone_doc
+    algorithm
   :
+    <dependency>autodoc 
     <xsl:param>boost.root=../../../..
+    <xsl:param>html.stylesheet=../../../../doc/src/boostbook.css 
     <xsl:param>chapter.autolabel=0
     <xsl:param>chunk.section.depth=8
     <xsl:param>chunk.first.sections=1

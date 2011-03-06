@@ -23,6 +23,7 @@ tables (looking for the same thing in several cases?
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 
 
@@ -39,15 +40,16 @@ namespace {
 	bool Equal ( const char &ch1, const char &ch2 ) {	return ~ch1 == ~ch2; }
 	
 
-	void check_one ( const std::string &haystack, const std::string &needle, int expected ) {
-		std::string::const_iterator it0  = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-		std::string::const_iterator it0p = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
-		std::string::const_iterator it1  = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-		std::string::const_iterator it1p = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
-		std::string::const_iterator it2  = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-		std::string::const_iterator it2p = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
-		std::string::const_iterator it3  = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-		std::string::const_iterator it3p = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
+	template<typename Container>
+	void check_one ( const Container &haystack, const std::string &needle, int expected ) {
+		typename Container::const_iterator it0  = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
+		typename Container::const_iterator it0p = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
+		typename Container::const_iterator it1  = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
+		typename Container::const_iterator it1p = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
+		typename Container::const_iterator it2  = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end ());
+		typename Container::const_iterator it2p = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
+		typename Container::const_iterator it3  = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
+		typename Container::const_iterator it3p = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
 		int dist = it1 == haystack.end () ? -1 : std::distance ( haystack.begin(), it1 );
 		
 		std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; " << std::endl;
@@ -125,6 +127,9 @@ int test_main( int , char* [] )
 	std::string needle6   ( "NOT FOUND" );	// Nowhere
 	std::string needle7   ( "NOT FO\340ND" );	// Nowhere
 
+	std::string haystack2 ( "ABC ABCDAB ABCDABCDABDE" );
+	std::string needle11  ( "ABCDABD" );
+	
 	check_one ( haystack1, needle1, 26 );
 	check_one ( haystack1, needle2, 18 );
 	check_one ( haystack1, needle3,  9 );
@@ -136,10 +141,7 @@ int test_main( int , char* [] )
 	check_one ( needle1, haystack1, -1 );	// cant find long pattern in short corpus
 	check_one ( haystack1, haystack1, 0 );	// find something in itself
 	
-	std::string haystack2 ( "ABC ABCDAB ABCDABCDABDE" );
-	std::string needle11  ( "ABCDABD" );
-	
 	check_one ( haystack2, needle11, 15 );
-	
+
 	return 0;
 	}

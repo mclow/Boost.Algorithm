@@ -20,10 +20,10 @@ using namespace boost;
 /* Preprocessor Defines */
 
 #define elementsof(v)	(sizeof (v) / sizeof (v[0]))
-#define begin(v)		(&v[0])
-#define end(v)			(v + elementsof (v))
-#define b_e(v)			begin(v),end(v)
-#define	range(v)		v
+#define a_begin(v)		(&v[0])
+#define a_end(v)		(v + elementsof (v))
+#define	a_range(v)		v
+#define b_e(v)			a_begin(v),a_end(v)
 
 namespace ba = boost::algorithm;
 
@@ -36,6 +36,7 @@ test_ordered(void)
 	const int decreasingValues[] = { 9, 7, 7, 7, 5 };
 	const int randomValues[] = { 3, 6, 1, 2, 7 };
 	const int constantValues[] = { 7, 7, 7, 7, 7 };
+	      int nonConstantArray[] = { 7, 7, 7, 7, 7 };
 
 	// Test a strictly increasing sequence
 	BOOST_CHECK (  ba::is_strictly_increasing (b_e(strictlyIncreasingValues)));
@@ -43,10 +44,10 @@ test_ordered(void)
 	BOOST_CHECK ( !ba::is_strictly_decreasing (b_e(strictlyIncreasingValues)));
 	BOOST_CHECK ( !ba::is_decreasing          (b_e(strictlyIncreasingValues)));
 
-//	BOOST_CHECK (  ba::is_strictly_increasing (range(strictlyIncreasingValues)));
-//	BOOST_CHECK (  ba::is_increasing          (range(strictlyIncreasingValues)));
-//	BOOST_CHECK ( !ba::is_strictly_decreasing (range(strictlyIncreasingValues)));
-//	BOOST_CHECK ( !ba::is_decreasing          (range(strictlyIncreasingValues)));
+	BOOST_CHECK (  ba::is_strictly_increasing (a_range(strictlyIncreasingValues)));
+	BOOST_CHECK (  ba::is_increasing          (a_range(strictlyIncreasingValues)));
+	BOOST_CHECK ( !ba::is_strictly_decreasing (a_range(strictlyIncreasingValues)));
+	BOOST_CHECK ( !ba::is_decreasing          (a_range(strictlyIncreasingValues)));
 
 	// Test a strictly decreasing sequence
 	BOOST_CHECK ( !ba::is_strictly_increasing (b_e(strictlyDecreasingValues)));
@@ -77,7 +78,32 @@ test_ordered(void)
 	BOOST_CHECK (  ba::is_increasing          (b_e(constantValues)));
 	BOOST_CHECK ( !ba::is_strictly_decreasing (b_e(constantValues)));
 	BOOST_CHECK (  ba::is_decreasing          (b_e(constantValues)));
+	
+	// Test an empty sequence
+	BOOST_CHECK (  ba::is_strictly_increasing (strictlyIncreasingValues, strictlyIncreasingValues));
+	BOOST_CHECK (  ba::is_increasing          (strictlyIncreasingValues, strictlyIncreasingValues));
+	BOOST_CHECK (  ba::is_strictly_decreasing (strictlyIncreasingValues, strictlyIncreasingValues));
+	BOOST_CHECK (  ba::is_decreasing          (strictlyIncreasingValues, strictlyIncreasingValues));
+	
+	// Test a one-element sequence
+	BOOST_CHECK (  ba::is_strictly_increasing (strictlyIncreasingValues, strictlyIncreasingValues+1));
+	BOOST_CHECK (  ba::is_increasing          (strictlyIncreasingValues, strictlyIncreasingValues+1));
+	BOOST_CHECK (  ba::is_strictly_decreasing (strictlyIncreasingValues, strictlyIncreasingValues+1));
+	BOOST_CHECK (  ba::is_decreasing          (strictlyIncreasingValues, strictlyIncreasingValues+1));
 
+	// Test a two-element sequence
+	BOOST_CHECK (  ba::is_strictly_increasing (strictlyIncreasingValues, strictlyIncreasingValues+2));
+	BOOST_CHECK (  ba::is_increasing          (strictlyIncreasingValues, strictlyIncreasingValues+2));
+	BOOST_CHECK ( !ba::is_strictly_decreasing (strictlyIncreasingValues, strictlyIncreasingValues+2));
+	BOOST_CHECK ( !ba::is_decreasing          (strictlyIncreasingValues, strictlyIncreasingValues+2));
+	
+	// Test underlying routines
+	BOOST_CHECK (  ba::is_ordered ( b_e(strictlyIncreasingValues),     std::less<int>()) ==      a_end(strictlyIncreasingValues));
+	BOOST_CHECK (  ba::is_ordered ( a_range(strictlyIncreasingValues), std::less<int>()) == boost::end(strictlyIncreasingValues));
+
+	BOOST_CHECK ( ba::is_ordered ( b_e(nonConstantArray),     std::less<int>()) !=      a_end(nonConstantArray));
+	BOOST_CHECK ( ba::is_ordered ( a_range(nonConstantArray), std::less<int>()) != boost::end(nonConstantArray));
+	
 }
 
 int test_main( int, char * [] )
