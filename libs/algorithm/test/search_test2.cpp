@@ -62,6 +62,78 @@ const char * KMP( const char *corpus_first, const char * corpus_last,
  return corpus_last;
 }
 
+#define	runOne(call, refDiff)	{ \
+	std::clock_t bTime, eTime;								\
+	bTime = std::clock ();									\
+	for ( i = 0; i < NUM_TRIES; ++i ) {						\
+		res = boost::algorithm::call 						\
+			( haystack.begin (), haystack.end (), 			\
+						needle.begin (), needle.end ());	\
+		if ( res != exp ) {									\
+			std::cout << "On run # " << i << " expected " 	\
+				<< exp - haystack.begin () << " got " 		\
+				<< res - haystack.begin () << std::endl;	\
+			throw std::runtime_error 						\
+				( "Unexpected result from " #call );		\
+			}												\
+		}													\
+	eTime = std::clock ();									\
+	printRes ( #call, eTime - bTime, refDiff ); }
+
+#define	runOneP(call, refDiff)	{ \
+	std::clock_t bTime, eTime;								\
+	bTime = std::clock ();									\
+	for ( i = 0; i < NUM_TRIES; ++i ) {						\
+		res = boost::algorithm::call 						\
+			( haystack.begin (), haystack.end (), 			\
+				needle.begin (), needle.end (), Equal );	\
+		if ( res != exp ) {									\
+			std::cout << "On run # " << i << " expected " 	\
+				<< exp - haystack.begin () << " got " 		\
+				<< res - haystack.begin () << std::endl;	\
+			throw std::runtime_error 						\
+				( "Unexpected result from " #call " (p)" );	\
+			}												\
+		}													\
+	eTime = std::clock ();									\
+	printRes ( #call "(p)", eTime - bTime, refDiff ); }
+	
+#define runObject(obj, refDiff)	{ \
+	std::clock_t bTime, eTime;								\
+	bTime = std::clock ();									\
+	boost::algorithm::obj <vec::const_iterator> 			\
+				s_o ( needle.begin (), needle.end ());		\
+	for ( i = 0; i < NUM_TRIES; ++i ) {						\
+		res = s_o ( haystack.begin (), haystack.end ());	\
+		if ( res != exp ) {									\
+			std::cout << "On run # " << i << " expected " 	\
+			<< exp - haystack.begin () << " got " 			\
+			<< res - haystack.begin () << std::endl;		\
+			throw std::runtime_error 						\
+			( "Unexpected result from " #obj " object" );	\
+			}												\
+		}													\
+	eTime = std::clock ();									\
+	printRes ( #obj " object", eTime - bTime, refDiff ); }
+	
+#define runObjectP(obj, refDiff)	{ \
+	std::clock_t bTime, eTime;								\
+	bTime = std::clock ();									\
+	boost::algorithm::obj <vec::const_iterator> 			\
+				s_o ( needle.begin (), needle.end ());		\
+	for ( i = 0; i < NUM_TRIES; ++i ) {						\
+		res = s_o ( haystack.begin (), haystack.end (), Equal );	\
+		if ( res != exp ) {									\
+			std::cout << "On run # " << i << " expected " 	\
+			<< exp - haystack.begin () << " got " 			\
+			<< res - haystack.begin () << std::endl;		\
+			throw std::runtime_error 						\
+			( "Unexpected result from " #obj " object (p)" );	\
+			}												\
+		}													\
+	eTime = std::clock ();									\
+	printRes ( #obj " object (p)", eTime - bTime, refDiff ); }
+
 
 namespace {
 
@@ -82,19 +154,21 @@ namespace {
 //	A simple predicate for testing the predicate versions
 	bool Equal ( const char &ch1, const char &ch2 ) {	return ~ch1 == ~ch2; }
 	
-	void printRes ( const char *prompt, float secs, float stdSecs ) {
-		std::cout << prompt 
-			<< std::setw(6) << secs << " seconds\t"
-			<< std::setw(5) << (secs / stdSecs) * 100 << '%';
-		if ( secs > stdSecs ) 
+	void printRes ( const char *prompt, float diff, float stdDiff ) {
+		std::cout 
+			<< std::setw(40) << prompt << " "
+			<< std::setw(6)  << diff / CLOCKS_PER_SEC << " seconds\t"
+			<< std::setw(5)  << (diff / stdDiff) * 100 << "% " 
+			<< std::setw(12) << diff;
+		if ( diff > stdDiff ) 
 			std::cout << " !!";
 		std::cout << std::endl;
 		}
 	
 	void check_one ( const vec &haystack, const vec &needle, int expected ) {
 		std::size_t i;
-		std::clock_t bTime, eTime;
-		float tmpSecs;
+		std::clock_t sTime;
+		float stdDiff, stdPDiff, tempDiff;
 		
 		vec::const_iterator res;
 		vec::const_iterator exp;		// the expected result
@@ -102,7 +176,7 @@ namespace {
 		if ( expected >= 0 )
 			exp = haystack.begin () + expected;
 		else if ( expected == -1 )
-			exp = haystack.end ();		// we didn't find it1
+			exp = haystack.end ();		// we didn't find it!
 		else if ( expected == -2 )
 			exp = std::search ( haystack.begin (), haystack.end (), needle.begin (), needle.end ());
 		else	
@@ -110,9 +184,9 @@ namespace {
 
 		std::cout << "Pattern is " << needle.size ()   << " entries long" << std::endl;
 		std::cout << "Corpus  is " << haystack.size () << " entries long" << std::endl;
+
 	//	First, the std library search
-		float stdSecs;
-		bTime = std::clock ();
+		sTime = std::clock ();
 		for ( i = 0; i < NUM_TRIES; ++i ) {
 			res = std::search ( haystack.begin (), haystack.end (), needle.begin (), needle.end ());
 			if ( res != exp ) {
@@ -120,69 +194,19 @@ namespace {
 				throw std::runtime_error ( "Unexpected result from std::search" );
 				}
 			}
-		eTime = std::clock ();
-		stdSecs = timeDiffToSecs ( bTime, eTime );
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "std::search                               took ", tmpSecs, stdSecs );
+		stdDiff = std::clock () - sTime;
+		printRes ( "std::search", stdDiff, stdDiff );
 
-	//	Now, the boyer_moore search
-		bTime = std::clock ();
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = boost::algorithm::boyer_moore_search 
-				( haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from boyer_moore_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer_moore_search                        took ", tmpSecs, stdSecs );
+		runOne    ( boyer_moore_search,          stdDiff );
+		runObject ( boyer_moore,                 stdDiff );
+		runOne    ( boyer_moore_horspool_search, stdDiff );
+		runObject ( boyer_moore_horspool,        stdDiff );
+		runOne    ( knuth_morris_pratt_search,   stdDiff );
+		runObject ( knuth_morris_pratt,          stdDiff );
 
-	//	Search using an object
-		bTime = std::clock ();
-		boost::algorithm::boyer_moore <vec::const_iterator> bm1 ( needle.begin (), needle.end ());
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = bm1 ( haystack.begin (), haystack.end ());
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer-moore object                        took ", tmpSecs, stdSecs );
-
-	//	Now, the boyer_moore_horspool search
-		bTime = std::clock ();
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = boost::algorithm::boyer_moore_horspool_search 
-				( haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from boyer_moore_horspool_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer_moore_horspool_search               took ", tmpSecs, stdSecs );
-
-	//	Search using an object
-		bTime = std::clock ();
-		boost::algorithm::boyer_moore_horspool <vec::const_iterator> bmh1 ( needle.begin (), needle.end ());
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = bmh1 ( haystack.begin (), haystack.end ());
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer-moore-horspool object               took ", tmpSecs, stdSecs );
 
 	//	Now, the knuth_morris_pratt search
-		bTime = std::clock ();
+		sTime = std::clock ();
 		const char *pRes;
 		for ( i = 0; i < NUM_TRIES; ++i ) {
 			pRes = KMP ( &*haystack.begin (), &*haystack.end (), &*needle.begin (), &*needle.end ());
@@ -191,133 +215,28 @@ namespace {
 				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
 				}
 			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "knuth_morris_pratt_search (C version)     took ", tmpSecs, stdSecs );
 
-	//	Now, the knuth_morris_pratt search
-		bTime = std::clock ();
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = boost::algorithm::knuth_morris_pratt_search 
-				( haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "knuth_morris_pratt_search                 took ", tmpSecs, stdSecs );
-
-	//	Now, the knuth_morris_pratt search
-		bTime = std::clock ();
-		boost::algorithm::knuth_morris_pratt<vec::const_iterator> kmp1 ( needle.begin (), needle.end ());
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = kmp1 ( haystack.begin (), haystack.end ());
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "knuth_morris_pratt object                 took ", tmpSecs, stdSecs );
+		tempDiff = std::clock () - sTime;
+		printRes ( "knuth_morris_pratt_search (C version)", tempDiff, stdDiff );
 		std::cout << std::endl;
-
-		float stdPSecs;
-		bTime = std::clock ();
+		
+		sTime = std::clock ();
 		for ( i = 0; i < NUM_TRIES; ++i ) {
 			res = std::search ( haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal );
 			if ( res != exp ) {
 				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from std::search(p)" );
+				throw std::runtime_error ( "Unexpected result from std::search (p)" );
 				}
 			}
-		eTime = std::clock ();
-		stdPSecs = timeDiffToSecs ( bTime, eTime );
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "std::search (w/predicate)                 took ", tmpSecs, stdPSecs );
+		stdPDiff = std::clock () - sTime;
+		printRes ( "std::search (p)", stdPDiff, stdPDiff );
 
-		bTime = std::clock ();
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = boost::algorithm::boyer_moore_search 
-				( haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal );
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from boyer_moore_search(p)" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer_moore_search (w/predicate)          took ", tmpSecs, stdPSecs );
-
-		bTime = std::clock ();
-		boost::algorithm::boyer_moore <vec::const_iterator> bm2 ( needle.begin (), needle.end ());
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = bm2 (  haystack.begin (), haystack.end (), Equal );
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer-moore object (w/predicate)          took ", tmpSecs, stdPSecs );
-
-		bTime = std::clock ();
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = boost::algorithm::boyer_moore_horspool_search 
-				( haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal );
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from boyer_moore_horspool_search(p)" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer_moore_horspool_search (w/predicate) took ", tmpSecs, stdPSecs );
-
-		bTime = std::clock ();
-		boost::algorithm::boyer_moore_horspool <vec::const_iterator> bmh2 ( needle.begin (), needle.end ());
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = bmh2 (  haystack.begin (), haystack.end (), Equal );
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "boyer-moore-horspool object (w/predicate) took ", tmpSecs, stdPSecs );
-
-	//	Now, the knuth_morris_pratt search
-		bTime = std::clock ();
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = boost::algorithm::knuth_morris_pratt_search 
-				( haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "knuth_morris_pratt_search (w/predicate)   took ", tmpSecs, stdPSecs );
-
-	//	Now, the knuth_morris_pratt search
-		bTime = std::clock ();
-		boost::algorithm::knuth_morris_pratt <vec::const_iterator> kmp2 ( needle.begin (), needle.end ());
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			res = kmp2 (  haystack.begin (), haystack.end (), Equal );
-			if ( res != exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-		eTime = std::clock ();
-		tmpSecs = timeDiffToSecs ( bTime, eTime );
-		printRes ( "knuth_morris_pratt object (w/predicate)   took ", tmpSecs, stdPSecs );
-		std::cout << std::endl;
+		runOneP    ( boyer_moore_search,          stdPDiff );
+		runObjectP ( boyer_moore,                 stdPDiff );
+		runOneP    ( boyer_moore_horspool_search, stdPDiff );
+		runObjectP ( boyer_moore_horspool,        stdPDiff );
+		runOneP    ( knuth_morris_pratt_search,   stdPDiff );
+		runObjectP ( knuth_morris_pratt,          stdPDiff );
 		}
 	}
 

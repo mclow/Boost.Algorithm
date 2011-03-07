@@ -27,6 +27,7 @@
 #include <string>
 #endif
 
+#include <cassert>
 #include <vector>
 #include <functional>   // for std::equal_to
 #include <tr1/unordered_map>
@@ -500,14 +501,17 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
             std::size_t idx = 0;          // position in the pattern we're comparing
             std::size_t match_start = 0;  // position in the corpus that we're matching
-            while ( match_start + idx < k_corpus_length ) {
+            const std::size_t last_match = k_corpus_length - k_pattern_length;
+            while ( match_start <= last_match ) {
                 while ( p ( pat_first [ idx ], corpus_first [ match_start + idx ] )) {
                     if ( ++idx == k_pattern_length )
                         return corpus_first + match_start;
                     }
             //  Figure out where to start searching again
+           // 	assert ( idx - skip_ [ idx ] > 0 );	// we're always moving forward
                 match_start += idx - skip_ [ idx ];
                 idx = skip_ [ idx ] >= 0 ? skip_ [ idx ] : 0;
+           //   assert ( idx >= 0 && idx < k_pattern_length );
                 }
                 
         //  We didn't find anything
