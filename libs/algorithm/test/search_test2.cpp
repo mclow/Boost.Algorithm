@@ -11,7 +11,7 @@
 #include <vector>
 
 typedef	std::vector<char> vec;
-#define	NUM_TRIES	500
+#define	NUM_TRIES	100
 
 void pre_KMP ( const char *pat_first, const char *pat_last, int *skip /* count+1 */ )
 {
@@ -38,7 +38,7 @@ const char * KMP( const char *corpus_first, const char * corpus_last,
  int m = pat_last - pat_first;
  int n = corpus_last - corpus_first;
  std::vector<int> f ( m + 1 );
- boost::algorithm::detail::create_kmp_table ( pat_first, pat_last, f );
+ boost::algorithm::detail::kmp::create_skip_table ( pat_first, pat_last, f );
 // pre_KMP(pat_first, pat_last, f);
  int i = 0;
  int k = 0;
