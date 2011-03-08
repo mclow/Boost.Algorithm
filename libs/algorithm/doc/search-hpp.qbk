@@ -20,6 +20,37 @@ sequences of values. These are classic algorithms in computer science, and have 
 
 Nomenclature: for each of these searches, I refer to the sequence being searched for as the "pattern", and the sequence being searched in as the "corpus".
 
+Each of the searches uses a generated table to speed up the searches. Preparing these tables adds overhead to the beginning of the search process. To help with this, each search has two interfaces; an object-based interface and a procedural one. The object-based interface builds the table(s) in the constructor, and uses operator () to perform the search. The procedural interface builds the table and does the search all in one step.
+
+Here is the object interface to one of the searches:
+``
+template <typename patIter>
+class boyer_moore {
+public:
+	boyer_moore ( patIter first, patIter last );
+	~boyer_moore ();
+	
+	template <typename corpusIter, typename Pred>
+	corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p );
+
+	template <typename corpusIter>
+	corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last );
+	};
+``
+
+and here are the corresponding procedural interfaces:
+
+``template <typename patIter, typename corpusIter, typename Pred>
+corpusIter boyer_moore_search ( 
+		corpusIter corpus_first, corpusIter corpus_last, 
+		patIter pat_first, patIter pat_last, Pred p);
+
+template <typename patIter, typename corpusIter>
+corpusIter boyer_moore_search ( 
+		corpusIter corpus_first, corpusIter corpus_last, 
+		patIter pat_first, patIter pat_last );
+``
+
 Each of the functions is passed two pairs of iterators. The first two define the corpus and the second two define the pattern. Note that the two pairs need not be of the same type, but they do need to "point" at the same type. In other words, I1::value_type and I2::value_type need to be the same type.
 
 The return value of the function is an iterator pointing to the start of the pattern in the corpus. If the pattern is not found, it returns the end of the corpus ('corpus_last').
@@ -28,10 +59,10 @@ Each search takes an (optional) comparison predicate.
 The predicate should have the form of:
 
 ``
-bool (*comp) ( const I1::value_type &one, const I2::value_type &two );
+bool (*comp) ( const patIter::value_type &one, const patIter::value_type &two );
 ``
 
-where I1 and I2 are the iterator types passed to the search function. Of course, the predicate can be a free function, a Boost.Bind expression, a functor, or even (in C++0x) a lambda expression.
+Of course, the predicate can be a free function, a Boost.Bind expression, a functor, or even (in C++0x) a lambda expression.
 
 The general rule for such a predicate is:
 
@@ -44,49 +75,33 @@ The Boyer–Moore string search algorithm is a particularly efficient string sea
 
 It was developed by Bob Boyer and J Strother Moore in 1977. The algorithm preprocesses the target string (pattern) that is being searched for. The execution time of the Boyer-Moore algorithm, while still linear in the size of the string being searched, can have a significantly lower constant factor than many other search algorithms: it doesn't need to check every character of the string to be searched, but rather skips over some of them. Generally the algorithm gets faster as the key being searched for becomes longer. Its efficiency derives from the fact that with each unsuccessful attempt to find a match between the search string and the text it's searching, it uses the information gained from that attempt to rule out as many positions of the text as possible where the string cannot match.
 
-``
-template <typename I1, typename I2>
-I2 boyer_moore_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last );
-
-template <typename I1, typename I2, typename Pred>
-I2 boyer_moore_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last, Pred p );
-``
-
 Memory Use: The algorithm allocates two internal tables. The first one is proportional to the length of the pattern; the second one has one entry for each member of the "alphabet" in the pattern. For (8-bit) character types, this table contains 256 entries.
 
-Complexity:	The worst-case performance to find a pattern in the corpus is linear; that is, proportional to the length of the corpus being searched. In general, the search is sub-linear; not every character need be checked.
+Complexity:	The worst-case performance to find a pattern in the corpus is linear; that is, proportional to the length of the corpus being searched. In general, the search is sub-linear; not every entry in the corpus need be checked.
 
+[note
+[#bm-implementation]
+
+This implementation of Boyer-Moore implements an alternative way to store the skip table (the second one) as stored as an hash table (unordered_map) instead of an array. This has the disadvantage that lookups are slower; but on the other hand, the table need only store one entry for each unique element in the pattern, rather than one entry for every possible value in the pattern. For example, the character pattern "ABCDEFEFGH" would require 7 entries as opposed to 256. This advantage becomes even larger when the pattern and corpus are (say) UTF-16 text; in that case, the skip table would be 64K entries long when implemented as an array.
+
+A second advantage of using a hash-table for the skip table is that the data being searched does not have to be numeric. In the original algorithm, a value is used as an index into the skip table. With a hash-table, the values just need to be hashable, and the hash-value is used for the index. If that requirement is found to be too onerous, the unordered_map could be replaced by a std::map, and all that would require was a weak strict ordering (`operator <`).
+]
 
 [heading Boyer-Moore-Horspool]
 
 The Boyer-Moore-Horspool search algorithm was published by Nigel Horspool in 1980. It is a refinement of the Boyer-Moore algorithm that trades space for time. It uses less space for internal tables than Boyer-Moore, and has poorer worst-case performance.
 
-``
-template <typename I1, typename I2>
-I2 boyer_moore_horspool_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last );
-
-template <typename I1, typename I2, typename Pred>
-I2 boyer_moore_horspool_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last, Pred p );
-``
-
 Memory Use: The algorithm an internal table that has one entry for each member of the "alphabet" in the pattern. For (8-bit) character types, this table contains 256 entries.
 
 Complexity: The worst-case performance is O(m x n), where m is the length of the pattern and n is the length of the corpus. The average time is O(n). The best case performance is sub-linear, and is, in fact, identical to Boyer-Moore, but the initialization is quicker and the internal loop is simpler than Boyer-Moore.
 
+Like Boyer-Moore, this implementation of Boyer-Moore-Horspool implements an alternative way to store the skip table. See [link bm-implementation the Boyer-Moore implementation note] for more information.
 
 [heading Knuth-Morris-Pratt]
 
 The Knuth-Morris-Pratt algorithm was developed by Donald Knuth and Vaughan Pratt, and independently by James H. Morris in 1977, and then published jointly.
 
 The core idea of the Knuth-Morris-Pratt algorithm is that when a comparision of the pattern against a section of the corpus fails, the failure contains information that can be used to decide where to start looking for the match - instead of just at the next entry in the corpus.
-
-``
-template <typename I1, typename I2>
-I2 knuth_morris_pratt_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last );
-
-template <typename I1, typename I2, typename Pred>
-I2 knuth_morris_pratt_search ( I1 corpus_first, I1 corpus_last, I2 pat_first, I2 pat_last, Pred p );
-``
 
 Memory Use: The algorithm uses an internal table that contains one entry for each entry in the pattern.
 
