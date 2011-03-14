@@ -32,3 +32,5 @@ unit-test ordered_test : ordered_test.cpp ;
 unit-test search_test1 : search_test1.cpp ;
 
 unit-test search_test2 : search_test2.cpp ;
+
+unit-test search_test3 : search_test3.cpp ;

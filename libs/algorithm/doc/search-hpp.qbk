@@ -27,28 +27,28 @@ Here is the object interface to one of the searches:
 template <typename patIter>
 class boyer_moore {
 public:
-	boyer_moore ( patIter first, patIter last );
-	~boyer_moore ();
-	
-	template <typename corpusIter, typename Pred>
-	corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p );
+    boyer_moore ( patIter first, patIter last );
+    ~boyer_moore ();
+    
+    template <typename corpusIter, typename Pred>
+    corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p );
 
-	template <typename corpusIter>
-	corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last );
-	};
+    template <typename corpusIter>
+    corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last );
+    };
 ``
 
 and here are the corresponding procedural interfaces:
 
 ``template <typename patIter, typename corpusIter, typename Pred>
 corpusIter boyer_moore_search ( 
-		corpusIter corpus_first, corpusIter corpus_last, 
-		patIter pat_first, patIter pat_last, Pred p);
+        corpusIter corpus_first, corpusIter corpus_last, 
+        patIter pat_first, patIter pat_last, Pred p);
 
 template <typename patIter, typename corpusIter>
 corpusIter boyer_moore_search ( 
-		corpusIter corpus_first, corpusIter corpus_last, 
-		patIter pat_first, patIter pat_last );
+        corpusIter corpus_first, corpusIter corpus_last, 
+        patIter pat_first, patIter pat_last );
 ``
 
 Each of the functions is passed two pairs of iterators. The first two define the corpus and the second two define the pattern. Note that the two pairs need not be of the same type, but they do need to "point" at the same type. In other words, I1::value_type and I2::value_type need to be the same type.
@@ -77,7 +77,7 @@ It was developed by Bob Boyer and J Strother Moore in 1977. The algorithm prepro
 
 Memory Use: The algorithm allocates two internal tables. The first one is proportional to the length of the pattern; the second one has one entry for each member of the "alphabet" in the pattern. For (8-bit) character types, this table contains 256 entries.
 
-Complexity:	The worst-case performance to find a pattern in the corpus is linear; that is, proportional to the length of the corpus being searched. In general, the search is sub-linear; not every entry in the corpus need be checked.
+Complexity: The worst-case performance to find a pattern in the corpus is linear; that is, proportional to the length of the corpus being searched. In general, the search is sub-linear; not every entry in the corpus need be checked.
 
 [note
 [#bm-implementation]
@@ -106,5 +106,5 @@ The core idea of the Knuth-Morris-Pratt algorithm is that when a comparision of 
 Memory Use: The algorithm uses an internal table that contains one entry for each entry in the pattern.
 
 Complexity: The performance is O(m + n), where m is the length of the pattern and n is the length of the corpus.
-	
+    
 [endsect]

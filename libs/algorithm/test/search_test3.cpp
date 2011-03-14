@@ -9,58 +9,10 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <string>
 
-typedef	std::vector<char> vec;
+typedef	std::vector<std::string> vec;
 #define	NUM_TRIES	100
-
-void pre_KMP ( const char *pat_first, const char *pat_last, int *skip /* count+1 */ )
-{
-  int m = pat_last - pat_first;
-  int k;
-  skip[0] = -1;
-  for (int i = 1; i<m; i++)
-    {
-     k = skip[i-1];
-     while (k>=0)
-       {
-        if (pat_first[k]==pat_first[i-1])
-            break;
-        else
-            k = skip[k];
-       }
-     skip[i] = k + 1;
-    }
-}
-
-const char * KMP( const char *corpus_first, const char * corpus_last,
-					const char * pat_first, const char * pat_last )
-{
- int m = pat_last - pat_first;
- int n = corpus_last - corpus_first;
- std::vector<int> f ( m + 1 );
- boost::algorithm::detail::kmp::create_skip_table ( pat_first, pat_last, f );
-// pre_KMP(pat_first, pat_last, f);
- int i = 0;
- int k = 0;
- while (i<n)
-    {
-     if (k==-1)
-        {
-         i++;
-         k = 0;
-        }
-     else if (corpus_first[i]==pat_first[k]) 
-        {
-         i++;
-         k++;
-         if (k==m)
-            return corpus_first + i-k;
-        }
-     else
-        k=f[k];
-    }
- return corpus_last;
-}
 
 #define	runOne(call, refDiff)	{ \
 	std::clock_t bTime, eTime;								\
@@ -134,25 +86,26 @@ const char * KMP( const char *corpus_first, const char * corpus_last,
 	eTime = std::clock ();									\
 	printRes ( #obj " object (p)", eTime - bTime, refDiff ); }
 
-
 namespace {
 
 	vec ReadFromFile ( const char *name ) {
 		std::ifstream in ( name, std::ios_base::binary | std::ios_base::in );
+		std::string temp;
 		vec retVal;
-		std::istream_iterator<char, char> begin(in);
-		std::istream_iterator<char, char> end;
+		while ( in ) {
+			in >> temp;
+			retVal.push_back ( temp );
+			}
 		
-		std::copy ( begin, end, std::back_inserter ( retVal ));
 		return retVal;
 		}
 	
-	float timeDiffToSecs ( std::clock_t start, std::clock_t stop ) {
-		return ((float) ( stop - start )) / CLOCKS_PER_SEC;
-		}
-	
 //	A simple predicate for testing the predicate versions
-	bool Equal ( const char &ch1, const char &ch2 ) {	return ~ch1 == ~ch2; }
+	bool Equal ( const std::string &ch1, const std::string &ch2 ) {
+		if ( ch1.length () == ch2.length ())
+			return std::equal ( ch1.begin (), ch1.end (), ch2.begin ());
+		return false;
+		}
 	
 	void printRes ( const char *prompt, float diff, float stdDiff ) {
 		std::cout 
@@ -168,7 +121,7 @@ namespace {
 	void check_one ( const vec &haystack, const vec &needle, int expected ) {
 		std::size_t i;
 		std::clock_t sTime;
-		float stdDiff, stdPDiff, tempDiff;
+		float stdDiff, stdPDiff;
 		
 		vec::const_iterator res;
 		vec::const_iterator exp;		// the expected result
@@ -176,7 +129,7 @@ namespace {
 		if ( expected >= 0 )
 			exp = haystack.begin () + expected;
 		else if ( expected == -1 )
-			exp = haystack.end ();		// we didn't find it!
+			exp = haystack.end ();		// we didn't find it1
 		else if ( expected == -2 )
 			exp = std::search ( haystack.begin (), haystack.end (), needle.begin (), needle.end ());
 		else	
@@ -201,24 +154,6 @@ namespace {
 		runObject ( boyer_moore,                 stdDiff );
 		runOne    ( boyer_moore_horspool_search, stdDiff );
 		runObject ( boyer_moore_horspool,        stdDiff );
-		runOne    ( knuth_morris_pratt_search,   stdDiff );
-		runObject ( knuth_morris_pratt,          stdDiff );
-
-
-	//	Now, the knuth_morris_pratt search
-		sTime = std::clock ();
-		const char *pRes;
-		for ( i = 0; i < NUM_TRIES; ++i ) {
-			pRes = KMP ( &*haystack.begin (), &*haystack.end (), &*needle.begin (), &*needle.end ());
-			if ( pRes != &*exp ) {
-				std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-				throw std::runtime_error ( "Unexpected result from knuth_morris_pratt_search" );
-				}
-			}
-
-		tempDiff = std::clock () - sTime;
-		printRes ( "knuth_morris_pratt_search (C version)", tempDiff, stdDiff );
-		std::cout << std::endl;
 		
 		sTime = std::clock ();
 		for ( i = 0; i < NUM_TRIES; ++i ) {
@@ -242,11 +177,11 @@ namespace {
 
 int test_main( int , char* [] )
 {
-	std::vector<char> c1  = ReadFromFile ( "data-files/0001.corpus" );
-	std::vector<char> p1b = ReadFromFile ( "data-files/0001b.pat" );
-	std::vector<char> p1e = ReadFromFile ( "data-files/0001e.pat" );
-	std::vector<char> p1n = ReadFromFile ( "data-files/0001n.pat" );
-	std::vector<char> p1f = ReadFromFile ( "data-files/0001f.pat" );
+	vec c1  = ReadFromFile ( "data-files/0002.corpus" );
+	vec p1b = ReadFromFile ( "data-files/0002b.pat" );
+	vec p1e = ReadFromFile ( "data-files/0002e.pat" );
+	vec p1n = ReadFromFile ( "data-files/0002n.pat" );
+	vec p1f = ReadFromFile ( "data-files/0002f.pat" );
 	
 	std::cout << std::ios::fixed << std::setprecision(4);
 //	std::cout << "Corpus is " << c1.size () << " entries long\n";
