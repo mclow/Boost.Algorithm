@@ -59,6 +59,9 @@ namespace detail {
         }
 #endif
 
+//
+//	Default implementations of the skip tables for B-M and B-M-H
+//
 	template<typename Iter, bool useMap> class skip_table;
 
 //  General case for data searching other than bytes; use a map
@@ -67,12 +70,12 @@ namespace detail {
 	private:
 		typedef typename Iter::value_type value_type;
 		typedef std::tr1::unordered_map<value_type, int> skip_map;
-		skip_map skip_;
 		const int k_default_value;
+		skip_map skip_;
 		
 	public:
 		skip_table ( std::size_t patSize, int default_value ) 
-			: skip_ ( patSize ), k_default_value ( default_value ) {}
+			: k_default_value ( default_value ), skip_ ( patSize ) {}
 		
 		void insert ( typename Iter::value_type key, int val ) {
 			skip_ [ key ] = val;    // Would skip_.insert (<blah>) be better here?
@@ -127,69 +130,22 @@ namespace detail {
 		};
 		
 
-    namespace bm {
-        template<typename Iter>
-        void compute_bm_prefix ( Iter pat_first, Iter pat_last, std::size_t *prefix /* [count] */ ) {
-            const std::size_t count = std::distance ( pat_first, pat_last );
-        
-            prefix[0] = 0;
-            std::size_t k = 0;
-            for ( std::size_t i = 1; i < count; ++i ) {
-                while ( k > 0 && pat_first[k] != pat_first[i] )
-                    k = prefix [ k - 1 ];
-                if ( pat_first[k] == pat_first[i] )
-                    k++;
-                prefix [ i ] = k;
-                }
-            }
+	template<typename Iter, typename Container>
+	void init_kmp_skip_table ( Iter first, Iter last, Container &skip /* count+1 */ ) {
+		const /*std::size_t*/ int count = std::distance ( first, last );
 
-        template<typename Iter, typename Container>
-        void create_suffix_table ( Iter pat_first, Iter pat_last, Container &result /* count+1 */ ) {
-            const std::size_t count = (std::size_t) std::distance ( pat_first, pat_last );
-            std::vector<typename Iter::value_type> reversed(count);     
-            (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
-            
-            std::vector<std::size_t> prefix (count);
-            compute_bm_prefix ( pat_first, pat_last, &*prefix.begin ());
-    
-            std::vector<std::size_t> prefix_reversed (count);
-            compute_bm_prefix ( reversed.begin (), reversed.end (), &*prefix_reversed.begin ());
-            
-            std::size_t i;
-            for ( i = 0; i <= count; i++ )
-                result[i] = count - prefix [count-1];
-     
-            for (i = 0; i < count; i++) {
-                const std::size_t j = count - prefix_reversed[i];
-                const std::size_t k = i -     prefix_reversed[i] + 1;
-     
-                if (result[j] > k)
-                    result[j] = k;
-                }
-            }
-        
-    }   // namespace bm
-            
-
-    namespace kmp {
-        template<typename Iter, typename Container>
-        void create_skip_table ( Iter first, Iter last, Container &skip /* count+1 */ ) {
-            const /*std::size_t*/ int count = std::distance ( first, last );
-    
-            int j;
-            skip [ 0 ] = -1;
-            for ( int i = 1; i < count; ++i ) {
-                j = skip [ i - 1 ];
-                while ( j >= 0 ) {
-                    if ( first [ j ] == first [ i - 1 ] )
-                        break;
-                    j = skip [ j ];
-                    }
-                skip [ i ] = j + 1;
-                }
-            }
-    }   // namespace kmp
-    
+		int j;
+		skip [ 0 ] = -1;
+		for ( int i = 1; i < count; ++i ) {
+			j = skip [ i - 1 ];
+			while ( j >= 0 ) {
+				if ( first [ j ] == first [ i - 1 ] )
+					break;
+				j = skip [ j ];
+				}
+			skip [ i ] = j + 1;
+			}
+		}    
     }
 
 /*
@@ -230,7 +186,7 @@ Requirements:
             for ( patIter iter = pat_first; iter != pat_last; ++iter, ++i )
                 skip_.insert ( *iter, i );
     
-            detail::bm::create_suffix_table ( pat_first, pat_last, suffix_ );
+            this->create_suffix_table ( pat_first, pat_last );
 #ifdef B_ALGO_DEBUG
             skip_.PrintSkipTable ();
             detail::PrintTable ( suffix_.begin (), suffix_.end ());
@@ -244,6 +200,7 @@ Requirements:
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last ) return corpus_first;       // empty pattern matches at start
+
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;     // If the pattern is larger than the corpus....
@@ -288,6 +245,46 @@ Requirements:
         const std::size_t k_pattern_length;
         detail::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
         std::vector <std::size_t> suffix_;
+
+        template<typename Iter>
+        void compute_bm_prefix ( Iter pat_first, Iter pat_last, std::size_t *prefix /* [count] */ ) {
+            const std::size_t count = std::distance ( pat_first, pat_last );
+        
+            prefix[0] = 0;
+            std::size_t k = 0;
+            for ( std::size_t i = 1; i < count; ++i ) {
+                while ( k > 0 && pat_first[k] != pat_first[i] )
+                    k = prefix [ k - 1 ];
+                if ( pat_first[k] == pat_first[i] )
+                    k++;
+                prefix [ i ] = k;
+                }
+            }
+
+        void create_suffix_table ( patIter pat_first, patIter pat_last ) {
+            const std::size_t count = (std::size_t) std::distance ( pat_first, pat_last );
+            std::vector<typename patIter::value_type> reversed(count);     
+            (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
+            
+            std::vector<std::size_t> prefix (count);
+            compute_bm_prefix ( pat_first, pat_last, &*prefix.begin ());
+    
+            std::vector<std::size_t> prefix_reversed (count);
+            compute_bm_prefix ( reversed.begin (), reversed.end (), &*prefix_reversed.begin ());
+            
+            std::size_t i;
+            for ( i = 0; i <= count; i++ )
+                suffix_[i] = count - prefix [count-1];
+     
+            for (i = 0; i < count; i++) {
+                const std::size_t j = count - prefix_reversed[i];
+                const std::size_t k = i -     prefix_reversed[i] + 1;
+     
+                if (suffix_[j] > k)
+                    suffix_[j] = k;
+                }
+            }
+        
         };
     
 
@@ -345,6 +342,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last ) return corpus_first;       // empty pattern matches at start
+
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;     // If the pattern is larger than the corpus....
@@ -416,7 +414,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                 : pat_first ( first ), pat_last ( last ),
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length + 1 ) {
-            detail::kmp::create_skip_table ( pat_first, pat_last, skip_ );
+            detail::init_kmp_skip_table ( pat_first, pat_last, skip_ );
 #ifdef B_ALGO_DEBUG
             detail::PrintTable ( skip_.begin (), skip_.end ());
 #endif
@@ -429,6 +427,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
+
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;     // If the pattern is larger than the corpus....
