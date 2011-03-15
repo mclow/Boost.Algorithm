@@ -92,10 +92,8 @@ namespace {
 		std::ifstream in ( name, std::ios_base::binary | std::ios_base::in );
 		std::string temp;
 		vec retVal;
-		while ( in ) {
-			in >> temp;
+		while ( std::getline ( in, temp ))
 			retVal.push_back ( temp );
-			}
 		
 		return retVal;
 		}
@@ -177,12 +175,12 @@ namespace {
 
 int test_main( int , char* [] )
 {
-	vec c1  = ReadFromFile ( "data-files/0002.corpus" );
+	vec c1  = ReadFromFile ( "data-files/0001.corpus" );
 	vec p1b = ReadFromFile ( "data-files/0002b.pat" );
 	vec p1e = ReadFromFile ( "data-files/0002e.pat" );
 	vec p1n = ReadFromFile ( "data-files/0002n.pat" );
 	vec p1f = ReadFromFile ( "data-files/0002f.pat" );
-	
+
 	std::cout << std::ios::fixed << std::setprecision(4);
 //	std::cout << "Corpus is " << c1.size () << " entries long\n";
 	std::cout << "--- Beginning ---" << std::endl;
