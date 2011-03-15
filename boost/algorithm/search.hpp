@@ -20,7 +20,7 @@
 #define BOOST_ALGORITHM_SEARCH_HPP
 
 // #define  B_ALGO_DEBUG
-#define USE_SKIP_TABLE_MAP      false
+#define USE_SKIP_TABLE_MAP      true
 
 #ifdef  B_ALGO_DEBUG
 #include <iostream>
@@ -59,71 +59,75 @@ namespace detail {
         }
 #endif
 
-    namespace bm {
-        template<typename Iter, bool useMap> class skip_table;
-    
-    //  General case for data searching other than bytes; use a map
-        template<typename Iter>
-        class skip_table<Iter, true> {
-        private:
-            typedef typename Iter::value_type value_type;
-            typedef std::tr1::unordered_map<value_type, int> skip_map;
-            skip_map skip_;
-            
-        public:
-            skip_table ( Iter first, Iter last ) :skip_ ( std::distance ( first, last )) {
-                std::size_t i = 0;
-                for ( Iter iter = first; iter != last; ++iter, ++i )
-                    skip_ [ *iter ] = i;    // Would skip_.insert (<blah>) be better here?
-                }
-            
-            int operator [] ( typename Iter::value_type val ) const {
-                typename skip_map::const_iterator it = skip_.find ( val );
-                return it == skip_.end () ? -1 : it->second;
-                }
-                
-    #ifdef  B_ALGO_DEBUG
-            void PrintSkipTable () const {
-                std::cout << "BM Skip Table <unordered_map>:" << std::endl;
-                for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-                    std::cout << "  " << it->first << ": " << it->second << std::endl;
-                std::cout << std::endl;
-                }
-    #endif
-            };
-            
-        
-    //  Special case small numeric values; use an array
-        template<typename Iter>
-        class skip_table<Iter, false> {
-        private:
-            typedef typename Iter::value_type value_type;
-            typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
-            typedef boost::array<int, 1U << (CHAR_BIT * sizeof(value_type))> skip_map;
-            skip_map skip_;
-        public:
-            skip_table ( Iter first, Iter last ) {
-                std::fill_n ( skip_.begin(), skip_.size(), -1 );
-                std::size_t i = 0;
-                for ( Iter iter = first; iter != last; ++iter, ++i )
-                    skip_ [ static_cast<unsigned_value_type> (*iter) ] = i;
-                }
-            
-            int operator [] ( typename Iter::value_type val ) const {
-                return skip_ [ static_cast<unsigned_value_type> ( val ) ];
-                }
-    
-    #ifdef  B_ALGO_DEBUG
-            void PrintSkipTable () const {
-                std::cout << "BM Skip Table <boost:array>:" << std::endl;
-                typename skip_map::const_iterator it = skip_.begin ();
-                for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-                    std::cout << "  " << std::distance (it, skip_.begin ()) << ": " << *it << std::endl;
-                std::cout << std::endl;
-                }
-    #endif
-            };
+	template<typename Iter, bool useMap> class skip_table;
 
+//  General case for data searching other than bytes; use a map
+	template<typename Iter>
+	class skip_table<Iter, true> {
+	private:
+		typedef typename Iter::value_type value_type;
+		typedef std::tr1::unordered_map<value_type, int> skip_map;
+		skip_map skip_;
+		const int k_default_value;
+		
+	public:
+		skip_table ( std::size_t patSize, int default_value ) 
+			: skip_ ( patSize ), k_default_value ( default_value ) {}
+		
+		void insert ( typename Iter::value_type key, int val ) {
+			skip_ [ key ] = val;    // Would skip_.insert (<blah>) be better here?
+			}
+
+		int operator [] ( typename Iter::value_type val ) const {
+			typename skip_map::const_iterator it = skip_.find ( val );
+			return it == skip_.end () ? k_default_value : it->second;
+			}
+			
+#ifdef  B_ALGO_DEBUG
+		void PrintSkipTable () const {
+			std::cout << "BM(H) Skip Table <unordered_map>:" << std::endl;
+			for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
+				std::cout << "  " << it->first << ": " << it->second << std::endl;
+			std::cout << std::endl;
+			}
+#endif
+		};
+		
+	
+//  Special case small numeric values; use an array
+	template<typename Iter>
+	class skip_table<Iter, false> {
+	private:
+		typedef typename Iter::value_type value_type;
+		typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
+		typedef boost::array<int, 1U << (CHAR_BIT * sizeof(value_type))> skip_map;
+		skip_map skip_;
+	public:
+		skip_table ( std::size_t patSize, int default_value ) {
+			std::fill_n ( skip_.begin(), skip_.size(), default_value );
+			}
+		
+		void insert ( typename Iter::value_type key, int val ) {
+			skip_ [ static_cast<unsigned_value_type> ( key ) ] = val;
+			}
+
+		int operator [] ( typename Iter::value_type val ) const {
+			return skip_ [ static_cast<unsigned_value_type> ( val ) ];
+			}
+
+#ifdef  B_ALGO_DEBUG
+		void PrintSkipTable () const {
+			std::cout << "BM(H) Skip Table <boost:array>:" << std::endl;
+			typename skip_map::const_iterator it = skip_.begin ();
+			for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
+				std::cout << "  " << std::distance (it, skip_.begin ()) << ": " << *it << std::endl;
+			std::cout << std::endl;
+			}
+#endif
+		};
+		
+
+    namespace bm {
         template<typename Iter>
         void compute_bm_prefix ( Iter pat_first, Iter pat_last, std::size_t *prefix /* [count] */ ) {
             const std::size_t count = std::distance ( pat_first, pat_last );
@@ -167,78 +171,6 @@ namespace detail {
     }   // namespace bm
             
 
-    namespace bmh {
-        template<typename Iter, bool useMap> class skip_table;
-
-    //  General case for data searching other than bytes; use a map
-        template<typename Iter>
-        class skip_table<Iter, true> {
-        private:
-            typedef typename Iter::value_type value_type;
-            typedef std::tr1::unordered_map<value_type, int> skip_map;
-            const std::size_t k_pattern_length;
-            skip_map skip_;
-            
-        public:
-            skip_table ( Iter first, Iter last )
-                : k_pattern_length (std::distance( first, last )),
-                    skip_ ( std::distance ( first, last )) {
-                std::size_t i = 0;
-                for ( Iter iter = first; iter != last-1; ++iter, ++i )
-                    skip_ [ *iter ] = ( k_pattern_length - 1 ) - i; // Would skip_.insert (<blah>) be better here?
-                }
-            
-            int operator [] ( typename Iter::value_type val ) const {
-                typename skip_map::const_iterator it = skip_.find ( val );
-                return it == skip_.end () ? k_pattern_length : it->second;
-                }
-                
-    #ifdef  B_ALGO_DEBUG
-            void PrintSkipTable () const {
-                std::cout << "BMH Skip Table <unordered_map>:" << std::endl;
-                for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-                    std::cout << "  " << it->first << ": " << it->second << std::endl;
-                std::cout << std::endl;
-                }
-    #endif
-            };
-            
-        
-    //  Special case small numeric values; use an array
-        template<typename Iter>
-        class skip_table<Iter, false> {
-        private:
-            typedef typename Iter::value_type value_type;
-            typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
-            typedef std::vector <value_type> skip_map;
-            const std::size_t k_pattern_length;
-            skip_map skip_;
-    
-        public:
-            skip_table ( Iter first, Iter last ) 
-                : k_pattern_length (std::distance( first, last )),
-                      skip_ ( 1U << (CHAR_BIT * sizeof(value_type)), k_pattern_length ) {
-                std::size_t i = 0;
-                for ( Iter iter = first; iter != last-1; ++iter, ++i )
-                    skip_ [ static_cast<unsigned_value_type> ( *iter ) ] = ( k_pattern_length - 1 ) - i;
-                }
-            
-            int operator [] ( typename Iter::value_type val ) const {
-                return skip_ [ static_cast<unsigned_value_type> ( val ) ];
-                }
-    
-    #ifdef  B_ALGO_DEBUG
-            void PrintSkipTable () const {
-                std::cout << "BMH Skip Table <vector>:" << std::endl;
-                typename skip_map::const_iterator it = skip_.begin ();
-                for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-                    std::cout << "  " << std::distance (it, skip_.begin ()) << ": " << *it << std::endl;
-                std::cout << std::endl;
-                }
-    #endif
-            };
-    }   // namespace bmh
-    
     namespace kmp {
         template<typename Iter, typename Container>
         void create_skip_table ( Iter first, Iter last, Container &skip /* count+1 */ ) {
@@ -290,15 +222,20 @@ Requirements:
         boyer_moore ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
-                  skip_ ( pat_first, pat_last ),
+                  skip_ ( k_pattern_length, -1 ),
                   suffix_ ( k_pattern_length + 1 ) {
 
-                    detail::bm::create_suffix_table ( pat_first, pat_last, suffix_ );
+        //  Build the skip table
+            std::size_t i = 0;
+            for ( patIter iter = pat_first; iter != pat_last; ++iter, ++i )
+                skip_.insert ( *iter, i );
+    
+            detail::bm::create_suffix_table ( pat_first, pat_last, suffix_ );
 #ifdef B_ALGO_DEBUG
-                    skip_.PrintSkipTable ();
-                    detail::PrintTable ( suffix_.begin (), suffix_.end ());
+            skip_.PrintSkipTable ();
+            detail::PrintTable ( suffix_.begin (), suffix_.end ());
 #endif
-                    }
+            }
             
         ~boyer_moore () {}
         
@@ -349,7 +286,7 @@ Requirements:
     private:
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
-        detail::bm::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
+        detail::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
         std::vector <std::size_t> suffix_;
         };
     
@@ -359,7 +296,7 @@ Requirements:
     template <typename patIter, typename corpusIter, typename Pred>
     corpusIter boyer_moore_search ( 
             corpusIter corpus_first, corpusIter corpus_last, 
-            patIter pat_first, patIter pat_last, Pred p) {
+            patIter pat_first, patIter pat_last, Pred p ) {
         boyer_moore <patIter> bm ( pat_first, pat_last );
         return bm ( corpus_first, corpus_last, p );
         }
@@ -390,7 +327,12 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         boyer_moore_horspool ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
-                  skip_ ( pat_first, pat_last ) {
+                  skip_ ( k_pattern_length, k_pattern_length ) {
+                  
+        //  Build the skip table
+            std::size_t i = 0;
+            for ( patIter iter = first; iter != last-1; ++iter, ++i )
+                skip_.insert ( *iter, k_pattern_length - 1 - i );
 #ifdef B_ALGO_DEBUG
             skip_.PrintSkipTable ();
 #endif
@@ -435,7 +377,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
     private:
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
-        detail::bmh::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
+        detail::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
         };
     
 //  Bummer(2): We could make this better - remove code duplication
@@ -508,7 +450,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                         return corpus_first + match_start;
                     }
             //  Figure out where to start searching again
-           // 	assert ( idx - skip_ [ idx ] > 0 );	// we're always moving forward
+           //   assert ( idx - skip_ [ idx ] > 0 ); // we're always moving forward
                 match_start += idx - skip_ [ idx ];
                 idx = skip_ [ idx ] >= 0 ? skip_ [ idx ] : 0;
            //   assert ( idx >= 0 && idx < k_pattern_length );
