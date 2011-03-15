@@ -13,14 +13,14 @@
     
     05 Nov 2010 - Initial public version
     01 Mar 2011 - Refactored to use skip table objects
-    50 Mar 2011 - Created search objects to enable table reuse
+    05 Mar 2011 - Created search objects to enable table reuse
+    15 Mar 2011 - Added traits class to select skip table params
 */
 
 #ifndef BOOST_ALGORITHM_SEARCH_HPP
 #define BOOST_ALGORITHM_SEARCH_HPP
 
 // #define  B_ALGO_DEBUG
-#define USE_SKIP_TABLE_MAP      true
 
 #ifdef  B_ALGO_DEBUG
 #include <iostream>
@@ -34,6 +34,7 @@
 
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/is_integral.hpp>
 #include <boost/array.hpp>
 #include <boost/static_assert.hpp>
 
@@ -66,7 +67,7 @@ namespace detail {
 
 //  General case for data searching other than bytes; use a map
 	template<typename Iter>
-	class skip_table<Iter, true> {
+	class skip_table<Iter, false> {
 	private:
 		typedef typename Iter::value_type value_type;
 		typedef std::tr1::unordered_map<value_type, int> skip_map;
@@ -99,7 +100,7 @@ namespace detail {
 	
 //  Special case small numeric values; use an array
 	template<typename Iter>
-	class skip_table<Iter, false> {
+	class skip_table<Iter, true> {
 	private:
 		typedef typename Iter::value_type value_type;
 		typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
@@ -128,26 +129,13 @@ namespace detail {
 			}
 #endif
 		};
-		
 
-#if 0
-	template<typename Iter, typename Container>
-	void init_kmp_skip_table ( Iter first, Iter last, Container &skip /* count+1 */ ) {
-		const /*std::size_t*/ int count = std::distance ( first, last );
-
-		int j;
-		skip [ 0 ] = -1;
-		for ( int i = 1; i < count; ++i ) {
-			j = skip [ i - 1 ];
-			while ( j >= 0 ) {
-				if ( first [ j ] == first [ i - 1 ] )
-					break;
-				j = skip [ j ];
-				}
-			skip [ i ] = j + 1;
-			}
-		}    
-#endif
+	template<typename Iter>
+	struct BM_traits {
+		typedef typename Iter::value_type value_type;
+		typedef boost::algorithm::detail::skip_table<Iter, 
+				boost::is_integral<value_type>::value && (sizeof(value_type)==1)> skip_table_t;
+		};
     }
 
 /*
@@ -174,7 +162,7 @@ Requirements:
         * The two iterator types (I1 and I2) must "point to" the same underlying type.
 */
 
-    template <typename patIter>
+    template <typename patIter, typename traits=detail::BM_traits<patIter> >
     class boyer_moore {
     public:
         boyer_moore ( patIter first, patIter last ) 
@@ -245,7 +233,7 @@ Requirements:
     private:
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
-        detail::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
+        typename traits::skip_table_t skip_;
         std::vector <std::size_t> suffix_;
 
         template<typename Iter>
@@ -320,7 +308,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
 */
 
-    template <typename patIter>
+    template <typename patIter, typename traits=detail::BM_traits<patIter> >
     class boyer_moore_horspool {
     public:
         boyer_moore_horspool ( patIter first, patIter last ) 
@@ -377,7 +365,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
     private:
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
-        detail::skip_table<patIter, USE_SKIP_TABLE_MAP> skip_;
+        typename traits::skip_table_t skip_;
         };
     
 //  Bummer(2): We could make this better - remove code duplication
