@@ -63,7 +63,7 @@ namespace detail {
 //
 //	Default implementations of the skip tables for B-M and B-M-H
 //
-	template<typename Iter, bool useMap> class skip_table;
+	template<typename Iter, bool /*useArray*/> class skip_table;
 
 //  General case for data searching other than bytes; use a map
 	template<typename Iter>
@@ -153,13 +153,11 @@ Explanations:
 
 Requirements:
         * Random access iterators
-        * value types are convertable to an integral type
-        * Small size for the pattern type (usually a byte).
-    Internally, this algorithm builds a table of all possible values. For 8-bit
-    quantities, that means a 256 entry table. For 16-bit ones, that's a 64K entry
-    table, and so on. 
-        
-        * The two iterator types (I1 and I2) must "point to" the same underlying type.
+        * The two iterator types (patIter and corpusIter) must 
+        	"point to" the same underlying type and be comparable.
+        * Additional requirements may be imposed but the skip table, such as:
+        ** Numeric type (array-based skip table)
+        ** Hashable type (map-based skip table)
 */
 
     template <typename patIter, typename traits=detail::BM_traits<patIter> >
@@ -236,10 +234,11 @@ Requirements:
         typename traits::skip_table_t skip_;
         std::vector <std::size_t> suffix_;
 
-        template<typename Iter>
-        void compute_bm_prefix ( Iter pat_first, Iter pat_last, std::size_t *prefix /* [count] */ ) {
+        template<typename Iter, typename Container>
+        void compute_bm_prefix ( Iter pat_first, Iter pat_last, Container &prefix ) {
             const std::size_t count = std::distance ( pat_first, pat_last );
-        
+        	assert ( prefix.size () == count );
+        	
             prefix[0] = 0;
             std::size_t k = 0;
             for ( std::size_t i = 1; i < count; ++i ) {
@@ -257,16 +256,15 @@ Requirements:
             (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
             
             std::vector<std::size_t> prefix (count);
-            compute_bm_prefix ( pat_first, pat_last, &*prefix.begin ());
+            compute_bm_prefix ( pat_first, pat_last, prefix );
     
             std::vector<std::size_t> prefix_reversed (count);
-            compute_bm_prefix ( reversed.begin (), reversed.end (), &*prefix_reversed.begin ());
+            compute_bm_prefix ( reversed.begin (), reversed.end (), prefix_reversed );
             
-            std::size_t i;
-            for ( i = 0; i <= count; i++ )
+            for ( std::size_t i = 0; i <= count; i++ )
                 suffix_[i] = count - prefix [count-1];
      
-            for (i = 0; i < count; i++) {
+            for ( std::size_t i = 0; i < count; i++) {
                 const std::size_t j = count - prefix_reversed[i];
                 const std::size_t k = i -     prefix_reversed[i] + 1;
      
@@ -300,9 +298,12 @@ Requirements:
     A templated version of the boyer-moore-horspool searching algorithm.
     
     Requirements:
-        * Random-access iterators
-        * value types convertible to a std::size_t
-        * The two iterator types (I1 and I2) must "point to" the same underlying type.
+        * Random access iterators
+        * The two iterator types (patIter and corpusIter) must 
+        	"point to" the same underlying type and be comparable.
+        * Additional requirements may be imposed but the skip table, such as:
+        ** Numeric type (array-based skip table)
+        ** Hashable type (map-based skip table)
 
 http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
