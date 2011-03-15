@@ -130,6 +130,7 @@ namespace detail {
 		};
 		
 
+#if 0
 	template<typename Iter, typename Container>
 	void init_kmp_skip_table ( Iter first, Iter last, Container &skip /* count+1 */ ) {
 		const /*std::size_t*/ int count = std::distance ( first, last );
@@ -146,6 +147,7 @@ namespace detail {
 			skip [ i ] = j + 1;
 			}
 		}    
+#endif
     }
 
 /*
@@ -414,7 +416,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                 : pat_first ( first ), pat_last ( last ),
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length + 1 ) {
-            detail::init_kmp_skip_table ( pat_first, pat_last, skip_ );
+            init_skip_table ( pat_first, pat_last );
 #ifdef B_ALGO_DEBUG
             detail::PrintTable ( skip_.begin (), skip_.end ());
 #endif
@@ -469,6 +471,22 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
         std::vector <int> skip_;
+
+		void init_skip_table ( patIter first, patIter last ) {
+			const /*std::size_t*/ int count = std::distance ( first, last );
+	
+			int j;
+			skip_ [ 0 ] = -1;
+			for ( int i = 1; i < count; ++i ) {
+				j = skip_ [ i - 1 ];
+				while ( j >= 0 ) {
+					if ( first [ j ] == first [ i - 1 ] )
+						break;
+					j = skip_ [ j ];
+					}
+				skip_ [ i ] = j + 1;
+				}
+			}    
         };
     
 //  Bummer(3): We could make this better - remove code duplication
