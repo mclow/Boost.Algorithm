@@ -46,3 +46,4 @@ I will be soliciting submissions from other developers, as well as looking throu
 [include:algorithm search-hpp.qbk]
 [include:algorithm all-hpp.qbk]
 [include:algorithm clamp-hpp.qbk]
+[include:algorithm ordered-hpp.qbk]

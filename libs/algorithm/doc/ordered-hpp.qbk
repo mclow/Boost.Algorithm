@@ -1,0 +1,74 @@
+[/ QuickBook Document version 1.5 ]
+[section:ordered file 'ordered.hpp']
+
+[/license
+
+Copyright (c) 2010 Marshall Clow
+
+Distributed under the Boost Software License, Version 1.0.
+(See accompanying file LICENSE_1_0.txt or copy at
+http://www.boost.org/LICENSE_1_0.txt)
+
+]
+
+
+The header file ordered.hpp functions for determining if a sequence is ordered (according to some criteria).
+
+[heading ordered]
+
+The function `is_ordered ( sequence, predicate )` returns the point in the sequence where the predicate does not hold. It does that by comparing adjacent pairs of elements in the sequence to see if the predicate is satisfied. If all adjacent pairs satisfy the predicate, then it will return the end of the sequence.
+
+``
+template <typename FI, typename Pred>
+FI is_ordered ( FI first, FI last, Pred p );
+
+template <typename R, typename Pred>
+typename boost::range_const_iterator<R>::type is_ordered ( const R &range, Pred p );
+``
+  
+Complexity:
+	is_ordered will make at most N-1 calls to the predicate (given a sequence of length N).
+
+
+There are also a set of "wrapper functions" for is_ordered which make it easy to see if an entire sequence is ordered. These functions return a boolean indicating success or failure, rather than an iterator to where the out of order items were found.
+
+To test if a sequence is increasing (each element at least as large as the preceeding one):
+``
+template <typename FI>
+bool is_increasing ( FI first, FI last );
+
+template <typename R>
+bool is_increasing ( const R &range );
+``
+
+To test if a sequence is decreasing (each element no larger than the preceeding one):
+``
+template <typename FI>
+bool is_decreasing ( FI first, FI last );
+
+template <typename R>
+bool is_decreasing ( const R &range );
+``
+
+To test if a sequence is strictly increasing (each element larger than the preceeding one):
+``
+template <typename FI>
+bool is_strictly_increasing ( FI first, FI last );
+
+template <typename R>
+bool is_strictly_increasing ( const R &range );
+``
+
+To test if a sequence is strictly decreasing (each element smaller than the preceeding one):
+``
+template <typename FI>
+bool is_strictly_decreasing ( FI first, FI last );
+
+template <typename R>
+bool is_strictly_decreasing ( const R &range );
+``
+
+Complexity:
+	Each of these calls is just a thin wrapper over is_ordered, so they have the same complexity as is_ordered.
+
+[endsect]

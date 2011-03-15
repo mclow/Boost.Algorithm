@@ -11,12 +11,14 @@
 //
 //  Description:
 //    A set of four algorithms for inquiring about the properties of
-//    sequences, including:
-//
+//    sequences:
 //      - Increasing
 //      - Decreasing 
 //      - Strictly Increasing
 //      - Strictly Decreasing
+//
+//	along with the general purpose one:
+//		- is_ordered ( sequence, predicate )
 
 #ifndef BOOST_ALGORITHM_ORDERED_HPP
 #define BOOST_ALGORITHM_ORDERED_HPP
@@ -29,7 +31,6 @@
 #include <boost/range/end.hpp>
 
 namespace boost { namespace algorithm {
-#define	THIS_NS	boost::algorithm
 
     //  FI is an iterator: ForwardIterator or better
     //  Pred is a binary predicate taking two types
@@ -39,7 +40,7 @@ namespace boost { namespace algorithm {
     template <typename FI, typename Pred>
     FI is_ordered ( FI first, FI last, Pred p )
     {
-        if ( first == last ) return first;  // empty sequence is ordered
+        if ( first == last ) return first;  // the empty sequence is ordered
         FI next = first;
         while ( ++next != last )
         {
@@ -53,7 +54,7 @@ namespace boost { namespace algorithm {
     template <typename R, typename Pred>
     typename boost::range_const_iterator<R>::type is_ordered ( const R &range, Pred p )
     {
-        return THIS_NS::is_ordered ( boost::begin ( range ), boost::end ( range ), p );
+        return (is_ordered) ( boost::begin ( range ), boost::end ( range ), p );
     }
 
 
@@ -62,13 +63,13 @@ namespace boost { namespace algorithm {
     bool is_increasing ( FI first, FI last )
     {
         typedef typename std::iterator_traits<FI>::value_type value_type;
-        return THIS_NS::is_ordered (first, last, std::less_equal<value_type>()) == last;
+        return (is_ordered) (first, last, std::less_equal<value_type>()) == last;
     }
 
     template <typename R>
     bool is_increasing ( const R &range )
     {
-        return THIS_NS::is_increasing ( boost::begin ( range ), boost::end ( range ));
+        return (is_increasing) ( boost::begin ( range ), boost::end ( range ));
     }
 
 
@@ -77,13 +78,13 @@ namespace boost { namespace algorithm {
     bool is_decreasing ( FI first, FI last )
     {
         typedef typename std::iterator_traits<FI>::value_type value_type;
-        return THIS_NS::is_ordered (first, last, std::greater_equal<value_type>()) == last;
+        return (is_ordered) (first, last, std::greater_equal<value_type>()) == last;
     }
 
     template <typename R>
     bool is_decreasing ( const R &range )
     {
-        return THIS_NS::is_decreasing ( boost::begin ( range ), boost::end ( range ));
+        return (is_decreasing) ( boost::begin ( range ), boost::end ( range ));
     }
 
 
@@ -92,13 +93,13 @@ namespace boost { namespace algorithm {
     bool is_strictly_increasing ( FI first, FI last )
     {
         typedef typename std::iterator_traits<FI>::value_type value_type;
-        return THIS_NS::is_ordered (first, last, std::less<value_type>()) == last;
+        return (is_ordered) (first, last, std::less<value_type>()) == last;
     }
 
     template <typename R>
     bool is_strictly_increasing ( const R &range )
     {
-        return THIS_NS::is_strictly_increasing ( boost::begin ( range ), boost::end ( range ));
+        return (is_strictly_increasing) ( boost::begin ( range ), boost::end ( range ));
     }
 
 
@@ -106,16 +107,15 @@ namespace boost { namespace algorithm {
     bool is_strictly_decreasing ( FI first, FI last )
     {
         typedef typename std::iterator_traits<FI>::value_type value_type;
-        return THIS_NS::is_ordered (first, last, std::greater<value_type>()) == last;
+        return (is_ordered) (first, last, std::greater<value_type>()) == last;
     }
 
     template <typename R>
     bool is_strictly_decreasing ( const R &range )
     {
-        return THIS_NS::is_strictly_decreasing ( boost::begin ( range ), boost::end ( range ));
+        return (is_strictly_decreasing) ( boost::begin ( range ), boost::end ( range ));
     }
 
-#undef THIS_NS
 }} // namespace boost
 
 #endif  // BOOST_ALGORITHM_ORDERED_HPP

@@ -33,7 +33,7 @@ boostbook standalone
   :
     algorithm
   :
-    <dependency>autodoc 
+#    <dependency>autodoc 
     <xsl:param>boost.root=../../../..
     <xsl:param>html.stylesheet=../../../../doc/src/boostbook.css 
     <xsl:param>chapter.autolabel=0
