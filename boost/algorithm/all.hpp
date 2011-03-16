@@ -19,8 +19,11 @@
 #ifndef BOOST_ALGORITHM_ALL_HPP
 #define BOOST_ALGORITHM_ALL_HPP
 
-#include <boost/range.hpp>      // For boost::begin and boost::end
 #include <algorithm>            // for std::find and std::find_if
+
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+
 //  I would love to use the all_of, any_of and none_of that are in the C++0x
 //  standard library if they are available, but I don't know how to do that.
 //  -- mtc 11-May-2009
@@ -47,7 +50,8 @@ namespace boost { namespace algorithm {
   bool all_of ( I first, I last, const V &val )
   {
 //  return std::find ( first, last, != val ) == last;  
-    while (first != last) {
+    while (first != last)
+    {
       if ( *first++ != val ) 
         return false;
     } 
@@ -64,7 +68,7 @@ namespace boost { namespace algorithm {
   template<typename R, typename V> 
   bool all_of ( const R &range, const V &val ) 
   {
-    return all_of ( boost::begin ( range ), boost::end ( range ), val );
+    return (all_of) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
 
@@ -79,7 +83,8 @@ template<typename I, typename Pred>
   bool all_of_if ( I first, I last, Pred p )
   {
 //  return std::find_if ( first, last, !p ) == last;  
-    while (first != last) {
+    while (first != last)
+    {
       if ( !p(*first++)) 
         return false;
     } 
@@ -95,7 +100,7 @@ template<typename I, typename Pred>
   template<typename R, typename Pred> 
   bool all_of_if ( const R &range, Pred p )
   {
-    return all_of_if ( boost::begin ( range ), boost::end ( range ), p );
+    return (all_of_if) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
 /// \fn none_of ( I first, I last, const V &val )
@@ -109,7 +114,8 @@ template<typename I, typename Pred>
   bool none_of ( I first, I last, const V &val ) 
   {
 //  return std::find ( first, last, val ) == last;
-    while (first != last) {
+    while (first != last)
+    {
       if ( *first++ == val ) 
         return false;
     } 
@@ -125,7 +131,7 @@ template<typename I, typename Pred>
   template<typename R, typename V> 
   bool none_of ( const R &range, const V & val ) 
   {
-    return none_of ( boost::begin ( range ), boost::end ( range ), val );
+    return (none_of) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
 
@@ -139,7 +145,8 @@ template<typename I, typename Pred>
 template<typename I, typename Pred> 
   bool none_of_if ( I first, I last, Pred p )
   {
-    while (first != last) {
+    while (first != last)
+    {
       if ( p(*first++)) 
         return false;
     } 
@@ -155,7 +162,7 @@ template<typename I, typename Pred>
   template<typename R, typename Pred> 
   bool none_of_if ( const R &range, Pred p )
   {
-    return none_of_if ( boost::begin ( range ), boost::end ( range ), p );
+    return (none_of_if) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
 /// \fn any_of ( I first, I last, const V &val )
@@ -169,7 +176,8 @@ template<typename I, typename Pred>
   bool any_of ( I first, I last, const V &val ) 
   {
 //  return std::find ( first, last, val ) != last;
-    while (first != last) {
+    while (first != last)
+    {
       if ( *first++ == val ) 
         return true;
     } 
@@ -185,7 +193,7 @@ template<typename I, typename Pred>
   template<typename R, typename V> 
   bool any_of ( const R &range, const V &val ) 
   {
-    return any_of ( boost::begin ( range ), boost::end ( range ), val );
+    return (any_of) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
 /// \fn any_of_if ( I first, I last, Pred p )
@@ -199,7 +207,8 @@ template<typename I, typename Pred>
   bool any_of_if ( I first, I last, Pred p) 
   {
 //  return std::find_if ( first, last, p ) != last;
-    while (first != last) {
+    while (first != last)
+    {
       if ( p(*first++)) 
         return true;
     } 
@@ -215,7 +224,7 @@ template<typename I, typename Pred>
   template<typename R, typename Pred> 
   bool any_of_if ( const R &range, Pred p )
   {
-    return any_of_if ( boost::begin ( range ), boost::end ( range ), p );
+    return (any_of_if) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
 /// \fn one_of ( I first, I last, const V &val )
@@ -230,8 +239,7 @@ template<typename I, typename Pred>
   {
     I i = std::find (first, last, val);
     if (i == last) return false;
-    if ( std::find (++i, last, val) != last) return false;
-    return true;
+    return std::find (++i, last, val) == last;
   }
 
 /// \fn one_of ( const R &range, const V &val )
@@ -243,7 +251,7 @@ template<typename I, typename Pred>
   template<typename R, typename V> 
   bool one_of ( const R &range, const V &val )
   {
-    return one_of ( boost::begin ( range ), boost::end ( range ), val );
+    return (one_of) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
 /// \fn one_of_if ( I first, I last, Pred p )
@@ -258,8 +266,7 @@ template<typename I, typename Pred>
   {
     I i = std::find_if (first, last, p);
     if (i == last) return false;
-    if (std::find_if(++i, last, p) != last) return false;
-    return true;
+    return std::find_if(++i, last, p) == last;
   }
 
 /// \fn one_of_if ( const R &range, Pred p )
@@ -271,7 +278,7 @@ template<typename I, typename Pred>
   template<typename R, typename Pred> 
   bool one_of_if ( R range, Pred p ) 
   {
-    return one_of ( boost::begin ( range ), boost::end ( range ), p );
+    return (one_of) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
 
