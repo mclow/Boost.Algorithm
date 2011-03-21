@@ -23,14 +23,15 @@ namespace boost { namespace algorithm {
 
 /// \fn clamp ( V val, V lo, V hi, Pred p )
 /// \brief Returns the value "val" brought into the range [ lo, hi ]
-///          If the value is greater than "hi", return hi. If the value is
-///          less than "lo", return lo. Otherwise, return the original value.
+///	    using the comparison predicate p.
+///     If the value is "greater than" hi, return hi. If the value is
+///     "less than" lo, return lo. Otherwise, return the original value.
 /// 
 /// \param val   The value to be clamped
 /// \param lo    The low point of the range to be clamped to
 /// \param hi    The high point of the range to be clamped to
 ///	\param p	 A predicate to use to compare the values.
-///					p ( a, b ) returns either 'a' or 'b'.
+///					p ( a, b ) returns a boolean.
 ///
   template<typename V, typename Pred> 
   V clamp ( V val, V lo, V hi, Pred p )
@@ -56,7 +57,7 @@ namespace boost { namespace algorithm {
 //  return std::max ( std::min ( val, hi ), lo );
 //  Rewritten to only use operator <
 //  return val < lo ? lo : hi < val ? hi : val;
-    return clamp ( val, lo, hi, std::less<V>());
+    return (clamp) ( val, lo, hi, std::less<V>());
   } 
 
 }}
