@@ -101,11 +101,11 @@ namespace {
 //	A simple predicate for testing the predicate versions
 	bool Equal ( const char &ch1, const char &ch2 ) {	return ~ch1 == ~ch2; }
 	
-	void printRes ( const char *prompt, float diff, float stdDiff ) {
+	void printRes ( const char *prompt, unsigned long diff, unsigned long stdDiff ) {
 		std::cout 
-			<< std::setw(40) << prompt << " "
-			<< std::setw(6)  << diff / CLOCKS_PER_SEC << " seconds\t"
-			<< std::setw(5)  << (diff / stdDiff) * 100 << "% " 
+			<< std::setw(34) << prompt << " "
+			<< std::setw(6)  << (  1.0 * diff) / CLOCKS_PER_SEC << " seconds\t"
+			<< std::setw(5)  << (100.0 * diff) / stdDiff << "% \t" 
 			<< std::setw(12) << diff;
 		if ( diff > stdDiff ) 
 			std::cout << " !!";
@@ -115,7 +115,7 @@ namespace {
 	void check_one ( const vec &haystack, const vec &needle, int expected ) {
 		std::size_t i;
 		std::clock_t sTime;
-		float stdDiff, stdPDiff;
+		unsigned long stdDiff, stdPDiff;
 		
 		vec::const_iterator res;
 		vec::const_iterator exp;		// the expected result
