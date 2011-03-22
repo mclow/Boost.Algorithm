@@ -13,7 +13,7 @@
 namespace ba = boost::algorithm;
 
 bool intLess   ( int lhs, int rhs )     { return lhs < rhs; }
-bool floatLess ( float lhs, float rhs ) { return lhs < rhs; }
+bool doubleLess ( double lhs, double rhs ) { return lhs < rhs; }
 
 void test_ints()
 {
@@ -64,11 +64,11 @@ void test_floats()
     BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 10.0, 1.0, 10.0 ));
     BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 11.0, 1.0, 10.0 ));
     
-    BOOST_CHECK_EQUAL (  3.0, ba::clamp (  3.0, 1.0, 10.0, floatLess ));
-    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  1.0, 1.0, 10.0, floatLess ));
-    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  0.0, 1.0, 10.0, floatLess ));
-    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 10.0, 1.0, 10.0, floatLess ));
-    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 11.0, 1.0, 10.0, floatLess ));
+    BOOST_CHECK_EQUAL (  3.0, ba::clamp (  3.0, 1.0, 10.0, doubleLess ));
+    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  1.0, 1.0, 10.0, doubleLess ));
+    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  0.0, 1.0, 10.0, doubleLess ));
+    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 10.0, 1.0, 10.0, doubleLess ));
+    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 11.0, 1.0, 10.0, doubleLess ));
 
 //  Negative numbers
     BOOST_CHECK_EQUAL (  -3.f, ba::clamp (  -3.f, -10.f, -1.f ));
