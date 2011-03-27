@@ -152,6 +152,8 @@ namespace {
 		runObject ( boyer_moore,                 stdDiff );
 		runOne    ( boyer_moore_horspool_search, stdDiff );
 		runObject ( boyer_moore_horspool,        stdDiff );
+		runOne    ( knuth_morris_pratt_search,   stdDiff );
+		runObject ( knuth_morris_pratt,          stdDiff );
 		
 		sTime = std::clock ();
 		for ( i = 0; i < NUM_TRIES; ++i ) {
