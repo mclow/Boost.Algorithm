@@ -11,11 +11,10 @@ import os ;
 
 local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
 
-project
+project /boost/algorithm/test
     : requirements
       <source>/boost//unit_test_framework
       <include>../../../
-#      <include>/Marshall/Sources/adobe-root/adobe_source_libraries
       <include>$(BOOST_ROOT)
       <optimization>speed
       <link>static
@@ -23,14 +22,10 @@ project
     ;
 
 
-unit-test all_test : all_test.cpp ;
+run all_test.cpp ;
+run clamp_test.cpp ;
+run ordered_test.cpp ;
 
-unit-test clamp_test : clamp_test.cpp ;
-
-unit-test ordered_test : ordered_test.cpp ;
-
-unit-test search_test1 : search_test1.cpp ;
-
-unit-test search_test2 : search_test2.cpp ;
-
-unit-test search_test3 : search_test3.cpp ;
+run search_test1.cpp ;
+run search_test2.cpp ;
+run search_test3.cpp ;
