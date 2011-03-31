@@ -1,6 +1,6 @@
 [/ QuickBook Document version 1.5 ]
 
-[section:all header file 'all.hpp']
+[section:all Header: 'all.hpp']
 
 [/license
 
@@ -15,16 +15,9 @@ http://www.boost.org/LICENSE_1_0.txt)
 The header file 'all.hpp' contains a series of algorithms for testing properties
 of a sequence. They fall, broadly, into two types of tests:
 
-There are a set of algorithms that [link
-algorithm.all.element_properties tests individual
-elements] in a sequence to see if every element in a sequence has a
-particular property.
+There are a set of algorithms that tests individual elements in a sequence to see if every element in a sequence has a particular property.
 
-The other algorithms test [link
-algorithm.all.sequence_properties the arrangement or
-ordering of the elements] in a sequence. 
-
-[h2 element properties]
+The other algorithms test the arrangement or ordering of the elements in a sequence. 
 
 Complexity: Unless otherwise noted, these routines all run in O(N) (linear)
 time. Each of the routines in this file will either compare against the
@@ -37,7 +30,6 @@ immediately, without examining the remaining items in the sequence.
 The function all_of returns true iff each value in the sequence compares
 equal to the value 'val':
 
-
 ``
 template<typename I, typename V> 
 bool all_of ( I first, I last, const V &val );
@@ -47,6 +39,7 @@ bool all_of ( const R &range, const V &val );
 ``
 
 [heading all_of_if]
+
 The function all_of_if is similar to all_of, except that for comparing
 with a value, it uses a predicate. It returns true iff the predicate returns
 true for each value in the sequence.
