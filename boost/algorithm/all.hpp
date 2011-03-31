@@ -276,9 +276,9 @@ template<typename I, typename Pred>
 /// \param p     A predicate to test the elements
 ///
   template<typename R, typename Pred> 
-  bool one_of_if ( R range, Pred p ) 
+  bool one_of_if ( const R &range, Pred p ) 
   {
-    return (one_of) ( boost::begin ( range ), boost::end ( range ), p );
+    return (one_of_if) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
 

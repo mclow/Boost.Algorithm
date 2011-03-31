@@ -21,6 +21,14 @@ void show(std::vector<T>& v)
  std::cout << "----------" << std::endl;
 }
 
+template<typename T>
+struct is_ {
+	T val_;
+	is_ ( T v ) : val_ ( v ) {}
+	~is_ () {}
+	bool operator () ( T comp ) const { return val_ == comp; }
+	};
+
 namespace ba = boost::algorithm;
 
 void test_none()
@@ -32,24 +40,37 @@ void test_none()
     int some_letters[] = { 'a', 'q', 'n', 'y', 'n' };
     std::vector<char> vc(some_letters, some_letters + 5);
     
-    BOOST_CHECK ( ba::none_of ( vi,                         100 ));
-    BOOST_CHECK ( ba::none_of ( vi.begin(),      vi.end (), 100 ));
-    BOOST_CHECK (!ba::none_of ( vi,                           1 ));
-    BOOST_CHECK (!ba::none_of ( vi.begin (),     vi.end(),    1 ));
+    BOOST_CHECK ( ba::none_of    ( vi,                         100 ));
+    BOOST_CHECK ( ba::none_of    ( vi.begin(),      vi.end (), 100 ));
+    BOOST_CHECK (!ba::none_of    ( vi,                           1 ));
+    BOOST_CHECK (!ba::none_of    ( vi.begin (),     vi.end(),    1 ));
 
-    BOOST_CHECK ( ba::none_of  ( vi.end (),      vi.end (),   0 ));
+    BOOST_CHECK ( ba::none_of_if ( vi,                         is_<int> ( 100 )));
+    BOOST_CHECK ( ba::none_of_if ( vi.begin(),      vi.end (), is_<int> ( 100 )));
+    BOOST_CHECK (!ba::none_of_if ( vi,                         is_<int> (   1 )));
+    BOOST_CHECK (!ba::none_of_if ( vi.begin (),     vi.end(),  is_<int> (   1 )));
+
+    BOOST_CHECK ( ba::none_of    ( vi.end (),      vi.end (),                0 ));
+    BOOST_CHECK ( ba::none_of_if ( vi.end (),      vi.end (),   is_<int> (   0 )));
 
 //   5 is not in { 0, 18, 1 }, but 1 is
-    BOOST_CHECK ( ba::none_of ( vi.begin () + 2, vi.end(),    5 ));
-    BOOST_CHECK (!ba::none_of ( vi.begin () + 2, vi.end(),    1 ));
+    BOOST_CHECK ( ba::none_of    ( vi.begin () + 2, vi.end(),              5 ));
+    BOOST_CHECK (!ba::none_of    ( vi.begin () + 2, vi.end(),              1 ));
+    BOOST_CHECK ( ba::none_of_if ( vi.begin () + 2, vi.end(), is_<int> (   5 )));
+    BOOST_CHECK (!ba::none_of_if ( vi.begin () + 2, vi.end(), is_<int> (   1 )));
 
 //  18 is not in { 1, 5, 0 }, but 5 is
-    BOOST_CHECK ( ba::none_of ( vi.begin (), vi.begin() + 3, 18 ));
-    BOOST_CHECK (!ba::none_of ( vi.begin (), vi.begin() + 3,  5 ));
+    BOOST_CHECK ( ba::none_of    ( vi.begin (), vi.begin() + 3,            18 ));
+    BOOST_CHECK (!ba::none_of    ( vi.begin (), vi.begin() + 3,             5 ));
+    BOOST_CHECK ( ba::none_of_if ( vi.begin (), vi.begin() + 3, is_<int> ( 18 )));
+    BOOST_CHECK (!ba::none_of_if ( vi.begin (), vi.begin() + 3, is_<int> (  5 )));
     
-    BOOST_CHECK ( ba::none_of ( vc, 'z' ));
-    BOOST_CHECK (!ba::none_of ( vc, 'a' ));
-    BOOST_CHECK (!ba::none_of ( vc, 'n' ));
+    BOOST_CHECK ( ba::none_of    ( vc,             'z' ));
+    BOOST_CHECK (!ba::none_of    ( vc,             'a' ));
+    BOOST_CHECK (!ba::none_of    ( vc,             'n' ));
+    BOOST_CHECK ( ba::none_of_if ( vc, is_<char> ( 'z' )));
+    BOOST_CHECK (!ba::none_of_if ( vc, is_<char> ( 'a' )));
+    BOOST_CHECK (!ba::none_of_if ( vc, is_<char> ( 'n' )));
 }
 
 void test_any ()
@@ -61,25 +82,42 @@ void test_any ()
     int some_letters[] = { 'a', 'q', 'n', 'y', 'n' };
     std::vector<char> vc(some_letters, some_letters + 5);
     
-    BOOST_CHECK ( ba::any_of ( vi,                           1 ));
-    BOOST_CHECK ( ba::any_of ( vi.begin(),      vi.end (),   1 ));
-    BOOST_CHECK (!ba::any_of ( vi,                           9 ));
-    BOOST_CHECK (!ba::any_of ( vi.begin (),     vi.end(),    9 ));
-    BOOST_CHECK ( ba::any_of ( vi,                          10 ));
-    BOOST_CHECK (!ba::any_of ( vi,                           4 ));
+    BOOST_CHECK ( ba::any_of    ( vi,                           1 ));
+    BOOST_CHECK ( ba::any_of    ( vi.begin(),      vi.end (),   1 ));
+    BOOST_CHECK (!ba::any_of    ( vi,                           9 ));
+    BOOST_CHECK (!ba::any_of    ( vi.begin (),     vi.end(),    9 ));
+    BOOST_CHECK ( ba::any_of    ( vi,                          10 ));
+    BOOST_CHECK (!ba::any_of    ( vi,                           4 ));
     
-    BOOST_CHECK (!ba::any_of ( vi.end (),      vi.end (),   0 ));
+    BOOST_CHECK ( ba::any_of_if ( vi,                         is_<int> (  1 )));
+    BOOST_CHECK ( ba::any_of_if ( vi.begin(),      vi.end (), is_<int> (  1 )));
+    BOOST_CHECK (!ba::any_of_if ( vi,                         is_<int> (  9 )));
+    BOOST_CHECK (!ba::any_of_if ( vi.begin (),     vi.end(),  is_<int> (  9 )));
+    BOOST_CHECK ( ba::any_of_if ( vi,                         is_<int> ( 10 )));
+    BOOST_CHECK (!ba::any_of_if ( vi,                         is_<int> (  4 )));
+
+
+    BOOST_CHECK (!ba::any_of    ( vi.end (),      vi.end (),            0 ));
+    BOOST_CHECK (!ba::any_of_if ( vi.end (),      vi.end (), is_<int> ( 0 )));
 
 //   5 is not in { 0, 18, 10 }, but 10 is
-    BOOST_CHECK ( ba::any_of ( vi.begin () + 2, vi.end(),   10 ));
-    BOOST_CHECK (!ba::any_of ( vi.begin () + 2, vi.end(),    5 ));
-//  18 is not in { 1, 5, 0 }, but 5 is
-    BOOST_CHECK ( ba::any_of ( vi.begin (), vi.begin() + 3,  5 ));
-    BOOST_CHECK (!ba::any_of ( vi.begin (), vi.begin() + 3, 18 ));
+    BOOST_CHECK ( ba::any_of    ( vi.begin () + 2, vi.end(),            10 ));
+    BOOST_CHECK (!ba::any_of    ( vi.begin () + 2, vi.end(),             5 ));
+    BOOST_CHECK ( ba::any_of_if ( vi.begin () + 2, vi.end(), is_<int> ( 10 )));
+    BOOST_CHECK (!ba::any_of_if ( vi.begin () + 2, vi.end(), is_<int> (  5 )));
 
-    BOOST_CHECK ( ba::any_of (vc, 'q' ));
-    BOOST_CHECK (!ba::any_of (vc, '!' ));
-    BOOST_CHECK ( ba::any_of (vc, 'n' ));
+//  18 is not in { 1, 5, 0 }, but 5 is
+    BOOST_CHECK ( ba::any_of    ( vi.begin (), vi.begin() + 3,             5 ));
+    BOOST_CHECK (!ba::any_of    ( vi.begin (), vi.begin() + 3,            18 ));
+    BOOST_CHECK ( ba::any_of_if ( vi.begin (), vi.begin() + 3, is_<int> (  5 )));
+    BOOST_CHECK (!ba::any_of_if ( vi.begin (), vi.begin() + 3, is_<int> ( 18 )));
+
+    BOOST_CHECK ( ba::any_of    ( vc,             'q' ));
+    BOOST_CHECK (!ba::any_of    ( vc,             '!' ));
+    BOOST_CHECK ( ba::any_of    ( vc,             'n' ));
+    BOOST_CHECK ( ba::any_of_if ( vc, is_<char> ( 'q' )));
+    BOOST_CHECK (!ba::any_of_if ( vc, is_<char> ( '!' )));
+    BOOST_CHECK ( ba::any_of_if ( vc, is_<char> ( 'n' )));
 }
 
 
@@ -92,17 +130,27 @@ void test_all ()
     int some_letters[] = { 'a', 'q', 'n', 'y', 'n' };
     std::vector<char> vc(some_letters, some_letters + 5);
     
-    BOOST_CHECK (!ba::all_of ( vi,                           1 ));
-    BOOST_CHECK (!ba::all_of ( vi.begin(),      vi.end (),   1 ));
-    BOOST_CHECK (!ba::all_of ( vi,                           0 ));
-    BOOST_CHECK (!ba::all_of ( vi.begin(),      vi.end (),   0 ));
+    BOOST_CHECK (!ba::all_of    ( vi,                                    1 ));
+    BOOST_CHECK (!ba::all_of    ( vi.begin(),      vi.end (),            1 ));
+    BOOST_CHECK (!ba::all_of    ( vi,                                    0 ));
+    BOOST_CHECK (!ba::all_of    ( vi.begin(),      vi.end (),            0 ));
 
-    BOOST_CHECK ( ba::all_of ( vi.end (),       vi.end (),   0 ));
+    BOOST_CHECK (!ba::all_of_if ( vi,                         is_<int> ( 1 )));
+    BOOST_CHECK (!ba::all_of_if ( vi.begin(),      vi.end (), is_<int> ( 1 )));
+    BOOST_CHECK (!ba::all_of_if ( vi,                         is_<int> ( 0 )));
+    BOOST_CHECK (!ba::all_of_if ( vi.begin(),      vi.end (), is_<int> ( 0 )));
 
-    BOOST_CHECK ( ba::all_of ( vi.begin (), vi.begin () + 3, 1 ));
+    BOOST_CHECK ( ba::all_of    ( vi.end (),       vi.end (),            0 ));
+    BOOST_CHECK ( ba::all_of_if ( vi.end (),       vi.end (), is_<int> ( 0 )));
+
+    BOOST_CHECK ( ba::all_of    ( vi.begin (), vi.begin () + 3,            1 ));
+    BOOST_CHECK ( ba::all_of_if ( vi.begin (), vi.begin () + 3, is_<int> ( 1 )));
     
-    BOOST_CHECK ( ba::all_of ( vc.begin () + 1, vc.begin () + 2, 'q' ));
-    BOOST_CHECK (!ba::all_of (vc, '!' ));
+    BOOST_CHECK ( ba::all_of    ( vc.begin () + 1, vc.begin () + 2,             'q' ));
+    BOOST_CHECK ( ba::all_of_if ( vc.begin () + 1, vc.begin () + 2, is_<char> ( 'q' )));
+
+    BOOST_CHECK (!ba::all_of    ( vc,             '!' ));
+    BOOST_CHECK (!ba::all_of_if ( vc, is_<char> ( '!' )));
 }
 
 
@@ -115,18 +163,31 @@ void test_one ()
     int some_letters[] = { 'a', 'q', 'n', 'y', 'n' };
     std::vector<char> vc(some_letters, some_letters + 5);
     
-    BOOST_CHECK (!ba::one_of ( vi,                           1 ));
-    BOOST_CHECK (!ba::one_of ( vi.begin(),      vi.end (),   1 ));
-    BOOST_CHECK (!ba::one_of ( vi,                           0 ));
-    BOOST_CHECK (!ba::one_of ( vi.begin(),      vi.end (),   0 ));
-    BOOST_CHECK ( ba::one_of ( vi,                           2 ));
-    BOOST_CHECK ( ba::one_of ( vi.begin(),      vi.end (),   2 ));
+    BOOST_CHECK (!ba::one_of    ( vi,                                    1 ));
+    BOOST_CHECK (!ba::one_of    ( vi.begin(),      vi.end (),            1 ));
+    BOOST_CHECK (!ba::one_of    ( vi,                                    0 ));
+    BOOST_CHECK (!ba::one_of    ( vi.begin(),      vi.end (),            0 ));
+    BOOST_CHECK ( ba::one_of    ( vi,                                    2 ));
+    BOOST_CHECK ( ba::one_of    ( vi.begin(),      vi.end (),            2 ));
 
-    BOOST_CHECK ( ba::one_of ( vi.begin () + 1, vi.end (),   1 ));
+    BOOST_CHECK (!ba::one_of_if ( vi,                         is_<int> ( 1 )));
+    BOOST_CHECK (!ba::one_of_if ( vi.begin(),      vi.end (), is_<int> ( 1 )));
+    BOOST_CHECK (!ba::one_of_if ( vi,                         is_<int> ( 0 )));
+    BOOST_CHECK (!ba::one_of_if ( vi.begin(),      vi.end (), is_<int> ( 0 )));
+    BOOST_CHECK ( ba::one_of_if ( vi,                         is_<int> ( 2 )));
+    BOOST_CHECK ( ba::one_of_if ( vi.begin(),      vi.end (), is_<int> ( 2 )));
+
+    BOOST_CHECK ( ba::one_of    ( vi.begin () + 1, vi.end (),            1 ));
+    BOOST_CHECK ( ba::one_of_if ( vi.begin () + 1, vi.end (), is_<int> ( 1 )));
     
-    BOOST_CHECK ( ba::one_of ( vc.begin () + 1, vc.begin () + 2, 'q' ));
-    BOOST_CHECK (!ba::one_of ( vc, '!' ));
-    BOOST_CHECK (!ba::one_of ( vc, 'n' ));
+    BOOST_CHECK ( ba::one_of    ( vc.begin () + 1, vc.begin () + 2,             'q' ));
+    BOOST_CHECK ( ba::one_of_if ( vc.begin () + 1, vc.begin () + 2, is_<char> ( 'q' )));
+
+    BOOST_CHECK (!ba::one_of    ( vc, '!' ));
+    BOOST_CHECK (!ba::one_of_if ( vc, is_<char> ( '!' )));
+    
+    BOOST_CHECK (!ba::one_of    ( vc, 'n' ));
+    BOOST_CHECK (!ba::one_of_if ( vc, is_<char> ( 'n' )));
 }
 
 
