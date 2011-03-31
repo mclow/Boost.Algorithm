@@ -12,8 +12,8 @@
 
 namespace ba = boost::algorithm;
 
-bool intLess   ( int lhs, int rhs )     { return lhs < rhs; }
-bool doubleLess ( double lhs, double rhs ) { return lhs < rhs; }
+bool intGreater    ( int lhs, int rhs )       { return lhs > rhs; }
+bool doubleGreater ( double lhs, double rhs ) { return lhs > rhs; }
 
 void test_ints()
 {
@@ -25,11 +25,11 @@ void test_ints()
     BOOST_CHECK_EQUAL ( 10, ba::clamp ( 10, 1, 10 ));
     BOOST_CHECK_EQUAL ( 10, ba::clamp ( 11, 1, 10 ));
     
-    BOOST_CHECK_EQUAL (  3, ba::clamp (  3, 1, 10, intLess ));
-    BOOST_CHECK_EQUAL (  1, ba::clamp (  1, 1, 10, intLess ));
-    BOOST_CHECK_EQUAL (  1, ba::clamp (  0, 1, 10, intLess ));
-    BOOST_CHECK_EQUAL ( 10, ba::clamp ( 10, 1, 10, intLess ));
-    BOOST_CHECK_EQUAL ( 10, ba::clamp ( 11, 1, 10, intLess ));
+    BOOST_CHECK_EQUAL (  3, ba::clamp (  3, 10, 1, intGreater ));
+    BOOST_CHECK_EQUAL (  1, ba::clamp (  1, 10, 1, intGreater ));
+    BOOST_CHECK_EQUAL (  1, ba::clamp (  0, 10, 1, intGreater ));
+    BOOST_CHECK_EQUAL ( 10, ba::clamp ( 10, 10, 1, intGreater ));
+    BOOST_CHECK_EQUAL ( 10, ba::clamp ( 11, 10, 1, intGreater ));
 
 //  Negative numbers
     BOOST_CHECK_EQUAL (  -3, ba::clamp (  -3, -10, -1 ));
@@ -64,11 +64,11 @@ void test_floats()
     BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 10.0, 1.0, 10.0 ));
     BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 11.0, 1.0, 10.0 ));
     
-    BOOST_CHECK_EQUAL (  3.0, ba::clamp (  3.0, 1.0, 10.0, doubleLess ));
-    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  1.0, 1.0, 10.0, doubleLess ));
-    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  0.0, 1.0, 10.0, doubleLess ));
-    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 10.0, 1.0, 10.0, doubleLess ));
-    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 11.0, 1.0, 10.0, doubleLess ));
+    BOOST_CHECK_EQUAL (  3.0, ba::clamp (  3.0, 10.0, 1.0, doubleGreater ));
+    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  1.0, 10.0, 1.0, doubleGreater ));
+    BOOST_CHECK_EQUAL (  1.0, ba::clamp (  0.0, 10.0, 1.0, doubleGreater ));
+    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 10.0, 10.0, 1.0, doubleGreater ));
+    BOOST_CHECK_EQUAL ( 10.0, ba::clamp ( 11.0, 10.0, 1.0, doubleGreater ));
 
 //  Negative numbers
     BOOST_CHECK_EQUAL (  -3.f, ba::clamp (  -3.f, -10.f, -1.f ));
@@ -127,8 +127,8 @@ void test_custom()
 
 int test_main( int , char* [] )
 {
-	test_ints ();
-	test_floats ();
-	test_custom ();
-	return 0;
+    test_ints ();
+    test_floats ();
+    test_custom ();
+    return 0;
 }
