@@ -237,8 +237,9 @@ Requirements:
         template<typename Iter, typename Container>
         void compute_bm_prefix ( Iter pat_first, Iter pat_last, Container &prefix ) {
             const std::size_t count = std::distance ( pat_first, pat_last );
+        	assert ( count > 0 );
         	assert ( prefix.size () == count );
-        	
+				        	
             prefix[0] = 0;
             std::size_t k = 0;
             for ( std::size_t i = 1; i < count; ++i ) {
@@ -252,27 +253,29 @@ Requirements:
 
         void create_suffix_table ( patIter pat_first, patIter pat_last ) {
             const std::size_t count = (std::size_t) std::distance ( pat_first, pat_last );
-            std::vector<typename patIter::value_type> reversed(count);     
-            (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
             
-            std::vector<std::size_t> prefix (count);
-            compute_bm_prefix ( pat_first, pat_last, prefix );
-    
-            std::vector<std::size_t> prefix_reversed (count);
-            compute_bm_prefix ( reversed.begin (), reversed.end (), prefix_reversed );
-            
-            for ( std::size_t i = 0; i <= count; i++ )
-                suffix_[i] = count - prefix [count-1];
-     
-            for ( std::size_t i = 0; i < count; i++) {
-                const std::size_t j = count - prefix_reversed[i];
-                const std::size_t k = i -     prefix_reversed[i] + 1;
-     
-                if (suffix_[j] > k)
-                    suffix_[j] = k;
-                }
-            }
-        
+            if ( count > 0 ) {	// empty pattern
+				std::vector<typename patIter::value_type> reversed(count);     
+				(void) std::copy_backward ( pat_first, pat_last, reversed.end ());
+				
+				std::vector<std::size_t> prefix (count);
+				compute_bm_prefix ( pat_first, pat_last, prefix );
+		
+				std::vector<std::size_t> prefix_reversed (count);
+				compute_bm_prefix ( reversed.begin (), reversed.end (), prefix_reversed );
+				
+				for ( std::size_t i = 0; i <= count; i++ )
+					suffix_[i] = count - prefix [count-1];
+		 
+				for ( std::size_t i = 0; i < count; i++) {
+					const std::size_t j = count - prefix_reversed[i];
+					const std::size_t k = i -     prefix_reversed[i] + 1;
+		 
+					if (suffix_[j] > k)
+						suffix_[j] = k;
+					}
+				}
+			}        
         };
     
 
@@ -319,8 +322,9 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                   
         //  Build the skip table
             std::size_t i = 0;
-            for ( patIter iter = first; iter != last-1; ++iter, ++i )
-                skip_.insert ( *iter, k_pattern_length - 1 - i );
+            if ( first != last )	// empty pattern?
+            	for ( patIter iter = first; iter != last-1; ++iter, ++i )
+                	skip_.insert ( *iter, k_pattern_length - 1 - i );
 #ifdef B_ALGO_DEBUG
             skip_.PrintSkipTable ();
 #endif

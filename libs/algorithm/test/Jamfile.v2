@@ -26,6 +26,7 @@ run all_test.cpp ;
 run clamp_test.cpp ;
 run ordered_test.cpp ;
 
+run empty_search_test.cpp ;
 run search_test1.cpp ;
 run search_test2.cpp ;
 run search_test3.cpp ;
