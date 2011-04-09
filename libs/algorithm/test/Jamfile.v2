@@ -29,3 +29,6 @@ run ordered_test.cpp ;
 run search_test1.cpp ;
 run search_test2.cpp ;
 run search_test3.cpp ;
+
+compile-fail search_fail1.cpp ;
+compile-fail search_fail2.cpp ;
