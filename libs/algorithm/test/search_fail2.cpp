@@ -1,10 +1,11 @@
 #include <vector>
+#include <boost/cstdint.hpp>
 #include <boost/algorithm/search.hpp>
 
 int main( int argc, char *argv [] )
 {
-	std::vector<uint8_t>	cv;
-	std::vector< int8_t>	iv;
+	std::vector<boost::uint8_t>	cv;
+	std::vector<boost:: int8_t>	iv;
 	
 //	Should fail to compile because the underlying types are different
 //	They are the same size, but one is signed, and the other is not.
