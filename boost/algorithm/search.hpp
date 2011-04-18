@@ -19,11 +19,17 @@
 
 #ifndef BOOST_ALGORITHM_SEARCH_HPP
 #define BOOST_ALGORITHM_SEARCH_HPP
+#include <boost/config/warning_disable.hpp>	// Disable MS C4996 warnings
 
 // #define  B_ALGO_DEBUG
 
 //	Old versions of gcc (4.2 and before) put unordered_map in tr1
+#if defined(__GNUC__) && ((__GNUC__ < 4 ) || ((__GNUC__ == 4 && (__GNUC_MINOR__ <= 2))))
 #define	USE_TR1_MAP	1
+#else
+#define	USE_TR1_MAP	0
+#endif
+
 
 #ifdef  B_ALGO_DEBUG
 #include <iostream>
