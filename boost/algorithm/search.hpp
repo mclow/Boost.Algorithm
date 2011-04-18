@@ -22,6 +22,9 @@
 
 // #define  B_ALGO_DEBUG
 
+//	Old versions of gcc (4.2 and before) put unordered_map in tr1
+#define	USE_TR1_MAP	1
+
 #ifdef  B_ALGO_DEBUG
 #include <iostream>
 #include <string>
@@ -30,7 +33,11 @@
 #include <cassert>
 #include <vector>
 #include <functional>   // for std::equal_to
+#if USE_TR1_MAP
 #include <tr1/unordered_map>
+#else
+#include <unordered_map>
+#endif
 
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -70,7 +77,11 @@ namespace detail {
 	class skip_table<Iter, false> {
 	private:
 		typedef typename Iter::value_type value_type;
+#if USE_TR1_MAP
 		typedef std::tr1::unordered_map<value_type, int> skip_map;
+#else
+		typedef std::unordered_map<value_type, int> skip_map;
+#endif
 		const int k_default_value;
 		skip_map skip_;
 		
@@ -183,6 +194,13 @@ Requirements:
             
         ~boyer_moore () {}
         
+		/// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
+		/// \brief Searches the corpus for the pattern that was passed into the constructor
+		/// 
+		/// \param corpus_first The start of the data to search (Random Access Iterator)
+		///	\param corpus_last  One past the end of the data to search
+		/// \param p            A predicate used for the search comparisons.
+		///
         template <typename corpusIter, typename Pred>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p ) {
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
@@ -332,6 +350,13 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             
         ~boyer_moore_horspool () {}
         
+		/// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
+		/// \brief Searches the corpus for the pattern that was passed into the constructor
+		/// 
+		/// \param corpus_first The start of the data to search (Random Access Iterator)
+		///	\param corpus_last  One past the end of the data to search
+		/// \param p            A predicate used for the search comparisons.
+		///
         template <typename corpusIter, typename Pred>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p ) {
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
@@ -417,6 +442,13 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             
         ~knuth_morris_pratt () {}
         
+		/// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
+		/// \brief Searches the corpus for the pattern that was passed into the constructor
+		/// 
+		/// \param corpus_first The start of the data to search (Random Access Iterator)
+		///	\param corpus_last  One past the end of the data to search
+		/// \param p            A predicate used for the search comparisons.
+		///
         template <typename corpusIter, typename Pred>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p ) {
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
@@ -492,6 +524,16 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         return kmp ( corpus_first, corpus_last, p );
         }
 
+
+/// \fn knuth_morris_pratt_search ( corpusIter corpus_first, corpusIter corpus_last, 
+///       patIter pat_first, patIter pat_last )
+/// \brief Searches the corpus for the pattern.
+/// 
+/// \param corpus_first The start of the data to search (Random Access Iterator)
+///	\param corpus_last  One past the end of the data to search
+/// \param pat_first    The start of the pattern to search for (Random Access Iterator)
+/// \param pat_last     One past the end of the data to search for
+///
     template <typename patIter, typename corpusIter>
     corpusIter knuth_morris_pratt_search ( 
             corpusIter corpus_first, corpusIter corpus_last, 
