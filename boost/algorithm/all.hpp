@@ -12,7 +12,7 @@
         on a suggestion by Sean Parent.
 */
 
-/// \file all.hpp
+/// \file
 /// \brief Test ranges against predicates.
 /// \author Marshall Clow
 
@@ -40,7 +40,7 @@
 namespace boost { namespace algorithm {
 
 /// \fn all_of ( I first, I last, const V &val )
-/// \brief Returns true if all elements in [first, last) are equal to 'val'
+/// \return true if all elements in [first, last) are equal to 'val'
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
@@ -60,7 +60,7 @@ namespace boost { namespace algorithm {
 
 
 /// \fn all_of ( const R &range, const V &val )
-/// \brief Returns true if all elements in the range are equal to 'val'
+/// \return true if all elements in the range are equal to 'val'
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
@@ -73,11 +73,11 @@ namespace boost { namespace algorithm {
 
 
 /// \fn all_of_if ( I first, I last, Pred p )
-/// \brief Returns true if all elements in [first, last) satisfy the predicate
+/// \return true if all elements in [first, last) satisfy the predicate 'p'
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
-/// \param p     A predicate
+/// \param p     A predicate for testing the elements of the sequence
 ///
 template<typename I, typename Pred> 
   bool all_of_if ( I first, I last, Pred p )
@@ -92,10 +92,10 @@ template<typename I, typename Pred>
   } 
 
 /// \fn all_of_if ( const R &range, Pred p )
-/// \brief Returns true if all elements in the range satisfy the predicate
+/// \return true if all elements in the range satisfy the predicate 'p'
 /// 
 /// \param range The input range
-/// \param p     A predicate to test the elements
+/// \param p     A predicate for testing the elements of the range
 ///
   template<typename R, typename Pred> 
   bool all_of_if ( const R &range, Pred p )
@@ -104,7 +104,7 @@ template<typename I, typename Pred>
   } 
 
 /// \fn none_of ( I first, I last, const V &val )
-/// \brief Returns true if none of the elements in [first, last) are equal to 'val'
+/// \return true if none of the elements in [first, last) are equal to 'val'
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
@@ -123,7 +123,7 @@ template<typename I, typename Pred>
   } 
 
 /// \fn none_of ( const R &range, const V &val )
-/// \brief Returns true if none of the elements in the range are equal to 'val'
+/// \return true if none of the elements in the range are equal to 'val'
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
@@ -136,11 +136,11 @@ template<typename I, typename Pred>
 
 
 /// \fn none_of_if ( I first, I last, Pred p )
-/// \brief Returns true if none of the elements in [first, last) satisfy the predicate
+/// \return true if none of the elements in [first, last) satisfy the predicate 'p'
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
-/// \param p     A predicate
+/// \param p     A predicate for testing the elements of the sequence
 ///
 template<typename I, typename Pred> 
   bool none_of_if ( I first, I last, Pred p )
@@ -154,10 +154,10 @@ template<typename I, typename Pred>
   } 
 
 /// \fn none_of_if ( const R &range, Pred p )
-/// \brief Returns true if none of the elements in the range satisfy the predicate
+/// \return true if none of the elements in the range satisfy the predicate 'p'
 /// 
 /// \param range The input range
-/// \param p     A predicate to test the elements
+/// \param p     A predicate for testing the elements of the range
 ///
   template<typename R, typename Pred> 
   bool none_of_if ( const R &range, Pred p )
@@ -201,7 +201,7 @@ template<typename I, typename Pred>
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
-/// \param p     A predicate
+/// \param p     A predicate for testing the elements of the sequence
 ///
   template<typename I, typename Pred> 
   bool any_of_if ( I first, I last, Pred p) 
@@ -216,10 +216,10 @@ template<typename I, typename Pred>
   } 
 
 /// \fn any_of_if ( const R &range, Pred p )
-/// \brief Returns true if any elements in the range satisfy the predicate
+/// \return true if any elements in the range satisfy the predicate 'p'
 /// 
 /// \param range The input range
-/// \param p     A predicate to test the elements
+/// \param p     A predicate for testing the elements of the range
 ///
   template<typename R, typename Pred> 
   bool any_of_if ( const R &range, Pred p )
@@ -228,7 +228,7 @@ template<typename I, typename Pred>
   } 
 
 /// \fn one_of ( I first, I last, const V &val )
-/// \brief Returns true if the value 'val' exists only once in [first, last).
+/// \return true if the value 'val' exists only once in [first, last).
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
@@ -238,12 +238,12 @@ template<typename I, typename Pred>
   bool one_of ( I first, I last, const V &val )
   {
     I i = std::find (first, last, val);
-    if (i == last) return false;
-    return std::find (++i, last, val) == last;
+    if (i == last) return false;		// Didn't occur at all
+    return (none_of) (++i, last, val);
   }
 
 /// \fn one_of ( const R &range, const V &val )
-/// \brief Returns true if the value 'val' exists only once in the range.
+/// \return true if the value 'val' exists only once in the range.
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
@@ -255,25 +255,25 @@ template<typename I, typename Pred>
   } 
 
 /// \fn one_of_if ( I first, I last, Pred p )
-/// \brief Returns true if the predicate 'p' is true for exactly one item in [first, last).
+/// \return true if the predicate 'p' is true for exactly one item in [first, last).
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
-/// \param p     A predicate to test the elements
+/// \param p     A predicate for testing the elements of the sequence
 ///
   template<typename I, typename Pred> 
   bool  one_of_if ( I first, I last, Pred p )
   {
     I i = std::find_if (first, last, p);
-    if (i == last) return false;
-    return std::find_if(++i, last, p) == last;
+    if (i == last) return false;	// Didn't occur at all
+    return (none_of_if) (++i, last, p);
   }
 
 /// \fn one_of_if ( const R &range, Pred p )
-/// \brief Returns true if the predicate 'p' is true for exactly one item in the range.
+/// \return true if the predicate 'p' is true for exactly one item in the range.
 /// 
 /// \param range The input range
-/// \param p     A predicate to test the elements
+/// \param p     A predicate for testing the elements of the range
 ///
   template<typename R, typename Pred> 
   bool one_of_if ( const R &range, Pred p ) 

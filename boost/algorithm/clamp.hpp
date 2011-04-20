@@ -10,7 +10,7 @@
    
 */
 
-/// \file clamp.hpp
+/// \file
 /// \brief Clamp algorithm
 /// \author Marshall Clow
 ///
@@ -22,7 +22,7 @@
 namespace boost { namespace algorithm {
 
 /// \fn clamp ( V val, V lo, V hi, Pred p )
-/// \brief Returns the value "val" brought into the range [ lo, hi ]
+/// \return the value "val" brought into the range [ lo, hi ]
 ///     using the comparison predicate p.
 ///     If p ( val, lo ) return lo.
 ///     If p ( hi, val ) return hi.
@@ -42,7 +42,7 @@ namespace boost { namespace algorithm {
 
 
 /// \fn clamp ( V val, V lo, V hi )
-/// \brief Returns the value "val" brought into the range [ lo, hi ].
+/// \return the value "val" brought into the range [ lo, hi ].
 ///     If the value is less than lo, return lo.
 ///     If the value is greater than "hi", return hi.
 ///     Otherwise, return the original value.

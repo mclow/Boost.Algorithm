@@ -23,12 +23,14 @@
 
 // #define  B_ALGO_DEBUG
 
+///	\cond DOXYGEN_HIDE
 //	Old versions of gcc (4.2 and before) put unordered_map in tr1
 #if defined(__GNUC__) && ((__GNUC__ < 4 ) || ((__GNUC__ == 4 && (__GNUC_MINOR__ <= 2))))
-#define	USE_TR1_MAP	1
+#define	BOOST_ALGORITHM_SEARCH_USE_TR1_MAP	1
 #else
-#define	USE_TR1_MAP	0
+#define	BOOST_ALGORITHM_SEARCH_USE_TR1_MAP	0
 #endif
+///	\endcond
 
 
 #ifdef  B_ALGO_DEBUG
@@ -83,7 +85,7 @@ namespace detail {
 	class skip_table<Iter, false> {
 	private:
 		typedef typename Iter::value_type value_type;
-#if USE_TR1_MAP
+#if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
 		typedef std::tr1::unordered_map<value_type, int> skip_map;
 #else
 		typedef std::unordered_map<value_type, int> skip_map;
