@@ -166,7 +166,7 @@ template<typename I, typename Pred>
   } 
 
 /// \fn any_of ( I first, I last, const V &val )
-/// \brief Returns true if any of the elements in [first, last) are equal to 'val'
+/// \return true if any of the elements in [first, last) are equal to 'val'
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
@@ -185,7 +185,7 @@ template<typename I, typename Pred>
   } 
 
 /// \fn any_of ( const R &range, const V &val )
-/// \brief Returns true if any of the elements in the range are equal to 'val'
+/// \return true if any of the elements in the range are equal to 'val'
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
@@ -197,7 +197,7 @@ template<typename I, typename Pred>
   } 
 
 /// \fn any_of_if ( I first, I last, Pred p )
-/// \brief Returns true if any of the elements in [first, last) satisfy the predicate
+/// \return true if any of the elements in [first, last) satisfy the predicate
 /// 
 /// \param first The start of the input sequence
 /// \param last  One past the end of the input sequence
