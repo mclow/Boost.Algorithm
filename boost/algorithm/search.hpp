@@ -41,7 +41,7 @@
 #include <cassert>
 #include <vector>
 #include <functional>   // for std::equal_to
-#if USE_TR1_MAP
+#if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
 #include <tr1/unordered_map>
 #else
 #include <unordered_map>
