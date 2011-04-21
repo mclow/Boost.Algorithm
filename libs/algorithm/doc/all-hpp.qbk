@@ -4,7 +4,7 @@
 
 [/license
 
-Copyright (c) 2010 Marshall Clow
+Copyright (c) 2010-2011 Marshall Clow
 
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
@@ -19,7 +19,7 @@ There are a set of algorithms that tests individual elements in a sequence to se
 
 The other algorithms test the arrangement or ordering of the elements in a sequence. 
 
-Complexity: Unless otherwise noted, these routines all run in O(N) (linear)
+Complexity: Unless otherwise noted, these routines all run in ['O(N)] (linear)
 time. Each of the routines in this file will either compare against the
 value or call the predicate for each element in the sequence. If any of the
 values in the range fails the test, the algorithm will return false
@@ -161,9 +161,7 @@ bool is_increasing ( R range );
 ``
 
 [heading is_strictly_increasing]
-The function is_strictly_increasing returns true if, for each pair of adjacent values in the
-sequence, the relationship a < b is true. This is more strict than is_increasing, which will
-return true on sequences that contain duplicate values.
+The function is_strictly_increasing returns true if, for each pair of adjacent values in the sequence, the relationship a < b is true. This is more strict than is_increasing, which will return true on sequences that contain duplicate values.
 
 ``
 template <typename I>
@@ -186,9 +184,7 @@ bool is_decreasing ( R range );
 ``
 
 [heading is_strictly_decreasing]
-The function is_strictly_decreasing returns true if, for each pair of adjacent values in the
-sequence, the relationship a > b is true. This is more strict than is_decreasing, which will
-return true on sequences that contain duplicate values.
+The function is_strictly_decreasing returns true if, for each pair of adjacent values in the sequence, the relationship a > b is true. This is more strict than is_decreasing, which will return true on sequences that contain duplicate values.
 
 ``
 template <typename I>

@@ -3,7 +3,7 @@
 
 [/license
 
-Copyright (c) 2010 Marshall Clow
+Copyright (c) 2010-2011 Marshall Clow
 
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
@@ -16,7 +16,7 @@ The header file ordered.hpp functions for determining if a sequence is ordered (
 
 [heading ordered]
 
-The function `is_ordered ( sequence, predicate )` returns the point in the sequence where the predicate does not hold. It does that by comparing adjacent pairs of elements in the sequence to see if the predicate is satisfied. If all adjacent pairs satisfy the predicate, then it will return the end of the sequence.
+The function `is_ordered(sequence, predicate)` returns the point in the sequence where the predicate does not hold. It does that by comparing adjacent pairs of elements in the sequence to see if the predicate is satisfied. If all adjacent pairs satisfy the predicate, then it will return one past the last element of the sequence.
 
 ``
 template <typename FI, typename Pred>
@@ -27,10 +27,10 @@ typename boost::range_const_iterator<R>::type is_ordered ( const R &range, Pred 
 ``
   
 Complexity:
-	is_ordered will make at most N-1 calls to the predicate (given a sequence of length N).
+	`is_ordered` will make at most ['N-1] calls to the predicate (given a sequence of length ['N]).
 
 
-There are also a set of "wrapper functions" for is_ordered which make it easy to see if an entire sequence is ordered. These functions return a boolean indicating success or failure, rather than an iterator to where the out of order items were found.
+There are also a set of "wrapper functions" for is_ordered which make it easy to see if an entire sequence is ordered. These functions return a boolean indicating success or failure rather than an iterator to where the out of order items were found.
 
 To test if a sequence is increasing (each element at least as large as the preceeding one):
 ``
