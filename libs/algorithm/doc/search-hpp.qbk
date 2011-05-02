@@ -51,11 +51,11 @@ corpusIter boyer_moore_search (
         patIter pat_first, patIter pat_last );
 ``
 
-Each of the functions is passed two pairs of iterators. The first two define the corpus and the second two define the pattern. Note that the two pairs need not be of the same type, but they do need to "point" at the same type. In other words, I1::value_type and I2::value_type need to be the same type.
+Each of the functions is passed two pairs of iterators. The first two define the corpus and the second two define the pattern. Note that the two pairs need not be of the same type, but they do need to "point" at the same type. In other words, `I1::value_type` and `I2::value_type` need to be the same type.
 
-The return value of the function is an iterator pointing to the start of the pattern in the corpus. If the pattern is not found, it returns the end of the corpus ('corpus_last').
+The return value of the function is an iterator pointing to the start of the pattern in the corpus. If the pattern is not found, it returns the end of the corpus (`corpus_last`).
 
-Each search takes an (optional) comparison predicate.
+Each search takes an optional comparison predicate.
 The predicate should have the form of:
 
 ``

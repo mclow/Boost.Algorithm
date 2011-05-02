@@ -25,7 +25,9 @@ FI is_ordered ( FI first, FI last, Pred p );
 template <typename R, typename Pred>
 typename boost::range_const_iterator<R>::type is_ordered ( const R &range, Pred p );
 ``
-  
+
+Iterator requirements: The `is_ordered` functions will work on forward iterators or better. Since they have to return a place in the input sequence, input iterators are will not suffice.
+
 Complexity:
 	`is_ordered` will make at most ['N-1] calls to the predicate (given a sequence of length ['N]).
 
@@ -34,41 +36,29 @@ There are also a set of "wrapper functions" for is_ordered which make it easy to
 
 To test if a sequence is increasing (each element at least as large as the preceeding one):
 ``
-template <typename FI>
-bool is_increasing ( FI first, FI last );
-
-template <typename R>
-bool is_increasing ( const R &range );
+template <typename FI> bool is_increasing ( FI first, FI last );
+template <typename R>  bool is_increasing ( const R &range );
 ``
 
 To test if a sequence is decreasing (each element no larger than the preceeding one):
 ``
-template <typename FI>
-bool is_decreasing ( FI first, FI last );
-
-template <typename R>
-bool is_decreasing ( const R &range );
+template <typename FI> bool is_decreasing ( FI first, FI last );
+template <typename R>  bool is_decreasing ( const R &range );
 ``
 
 To test if a sequence is strictly increasing (each element larger than the preceeding one):
 ``
-template <typename FI>
-bool is_strictly_increasing ( FI first, FI last );
-
-template <typename R>
-bool is_strictly_increasing ( const R &range );
+template <typename FI> bool is_strictly_increasing ( FI first, FI last );
+template <typename R>  bool is_strictly_increasing ( const R &range );
 ``
 
 To test if a sequence is strictly decreasing (each element smaller than the preceeding one):
 ``
-template <typename FI>
-bool is_strictly_decreasing ( FI first, FI last );
-
-template <typename R>
-bool is_strictly_decreasing ( const R &range );
+template <typename FI> bool is_strictly_decreasing ( FI first, FI last );
+template <typename R>  bool is_strictly_decreasing ( const R &range );
 ``
 
 Complexity:
-	Each of these calls is just a thin wrapper over is_ordered, so they have the same complexity as is_ordered.
+	Each of these calls is just a thin wrapper over `is_ordered`, so they have the same complexity as `is_ordered`.
 
 [endsect]

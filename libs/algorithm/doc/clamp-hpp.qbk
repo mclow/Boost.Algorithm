@@ -12,8 +12,7 @@ http://www.boost.org/LICENSE_1_0.txt)
 ]
 
 
-The header file clamp.hpp contains two functions for "clamping" a value between
-a pair of boundary values.
+The header file clamp.hpp contains two functions for "clamping" a value between a pair of boundary values.
 
 [heading clamp]
 
@@ -23,7 +22,7 @@ The function `clamp (v, lo, hi)` returns:
 * hi iff hi < v
 * otherwise, v
 	
-There is also a version that allows the caller to specify a comparison predicate to use instead of operator<.
+There is also a version that allows the caller to specify a comparison predicate to use instead of `operator <`.
 
 ``
 template<typename V> 
@@ -34,6 +33,6 @@ V clamp ( V val, V lo, V hi, Pred p );
 ``
   
 Complexity:
-	clamp will make one or two comparisons before returning one of the three parameters.
+	`clamp` will make either one or two calls to the comparison predicate before returning one of the three parameters.
 
 [endsect]

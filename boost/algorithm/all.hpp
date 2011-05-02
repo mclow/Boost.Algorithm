@@ -237,7 +237,7 @@ template<typename I, typename Pred>
   template<typename I, typename V> 
   bool one_of ( I first, I last, const V &val )
   {
-    I i = std::find (first, last, val);
+    I i = std::find (first, last, val);	// find first occurrence of 'val'
     if (i == last) return false;		// Didn't occur at all
     return (none_of) (++i, last, val);
   }
