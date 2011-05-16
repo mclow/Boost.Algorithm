@@ -184,7 +184,7 @@ void test_one ()
     BOOST_CHECK ( ba::one_of    ( vi.begin(),     vi.end(),            2 ));
     BOOST_CHECK ( ba::one_of_if ( vi.begin(),     vi.end(), is_<int> ( 2 )));
 
-//	Check for a match at the end
+//  Check for a match at the end
     BOOST_CHECK ( ba::one_of    ( vi,                                  5 ));
     BOOST_CHECK ( ba::one_of_if ( vi,                       is_<int> ( 5 )));
     BOOST_CHECK ( ba::one_of    ( vi.begin(),     vi.end(),            5 ));

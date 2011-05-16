@@ -19,18 +19,18 @@
 
 #ifndef BOOST_ALGORITHM_SEARCH_HPP
 #define BOOST_ALGORITHM_SEARCH_HPP
-#include <boost/config/warning_disable.hpp>	// Disable MS C4996 warnings
+#include <boost/config/warning_disable.hpp> // Disable MS C4996 warnings
 
 // #define  B_ALGO_DEBUG
 
-///	\cond DOXYGEN_HIDE
-//	Old versions of gcc (4.2 and before) put unordered_map in tr1
+/// \cond DOXYGEN_HIDE
+//  Old versions of gcc (4.2 and before) put unordered_map in tr1
 #if defined(__GNUC__) && ((__GNUC__ < 4 ) || ((__GNUC__ == 4 && (__GNUC_MINOR__ <= 2))))
-#define	BOOST_ALGORITHM_SEARCH_USE_TR1_MAP	1
+#define BOOST_ALGORITHM_SEARCH_USE_TR1_MAP  1
 #else
-#define	BOOST_ALGORITHM_SEARCH_USE_TR1_MAP	0
+#define BOOST_ALGORITHM_SEARCH_USE_TR1_MAP  0
 #endif
-///	\endcond
+/// \endcond
 
 
 #ifdef  B_ALGO_DEBUG
@@ -38,7 +38,6 @@
 #include <string>
 #endif
 
-#include <cassert>
 #include <vector>
 #include <functional>   // for std::equal_to
 #if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
@@ -47,6 +46,7 @@
 #include <unordered_map>
 #endif
 
+#include <boost/assert.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_integral.hpp>
@@ -76,85 +76,85 @@ namespace detail {
 #endif
 
 //
-//	Default implementations of the skip tables for B-M and B-M-H
+//  Default implementations of the skip tables for B-M and B-M-H
 //
-	template<typename Iter, bool /*useArray*/> class skip_table;
+    template<typename Iter, bool /*useArray*/> class skip_table;
 
 //  General case for data searching other than bytes; use a map
-	template<typename Iter>
-	class skip_table<Iter, false> {
-	private:
-		typedef typename Iter::value_type value_type;
+    template<typename Iter>
+    class skip_table<Iter, false> {
+    private:
+        typedef typename Iter::value_type value_type;
 #if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
-		typedef std::tr1::unordered_map<value_type, int> skip_map;
+        typedef std::tr1::unordered_map<value_type, int> skip_map;
 #else
-		typedef std::unordered_map<value_type, int> skip_map;
+        typedef std::unordered_map<value_type, int> skip_map;
 #endif
-		const int k_default_value;
-		skip_map skip_;
-		
-	public:
-		skip_table ( std::size_t patSize, int default_value ) 
-			: k_default_value ( default_value ), skip_ ( patSize ) {}
-		
-		void insert ( typename Iter::value_type key, int val ) {
-			skip_ [ key ] = val;    // Would skip_.insert (<blah>) be better here?
-			}
+        const int k_default_value;
+        skip_map skip_;
+        
+    public:
+        skip_table ( std::size_t patSize, int default_value ) 
+            : k_default_value ( default_value ), skip_ ( patSize ) {}
+        
+        void insert ( typename Iter::value_type key, int val ) {
+            skip_ [ key ] = val;    // Would skip_.insert (<blah>) be better here?
+            }
 
-		int operator [] ( typename Iter::value_type val ) const {
-			typename skip_map::const_iterator it = skip_.find ( val );
-			return it == skip_.end () ? k_default_value : it->second;
-			}
-			
+        int operator [] ( typename Iter::value_type val ) const {
+            typename skip_map::const_iterator it = skip_.find ( val );
+            return it == skip_.end () ? k_default_value : it->second;
+            }
+            
 #ifdef  B_ALGO_DEBUG
-		void PrintSkipTable () const {
-			std::cout << "BM(H) Skip Table <unordered_map>:" << std::endl;
-			for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-				std::cout << "  " << it->first << ": " << it->second << std::endl;
-			std::cout << std::endl;
-			}
+        void PrintSkipTable () const {
+            std::cout << "BM(H) Skip Table <unordered_map>:" << std::endl;
+            for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
+                std::cout << "  " << it->first << ": " << it->second << std::endl;
+            std::cout << std::endl;
+            }
 #endif
-		};
-		
-	
+        };
+        
+    
 //  Special case small numeric values; use an array
-	template<typename Iter>
-	class skip_table<Iter, true> {
-	private:
-		typedef typename Iter::value_type value_type;
-		typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
-		typedef boost::array<int, 1U << (CHAR_BIT * sizeof(value_type))> skip_map;
-		skip_map skip_;
-	public:
-		skip_table ( std::size_t patSize, int default_value ) {
-			std::fill_n ( skip_.begin(), skip_.size(), default_value );
-			}
-		
-		void insert ( typename Iter::value_type key, int val ) {
-			skip_ [ static_cast<unsigned_value_type> ( key ) ] = val;
-			}
+    template<typename Iter>
+    class skip_table<Iter, true> {
+    private:
+        typedef typename Iter::value_type value_type;
+        typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
+        typedef boost::array<int, 1U << (CHAR_BIT * sizeof(value_type))> skip_map;
+        skip_map skip_;
+    public:
+        skip_table ( std::size_t patSize, int default_value ) {
+            std::fill_n ( skip_.begin(), skip_.size(), default_value );
+            }
+        
+        void insert ( typename Iter::value_type key, int val ) {
+            skip_ [ static_cast<unsigned_value_type> ( key ) ] = val;
+            }
 
-		int operator [] ( typename Iter::value_type val ) const {
-			return skip_ [ static_cast<unsigned_value_type> ( val ) ];
-			}
+        int operator [] ( typename Iter::value_type val ) const {
+            return skip_ [ static_cast<unsigned_value_type> ( val ) ];
+            }
 
 #ifdef  B_ALGO_DEBUG
-		void PrintSkipTable () const {
-			std::cout << "BM(H) Skip Table <boost:array>:" << std::endl;
-			typename skip_map::const_iterator it = skip_.begin ();
-			for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-				std::cout << "  " << std::distance (it, skip_.begin ()) << ": " << *it << std::endl;
-			std::cout << std::endl;
-			}
+        void PrintSkipTable () const {
+            std::cout << "BM(H) Skip Table <boost:array>:" << std::endl;
+            typename skip_map::const_iterator it = skip_.begin ();
+            for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
+                std::cout << "  " << std::distance (it, skip_.begin ()) << ": " << *it << std::endl;
+            std::cout << std::endl;
+            }
 #endif
-		};
+        };
 
-	template<typename Iter>
-	struct BM_traits {
-		typedef typename Iter::value_type value_type;
-		typedef boost::algorithm::detail::skip_table<Iter, 
-				boost::is_integral<value_type>::value && (sizeof(value_type)==1)> skip_table_t;
-		};
+    template<typename Iter>
+    struct BM_traits {
+        typedef typename Iter::value_type value_type;
+        typedef boost::algorithm::detail::skip_table<Iter, 
+                boost::is_integral<value_type>::value && (sizeof(value_type)==1)> skip_table_t;
+        };
     }
 
 /*
@@ -164,7 +164,7 @@ References:
     http://www.cs.utexas.edu/users/moore/best-ideas/string-searching/
     http://www.cs.utexas.edu/~moore/publications/fstrpos.pdf
     
-Explanations:
+Explanations:   boostinspect:noascii (test tool complains)
     http://en.wikipedia.org/wiki/Boyer–Moore_string_search_algorithm
     http://www.movsd.com/bm.htm
     http://www.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
@@ -173,7 +173,7 @@ Explanations:
 Requirements:
         * Random access iterators
         * The two iterator types (patIter and corpusIter) must 
-        	"point to" the same underlying type and be comparable.
+            "point to" the same underlying type and be comparable.
         * Additional requirements may be imposed but the skip table, such as:
         ** Numeric type (array-based skip table)
         ** Hashable type (map-based skip table)
@@ -202,13 +202,13 @@ Requirements:
             
         ~boyer_moore () {}
         
-		/// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
-		/// \brief Searches the corpus for the pattern that was passed into the constructor
-		/// 
-		/// \param corpus_first The start of the data to search (Random Access Iterator)
-		///	\param corpus_last  One past the end of the data to search
-		/// \param p            A predicate used for the search comparisons.
-		///
+        /// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
+        /// \brief Searches the corpus for the pattern that was passed into the constructor
+        /// 
+        /// \param corpus_first The start of the data to search (Random Access Iterator)
+        /// \param corpus_last  One past the end of the data to search
+        /// \param p            A predicate used for the search comparisons.
+        ///
         template <typename corpusIter, typename Pred>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p ) {
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
@@ -263,9 +263,9 @@ Requirements:
         template<typename Iter, typename Container>
         void compute_bm_prefix ( Iter pat_first, Iter pat_last, Container &prefix ) {
             const std::size_t count = std::distance ( pat_first, pat_last );
-        	assert ( count > 0 );
-        	assert ( prefix.size () == count );
-				        	
+            BOOST_ASSERT ( count > 0 );
+            BOOST_ASSERT ( prefix.size () == count );
+                            
             prefix[0] = 0;
             std::size_t k = 0;
             for ( std::size_t i = 1; i < count; ++i ) {
@@ -280,28 +280,28 @@ Requirements:
         void create_suffix_table ( patIter pat_first, patIter pat_last ) {
             const std::size_t count = (std::size_t) std::distance ( pat_first, pat_last );
             
-            if ( count > 0 ) {	// empty pattern
-				std::vector<typename patIter::value_type> reversed(count);     
-				(void) std::copy_backward ( pat_first, pat_last, reversed.end ());
-				
-				std::vector<std::size_t> prefix (count);
-				compute_bm_prefix ( pat_first, pat_last, prefix );
-		
-				std::vector<std::size_t> prefix_reversed (count);
-				compute_bm_prefix ( reversed.begin (), reversed.end (), prefix_reversed );
-				
-				for ( std::size_t i = 0; i <= count; i++ )
-					suffix_[i] = count - prefix [count-1];
-		 
-				for ( std::size_t i = 0; i < count; i++) {
-					const std::size_t j = count - prefix_reversed[i];
-					const std::size_t k = i -     prefix_reversed[i] + 1;
-		 
-					if (suffix_[j] > k)
-						suffix_[j] = k;
-					}
-				}
-			}        
+            if ( count > 0 ) {  // empty pattern
+                std::vector<typename patIter::value_type> reversed(count);     
+                (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
+                
+                std::vector<std::size_t> prefix (count);
+                compute_bm_prefix ( pat_first, pat_last, prefix );
+        
+                std::vector<std::size_t> prefix_reversed (count);
+                compute_bm_prefix ( reversed.begin (), reversed.end (), prefix_reversed );
+                
+                for ( std::size_t i = 0; i <= count; i++ )
+                    suffix_[i] = count - prefix [count-1];
+         
+                for ( std::size_t i = 0; i < count; i++) {
+                    const std::size_t j = count - prefix_reversed[i];
+                    const std::size_t k = i -     prefix_reversed[i] + 1;
+         
+                    if (suffix_[j] > k)
+                        suffix_[j] = k;
+                    }
+                }
+            }        
         };
     
 
@@ -329,7 +329,7 @@ Requirements:
     Requirements:
         * Random access iterators
         * The two iterator types (patIter and corpusIter) must 
-        	"point to" the same underlying type and be comparable.
+            "point to" the same underlying type and be comparable.
         * Additional requirements may be imposed but the skip table, such as:
         ** Numeric type (array-based skip table)
         ** Hashable type (map-based skip table)
@@ -348,9 +348,9 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                   
         //  Build the skip table
             std::size_t i = 0;
-            if ( first != last )	// empty pattern?
-            	for ( patIter iter = first; iter != last-1; ++iter, ++i )
-                	skip_.insert ( *iter, k_pattern_length - 1 - i );
+            if ( first != last )    // empty pattern?
+                for ( patIter iter = first; iter != last-1; ++iter, ++i )
+                    skip_.insert ( *iter, k_pattern_length - 1 - i );
 #ifdef B_ALGO_DEBUG
             skip_.PrintSkipTable ();
 #endif
@@ -358,13 +358,13 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             
         ~boyer_moore_horspool () {}
         
-		/// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
-		/// \brief Searches the corpus for the pattern that was passed into the constructor
-		/// 
-		/// \param corpus_first The start of the data to search (Random Access Iterator)
-		///	\param corpus_last  One past the end of the data to search
-		/// \param p            A predicate used for the search comparisons.
-		///
+        /// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
+        /// \brief Searches the corpus for the pattern that was passed into the constructor
+        /// 
+        /// \param corpus_first The start of the data to search (Random Access Iterator)
+        /// \param corpus_last  One past the end of the data to search
+        /// \param p            A predicate used for the search comparisons.
+        ///
         template <typename corpusIter, typename Pred>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p ) {
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
@@ -450,13 +450,13 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             
         ~knuth_morris_pratt () {}
         
-		/// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
-		/// \brief Searches the corpus for the pattern that was passed into the constructor
-		/// 
-		/// \param corpus_first The start of the data to search (Random Access Iterator)
-		///	\param corpus_last  One past the end of the data to search
-		/// \param p            A predicate used for the search comparisons.
-		///
+        /// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
+        /// \brief Searches the corpus for the pattern that was passed into the constructor
+        /// 
+        /// \param corpus_first The start of the data to search (Random Access Iterator)
+        /// \param corpus_last  One past the end of the data to search
+        /// \param p            A predicate used for the search comparisons.
+        ///
         template <typename corpusIter, typename Pred>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last, Pred p ) {
             BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
@@ -505,21 +505,21 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         const std::size_t k_pattern_length;
         std::vector <int> skip_;
 
-		void init_skip_table ( patIter first, patIter last ) {
-			const /*std::size_t*/ int count = std::distance ( first, last );
-	
-			int j;
-			skip_ [ 0 ] = -1;
-			for ( int i = 1; i < count; ++i ) {
-				j = skip_ [ i - 1 ];
-				while ( j >= 0 ) {
-					if ( first [ j ] == first [ i - 1 ] )
-						break;
-					j = skip_ [ j ];
-					}
-				skip_ [ i ] = j + 1;
-				}
-			}    
+        void init_skip_table ( patIter first, patIter last ) {
+            const /*std::size_t*/ int count = std::distance ( first, last );
+    
+            int j;
+            skip_ [ 0 ] = -1;
+            for ( int i = 1; i < count; ++i ) {
+                j = skip_ [ i - 1 ];
+                while ( j >= 0 ) {
+                    if ( first [ j ] == first [ i - 1 ] )
+                        break;
+                    j = skip_ [ j ];
+                    }
+                skip_ [ i ] = j + 1;
+                }
+            }    
         };
     
 //  Bummer(3): We could make this better - remove code duplication
@@ -538,7 +538,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 /// \brief Searches the corpus for the pattern.
 /// 
 /// \param corpus_first The start of the data to search (Random Access Iterator)
-///	\param corpus_last  One past the end of the data to search
+/// \param corpus_last  One past the end of the data to search
 /// \param pat_first    The start of the pattern to search for (Random Access Iterator)
 /// \param pat_last     One past the end of the data to search for
 ///

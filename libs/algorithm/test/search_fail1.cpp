@@ -1,15 +1,22 @@
+/* 
+   Copyright (c) Marshall Clow 2008-2010.
+
+   Distributed under the Boost Software License, Version 1.0. (See accompanying
+   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+*/
+
 #include <vector>
 #include <boost/algorithm/search.hpp>
 
 int main( int argc, char *argv [] )
 {
-	std::vector<char>	cv;
-	std::vector<int>	iv;
-	
-//	Should fail to compile because the underlying types are different
-//	They are (almost certainly) different sizes
-	(void) boost::algorithm::boyer_moore_search (
-		cv.begin (), cv.end (), iv.begin (), iv.end ());
+    std::vector<char>   cv;
+    std::vector<int>    iv;
+    
+//  Should fail to compile because the underlying types are different
+//  They are (almost certainly) different sizes
+    (void) boost::algorithm::boyer_moore_search (
+        cv.begin (), cv.end (), iv.begin (), iv.end ());
 
    
    (void) argv; (void) argc;
