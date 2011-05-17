@@ -26,6 +26,11 @@ I will be soliciting submissions from other developers, as well as looking throu
 
 My goal is to run regular algorithm reviews, similar to the Boost library review process, but with smaller chunks of code. 
 
+[heading Dependencies]
+
+Boost.Algorithm uses Boost.Range, Boost.Assert, Boost.Array, Boost.TypeTraits, and Boost.StaticAssert.
+
+
 [heading Acknowledgements]
 
 Thanks to all the people who have reviewed this library and made suggestions for improvements. Steven Watanabe and Sean Parent, in particular, have provided a great deal of help.
