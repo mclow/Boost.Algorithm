@@ -46,8 +46,11 @@ namespace {
                 throw std::runtime_error ( 
                     std::string ( "results mismatch between predicate and non-predicate search" ));
         
-    //      BOOST_CHECK_EQUAL ( it1, it2 );
-    //      BOOST_CHECK_EQUAL ( it1, it3 );
+            if ( it0 != it1 || it0p != it1p ) {
+                throw std::runtime_error ( 
+                    std::string ( "results mismatch between std::search and boyer-moore search" ));
+                }
+
             if ( it1 != it2 ) {
                 throw std::runtime_error ( 
                     std::string ( "results mismatch between boyer-moore and boyer-moore-horspool search" ));
@@ -75,32 +78,6 @@ namespace {
             }
         
         BOOST_CHECK_EQUAL ( dist, expected );
-         
-#if 0
-        std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; ";
-        if ( it1 == haystack.end ())
-            std::cout << "not found" << std::endl;
-        else {
-            dist = std::distance ( haystack.begin(), it1 );
-            std::cout << "found at pos " << dist << std::endl;
-            std::cout << "Looking for string '" << needle << "'" << std::endl;
-            std::cout << "Found string       "  << make_str ( haystack.begin () + dist, needle.size ()) << std::endl;
-            }
-        
-        if ( it1 != it2 ) {
-            int d2 = it2 == haystack.end () ? -1 : std::distance ( haystack.begin(), it2 );
-            std::cout << "#### Mismatch (1) result! " << dist << " vs. " << d2 << std::endl;
-            }
-            
-        if ( it1 != it3 ) {
-            int d2 = it2 == haystack.end () ? -1 : std::distance ( haystack.begin(), it3 );
-            std::cout << "#### Mismatch (2) result! " << dist << " vs. " << d2 << std::endl;
-            }
-            
-        if ( dist != expected )
-            std::cout << "#### Unexpected result! " << expected << " vs. " << dist << std::endl;
-        std::cout << "-------------" << std::endl;
-#endif
         }
     }
 
@@ -121,6 +98,9 @@ int test_main( int , char* [] )
     std::string haystack3 ( "abra abracad abracadabra" );
     std::string needle12  ( "abracadabra" );
 
+    std::string needle13   ( "" );
+    std::string haystack4  ( "" );
+
     check_one ( haystack1, needle1, 26 );
     check_one ( haystack1, needle2, 18 );
     check_one ( haystack1, needle3,  9 );
@@ -134,6 +114,9 @@ int test_main( int , char* [] )
     
     check_one ( haystack2, needle11, 15 );
     check_one ( haystack3, needle12, 13 );
+
+    check_one ( haystack1, needle13, 0 );   // find the empty string 
+    check_one ( haystack4, needle1, -1 );  // can't find in an empty haystack
 
     return 0;
     }
