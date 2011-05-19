@@ -16,7 +16,7 @@ The header file ordered.hpp functions for determining if a sequence is ordered (
 
 [heading ordered]
 
-The function `is_ordered(sequence, predicate)` returns the point in the sequence where the predicate does not hold. It does that by comparing adjacent pairs of elements in the sequence to see if the predicate is satisfied. If all adjacent pairs satisfy the predicate, then it will return one past the last element of the sequence.
+The function `is_ordered(sequence, predicate)` returns the point in the sequence where the predicate does not hold. It does that by comparing adjacent pairs of elements in the sequence to see if the predicate is satisfied. If all adjacent pairs satisfy the predicate, then it will return one past the last element of the sequence. If the sequence has less than two elements, it returns the last element of the sequence. In other words, sequences of length zero and one are considered to be ordered - using any possible criteria.
 
 ``
 template <typename FI, typename Pred>
