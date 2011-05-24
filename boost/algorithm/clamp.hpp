@@ -19,6 +19,8 @@
 #ifndef BOOST_ALGORITHM_CLAMP_HPP
 #define BOOST_ALGORITHM_CLAMP_HPP
 
+#include <functional>       //  For std::less
+
 namespace boost { namespace algorithm {
 
 /// \fn clamp ( V val, V lo, V hi, Pred p )
