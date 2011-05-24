@@ -14,74 +14,101 @@ http://www.boost.org/LICENSE_1_0.txt)
 
 The header file 'all.hpp' contains a series of algorithms for testing properties of a sequence. They all follow the same pattern: they test individual elements in a sequence to see if every element in a sequence has a particular property.
 
+Some of these algorithms are defined to be part of the C++11 standard library in section 25.2 (Non-modifying sequence algorithms). If we are building with a C++11 compiler, the standard library versions will be used.
+
 Complexity: Unless otherwise noted, these routines all run in ['O(N)] (linear) time. Each of the routines in this file will either compare against the value or call the predicate for each element in the sequence. If any of the values in the range fails the test, the algorithm will return false immediately, without examining the remaining items in the sequence.
 
 Iterator requirements: The algorithms in this file should work on all kinds of iterators.
 
 [heading all_of]
 
-The function `all_of` returns true iff each value in the sequence compares equal to the value `val`:
+The function `all_of` returns true iff the predicate returns true for every item in the sequence..
 
 ``
-template<typename I, typename V> bool all_of ( I first, I last, const V &val );
-template<typename R, typename V> bool all_of ( const R &range,  const V &val );
-``
-
-[heading all_of_if]
-
-The function `all_of_if` is similar to `all_of`, except that for comparing with a value, it uses a predicate. It returns true iff the predicate returns true for each value in the sequence.
-
-``
-template<typename I, typename Pred> bool all_of_if ( I first, I last, Pred p );
-template<typename R, typename Pred> bool all_of_if ( const R &range,  Pred p );
-``
-
-[heading none_of]
-The function `none_of` returns true iff no value in the sequence compares equal to the value `val`:
-
-``
-template<typename I, typename V> bool none_of ( I first, I last, const V &val );
-template<typename R, typename V> bool none_of ( const R &range,  const V &val );
-``
-  
-[heading none_of_if]
-The function `none_of_if` is similar to `none_of`, except that for comparing with a value, it uses a predicate. It returns true iff the predicate returns false for each value in the sequence.
-
-``
-template<typename I, typename Pred> bool none_of_if ( I first, I last, Pred p );
-template<typename R, typename Pred> bool none_of_if ( const R &range,  Pred p );
+template<typename InputIterator, typename Pred>
+	bool all_of ( InputIterator first, InputIterator last, Pred p );
+template<typename R, typename Pred> 
+	bool all_of ( const R &range,  Pred p );
 ``
 
 [heading any_of]
-The function `any_of` returns true iff any value in the sequence compares equal to the value `val`:
+The function `any_of` returns true iff the predicate returns true for any item in the sequence.
 
 ``
-template<typename I, typename V> bool any_of ( I first, I last, const V &val );
-template<typename R, typename V> bool any_of ( const R &range,  const V &val );
+template<typename InputIterator, typename Pred>
+	bool any_of ( InputIterator first, InputIterator last, Pred p );
+template<typename R, typename Pred> 
+	bool any_of ( const R &range,  Pred p );
 ``
-  
-[heading any_of_if]
-The function `any_of_if` is similar to `any_of`, except that for comparing with a value, it uses a predicate. It returns true iff the predicate returns true for any value in the sequence.
+
+[heading none_of]
+The function `none_of` returns true iff the predicate returns false for every item in the sequence.
 
 ``
-template<typename I, typename Pred> bool any_of_if ( I first, I last, Pred p );
-template<typename R, typename Pred> bool any_of_if ( const R &range,  Pred p );
+template<typename InputIterator, typename Pred>
+	bool none_of ( InputIterator first, InputIterator last, Pred p );
+template<typename R, typename Pred> 
+	bool none_of ( const R &range,  Pred p );
 ``
 
 [heading one_of]
-The function `one_of` returns true iff the value `val` occurs exactly once in the sequence.
+The function `one_of` returns true iff the predicate returns true for exactly one item in the sequence.
 
 ``
-template<typename I, typename V> bool one_of ( I first, I last, const V &val );
-template<typename R, typename V> bool one_of ( const R &range,  const V &val );
+template<typename InputIterator, typename Pred>
+	bool one_of ( InputIterator first, InputIterator last, Pred p );
+template<typename R, typename Pred> 
+	bool one_of ( const R &range,  Pred p );
 ``
 
-[heading one_of_if]
-The function `one_of_if` is similar to `one_of`, except that for comparing with a value, it uses a predicate. It returns true iff the predicate returns true for exactly one value in the sequence.
+
+
+
+
+
+
+
+
+
+[heading all_of_val]
+The function `all_of_val` returns true iff each item in the sequence compares equal to the value `val`:
 
 ``
-template<typename I, typename Pred> bool one_of_if ( I first, I last, Pred p );
-template<typename R, typename Pred> bool one_of_if ( const R &range,  Pred p );
+template<typename InputIterator, typename V>
+	bool all_of_val ( InputIterator first, InputIterator last, const V &val );
+template<typename R, typename V> 
+	bool all_of_val ( const R &range,  const V &val );
 ``
+
+[heading any_of_val]
+The function `any_of_val` returns true iff any item in the sequence compares equal to the value `val`:
+
+``
+template<typename InputIterator, typename V>
+	bool any_of_val ( InputIterator first, InputIterator last, const V &val );
+template<typename R, typename V> 
+	bool any_of_val ( const R &range,  const V &val );
+``
+  
+[heading none_of_val]
+The function `none_of_val` returns true iff no item in the sequence compares equal to the value `val`:
+
+``
+template<typename InputIterator, typename V>
+	bool none_of_val ( InputIterator first, InputIterator last, const V &val );
+template<typename R, typename V> 
+	bool none_of_val ( const R &range,  const V &val );
+``
+  
+[heading one_of_val]
+The function `one_of` returns true iff exactly one item in the sequence compares equal to the value `val`:
+
+``
+template<typename InputIterator, typename V>
+	bool none_of_val ( InputIterator first, InputIterator last, const V &val );
+template<typename R, typename V> 
+	bool none_of_val ( const R &range,  const V &val );
+``
+
 
 [endsect]

@@ -111,7 +111,7 @@ using std::none_of;     // Section 25.2.3
     return (all_of) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
-/// \fn none_of_if ( const R &range, Predicate p )
+/// \fn none_of ( const R &range, Predicate p )
 /// \return true if none of the elements in the range satisfy the predicate 'p'
 /// 
 /// \param range The input range
@@ -137,7 +137,7 @@ using std::none_of;     // Section 25.2.3
 
 #pragma mark --one_of--
 
-/// \fn one_of ( I first, I last, Pred p )
+/// \fn one_of ( InputIterator first, InputIterator last, Predicate p )
 /// \return true if the predicate 'p' is true for exactly one item in [first, last).
 /// 
 /// \param first The start of the input sequence
@@ -152,7 +152,7 @@ using std::none_of;     // Section 25.2.3
     return (none_of) (++i, last, p);
   }
 
-/// \fn one_of_if ( const R &range, Predicate p )
+/// \fn one_of ( const R &range, Predicate p )
 /// \return true if the predicate 'p' is true for exactly one item in the range.
 /// 
 /// \param range The input range
