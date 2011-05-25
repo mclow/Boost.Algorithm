@@ -75,9 +75,9 @@ typedef std::vector<std::string> vec;
     std::clock_t bTime, eTime;                              \
     bTime = std::clock ();                                  \
     boost::algorithm::obj <vec::const_iterator>             \
-                s_o ( needle.begin (), needle.end ());      \
+              s_o ( needle.begin (), needle.end (), Equal); \
     for ( i = 0; i < NUM_TRIES; ++i ) {                     \
-        res = s_o ( haystack.begin (), haystack.end (), Equal );    \
+        res = s_o ( haystack.begin (), haystack.end ());    \
         if ( res != exp ) {                                 \
             std::cout << "On run # " << i << " expected "   \
             << exp - haystack.begin () << " got "           \

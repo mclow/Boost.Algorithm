@@ -25,7 +25,7 @@ std::string make_str ( Iter first, std::size_t len ) {
 namespace {
 
 //  A simple predicate for testing the predicate versions
-    bool Equal ( const char &ch1, const char &ch2 ) {   return ~ch1 == ~ch2; }
+    bool Equal ( char ch1, char ch2 ) {   return ~ch1 == ~ch2; }
     
 
     template<typename Container>
