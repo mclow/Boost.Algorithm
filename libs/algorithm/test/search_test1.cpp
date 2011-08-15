@@ -24,29 +24,17 @@ std::string make_str ( Iter first, std::size_t len ) {
 
 namespace {
 
-//  A simple predicate for testing the predicate versions
-    bool Equal ( char ch1, char ch2 ) {   return ~ch1 == ~ch2; }
-    
-
     template<typename Container>
     void check_one ( const Container &haystack, const std::string &needle, int expected ) {
         typename Container::const_iterator it0  = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it0p = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
         typename Container::const_iterator it1  = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it1p = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
         typename Container::const_iterator it2  = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it2p = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
         typename Container::const_iterator it3  = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it3p = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal);
         int dist = it1 == haystack.end () ? -1 : std::distance ( haystack.begin(), it1 );
         
         std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; " << std::endl;
         try {
-            if ( it0 != it0p || it1 != it1p || it2 != it2p || it3 != it3p )
-                throw std::runtime_error ( 
-                    std::string ( "results mismatch between predicate and non-predicate search" ));
-        
-            if ( it0 != it1 || it0p != it1p ) {
+            if ( it0 != it1 ) {
                 throw std::runtime_error ( 
                     std::string ( "results mismatch between std::search and boyer-moore search" ));
                 }
@@ -66,13 +54,9 @@ namespace {
             std::cout << "Searching for: " << needle << std::endl;
             std::cout << "Expected: " << expected << "\n";
             std::cout << "  std:    " << it0  - haystack.begin () << "\n";
-            std::cout << "  std(p): " << it0p - haystack.begin () << "\n";
             std::cout << "  bm:     " << it1  - haystack.begin () << "\n";
-            std::cout << "  bm(p):  " << it1p - haystack.begin () << "\n";
             std::cout << "  bmh:    " << it2  - haystack.begin () << "\n";
-            std::cout << "  bmh(p): " << it2p - haystack.begin () << "\n";
             std::cout << "  kpm:    " << it3  - haystack.begin () << "\n";
-            std::cout << "  kpm(p): " << it3p - haystack.begin () << "\n";
             std::cout << std::flush;
         //  throw;
             }

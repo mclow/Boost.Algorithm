@@ -34,24 +34,6 @@ typedef std::vector<char> vec;
     eTime = std::clock ();                                  \
     printRes ( #call, eTime - bTime, refDiff ); }
 
-#define runOneP(call, refDiff)  { \
-    std::clock_t bTime, eTime;                              \
-    bTime = std::clock ();                                  \
-    for ( i = 0; i < NUM_TRIES; ++i ) {                     \
-        res = boost::algorithm::call                        \
-            ( haystack.begin (), haystack.end (),           \
-                needle.begin (), needle.end (), Equal );    \
-        if ( res != exp ) {                                 \
-            std::cout << "On run # " << i << " expected "   \
-                << exp - haystack.begin () << " got "       \
-                << res - haystack.begin () << std::endl;    \
-            throw std::runtime_error                        \
-                ( "Unexpected result from " #call " (p)" ); \
-            }                                               \
-        }                                                   \
-    eTime = std::clock ();                                  \
-    printRes ( #call " (p)", eTime - bTime, refDiff ); }
-    
 #define runObject(obj, refDiff) { \
     std::clock_t bTime, eTime;                              \
     bTime = std::clock ();                                  \
@@ -70,23 +52,6 @@ typedef std::vector<char> vec;
     eTime = std::clock ();                                  \
     printRes ( #obj " object", eTime - bTime, refDiff ); }
     
-#define runObjectP(obj, refDiff)    { \
-    std::clock_t bTime, eTime;                              \
-    bTime = std::clock ();                                  \
-    boost::algorithm::obj <vec::const_iterator>             \
-            s_o ( needle.begin (), needle.end (), Equal );  \
-    for ( i = 0; i < NUM_TRIES; ++i ) {                     \
-        res = s_o ( haystack.begin (), haystack.end ());    \
-        if ( res != exp ) {                                 \
-            std::cout << "On run # " << i << " expected "   \
-            << exp - haystack.begin () << " got "           \
-            << res - haystack.begin () << std::endl;        \
-            throw std::runtime_error                        \
-            ( "Unexpected result from " #obj " object (p)" );   \
-            }                                               \
-        }                                                   \
-    eTime = std::clock ();                                  \
-    printRes ( #obj " object (p)", eTime - bTime, refDiff ); }
 
 
 namespace {
@@ -100,9 +65,6 @@ namespace {
         std::copy ( begin, end, std::back_inserter ( retVal ));
         return retVal;
         }
-    
-//  A simple predicate for testing the predicate versions
-    bool Equal ( char ch1, char ch2 ) {   return ~ch1 == ~ch2; }
     
     void printRes ( const char *prompt, unsigned long diff, unsigned long stdDiff ) {
         std::cout 
@@ -118,7 +80,7 @@ namespace {
     void check_one ( const vec &haystack, const vec &needle, int expected ) {
         std::size_t i;
         std::clock_t sTime;
-        unsigned long stdDiff, stdPDiff;
+        unsigned long stdDiff;
         
         vec::const_iterator res;
         vec::const_iterator exp;        // the expected result
@@ -153,24 +115,6 @@ namespace {
         runObject ( boyer_moore_horspool,        stdDiff );
         runOne    ( knuth_morris_pratt_search,   stdDiff );
         runObject ( knuth_morris_pratt,          stdDiff );
-
-        sTime = std::clock ();
-        for ( i = 0; i < NUM_TRIES; ++i ) {
-            res = std::search ( haystack.begin (), haystack.end (), needle.begin (), needle.end (), Equal );
-            if ( res != exp ) {
-                std::cout << "On run # " << i << " expected " << exp - haystack.begin () << " got " << res - haystack.begin () << std::endl;
-                throw std::runtime_error ( "Unexpected result from std::search (p)" );
-                }
-            }
-        stdPDiff = std::clock () - sTime;
-        printRes ( "std::search (p)", stdPDiff, stdPDiff );
-
-        runOneP    ( boyer_moore_search,          stdPDiff );
-        runObjectP ( boyer_moore,                 stdPDiff );
-        runOneP    ( boyer_moore_horspool_search, stdPDiff );
-        runObjectP ( boyer_moore_horspool,        stdPDiff );
-        runOneP    ( knuth_morris_pratt_search,   stdPDiff );
-        runObjectP ( knuth_morris_pratt,          stdPDiff );
         }
     }
 
