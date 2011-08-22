@@ -24,14 +24,21 @@ std::string make_str ( Iter first, std::size_t len ) {
 
 namespace {
 
+//	Check using iterators
     template<typename Container>
-    void check_one ( const Container &haystack, const std::string &needle, int expected ) {
-        typename Container::const_iterator it0  = std::search                                  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it1  = boost::algorithm::boyer_moore_search         (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it2  = boost::algorithm::boyer_moore_horspool_search(haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        typename Container::const_iterator it3  = boost::algorithm::knuth_morris_pratt_search  (haystack.begin (), haystack.end (), needle.begin (), needle.end ());
-        int dist = it1 == haystack.end () ? -1 : std::distance ( haystack.begin(), it1 );
-        
+    void check_one_iter ( const Container &haystack, const std::string &needle, int expected ) {
+    	typedef typename Container::const_iterator iter_type;
+    	iter_type hBeg = haystack.begin ();
+    	iter_type hEnd = haystack.end ();
+    	iter_type nBeg = needle.begin ();
+    	iter_type nEnd = needle.end ();
+
+        iter_type it0  = std::search                                  (hBeg, hEnd, nBeg, nEnd);
+        iter_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
+        iter_type it2  = boost::algorithm::boyer_moore_horspool_search(hBeg, hEnd, nBeg, nEnd);
+        iter_type it3  = boost::algorithm::knuth_morris_pratt_search  (hBeg, hEnd, nBeg, nEnd);
+        int dist = it1 == hEnd ? -1 : std::distance ( hBeg, it1 );
+
         std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; " << std::endl;
         try {
             if ( it0 != it1 ) {
@@ -43,7 +50,7 @@ namespace {
                 throw std::runtime_error ( 
                     std::string ( "results mismatch between boyer-moore and boyer-moore-horspool search" ));
                 }
-            
+
             if ( it1 != it3 )
                 throw std::runtime_error ( 
                     std::string ( "results mismatch between boyer-moore and knuth-morris-pratt search" ));
@@ -53,17 +60,71 @@ namespace {
         catch ( ... ) {
             std::cout << "Searching for: " << needle << std::endl;
             std::cout << "Expected: " << expected << "\n";
-            std::cout << "  std:    " << it0  - haystack.begin () << "\n";
-            std::cout << "  bm:     " << it1  - haystack.begin () << "\n";
-            std::cout << "  bmh:    " << it2  - haystack.begin () << "\n";
-            std::cout << "  kpm:    " << it3  - haystack.begin () << "\n";
+            std::cout << "  std:    " << std::distance ( hBeg, it0 ) << "\n";
+            std::cout << "  bm:     " << std::distance ( hBeg, it1 ) << "\n";
+            std::cout << "  bmh:    " << std::distance ( hBeg, it2 ) << "\n";
+            std::cout << "  kpm:    " << std::distance ( hBeg, it3 )<< "\n";
             std::cout << std::flush;
         //  throw;
             }
-        
+
         BOOST_CHECK_EQUAL ( dist, expected );
         }
+
+//	Check using pointers
+    template<typename Container>
+    void check_one_pointer ( const Container &haystack, const std::string &needle, int expected ) {
+    	typedef const typename Container::value_type *ptr_type;
+    	ptr_type hBeg = &*haystack.begin ();
+    	ptr_type hEnd = &*haystack.end ();
+    	ptr_type nBeg = &*needle.begin ();
+    	ptr_type nEnd = &*needle.end ();
+
+        ptr_type it0  = std::search                                  (hBeg, hEnd, nBeg, nEnd);
+        ptr_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
+        ptr_type it2  = boost::algorithm::boyer_moore_horspool_search(hBeg, hEnd, nBeg, nEnd);
+        ptr_type it3  = boost::algorithm::knuth_morris_pratt_search  (hBeg, hEnd, nBeg, nEnd);
+        int dist = it1 == hEnd ? -1 : std::distance ( hBeg, it1 );
+
+        std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; " << std::endl;
+        try {
+            if ( it0 != it1 ) {
+                throw std::runtime_error ( 
+                    std::string ( "results mismatch between std::search and boyer-moore search" ));
+                }
+
+            if ( it1 != it2 ) {
+                throw std::runtime_error ( 
+                    std::string ( "results mismatch between boyer-moore and boyer-moore-horspool search" ));
+                }
+
+            if ( it1 != it3 )
+                throw std::runtime_error ( 
+                    std::string ( "results mismatch between boyer-moore and knuth-morris-pratt search" ));
+
+            }
+
+        catch ( ... ) {
+            std::cout << "Searching for: " << needle << std::endl;
+            std::cout << "Expected: " << expected << "\n";
+            std::cout << "  std:    " << std::distance ( hBeg, it0 ) << "\n";
+            std::cout << "  bm:     " << std::distance ( hBeg, it1 ) << "\n";
+            std::cout << "  bmh:    " << std::distance ( hBeg, it2 ) << "\n";
+            std::cout << "  kpm:    " << std::distance ( hBeg, it3 )<< "\n";
+            std::cout << std::flush;
+        //  throw;
+            }
+
+        BOOST_CHECK_EQUAL ( dist, expected );
+        }
+
+    template<typename Container>
+    void check_one ( const Container &haystack, const std::string &needle, int expected ) {
+        check_one_iter ( haystack, needle, expected );
+        check_one_pointer ( haystack, needle, expected );
+        }
     }
+
 
 int test_main( int , char* [] )
 {
@@ -78,7 +139,7 @@ int test_main( int , char* [] )
 
     std::string haystack2 ( "ABC ABCDAB ABCDABCDABDE" );
     std::string needle11  ( "ABCDABD" );
-    
+
     std::string haystack3 ( "abra abracad abracadabra" );
     std::string needle12  ( "abracadabra" );
 
@@ -95,7 +156,7 @@ int test_main( int , char* [] )
 
     check_one ( needle1, haystack1, -1 );   // cant find long pattern in short corpus
     check_one ( haystack1, haystack1, 0 );  // find something in itself
-    
+
     check_one ( haystack2, needle11, 15 );
     check_one ( haystack3, needle12, 13 );
 

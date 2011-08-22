@@ -41,6 +41,7 @@
 
 #include <vector>
 #include <functional>   // for std::equal_to
+#include <limits>
 #if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
 #include <tr1/unordered_map>
 #else
@@ -51,6 +52,8 @@
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_integral.hpp>
+#include <boost/type_traits/remove_pointer.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/array.hpp>
 #include <boost/function.hpp>
 #include <boost/static_assert.hpp>
@@ -77,16 +80,25 @@ namespace detail {
         }
 #endif
 
+//  We can use either pointers or iterators
+//  In either case, we want the underlying type (w/o any const)
+    template <typename Iter, bool=boost::is_pointer<Iter>::value > struct ValueType;
+    template <typename Iter> struct ValueType<Iter, true> {
+        typedef typename boost::remove_const<typename boost::remove_pointer<Iter>::type >::type value_type;
+        };
+    template <typename Iter> struct ValueType<Iter, false> {
+        typedef typename Iter::value_type value_type;
+        };
+
 //
 //  Default implementations of the skip tables for B-M and B-M-H
 //
     template<typename Iter, bool /*useArray*/> class skip_table;
 
 //  General case for data searching other than bytes; use a map
-    template<typename Iter>
-    class skip_table<Iter, false> {
+    template<typename value_type>
+    class skip_table<value_type, false> {
     private:
-        typedef typename Iter::value_type value_type;
 #if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
         typedef std::tr1::unordered_map<value_type, int> skip_map;
 #else
@@ -99,11 +111,11 @@ namespace detail {
         skip_table ( std::size_t patSize, int default_value ) 
             : k_default_value ( default_value ), skip_ ( patSize ) {}
         
-        void insert ( typename Iter::value_type key, int val ) {
+        void insert ( value_type key, int val ) {
             skip_ [ key ] = val;    // Would skip_.insert (<blah>) be better here?
             }
 
-        int operator [] ( typename Iter::value_type val ) const {
+        int operator [] ( value_type val ) const {
             typename skip_map::const_iterator it = skip_.find ( val );
             return it == skip_.end () ? k_default_value : it->second;
             }
@@ -112,7 +124,8 @@ namespace detail {
         void PrintSkipTable () const {
             std::cout << "BM(H) Skip Table <unordered_map>:" << std::endl;
             for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-                std::cout << "  " << it->first << ": " << it->second << std::endl;
+                if ( it->second != k_default_value )
+                    std::cout << "  " << it->first << ": " << it->second << std::endl;
             std::cout << std::endl;
             }
 #endif
@@ -120,44 +133,46 @@ namespace detail {
         
     
 //  Special case small numeric values; use an array
-    template<typename Iter>
-    class skip_table<Iter, true> {
+    template<typename value_type>
+    class skip_table<value_type, true> {
     private:
-        typedef typename Iter::value_type value_type;
         typedef typename boost::make_unsigned<value_type>::type unsigned_value_type;
         typedef boost::array<int, 1U << (CHAR_BIT * sizeof(value_type))> skip_map;
         skip_map skip_;
+        const int k_default_value;
     public:
-        skip_table ( std::size_t patSize, int default_value ) {
+        skip_table ( std::size_t patSize, int default_value ) : k_default_value ( default_value ) {
             std::fill_n ( skip_.begin(), skip_.size(), default_value );
             }
         
-        void insert ( typename Iter::value_type key, int val ) {
+        void insert ( value_type key, int val ) {
             skip_ [ static_cast<unsigned_value_type> ( key ) ] = val;
             }
 
-        int operator [] ( typename Iter::value_type val ) const {
+        int operator [] ( value_type val ) const {
             return skip_ [ static_cast<unsigned_value_type> ( val ) ];
             }
 
 #ifdef  B_ALGO_DEBUG
         void PrintSkipTable () const {
             std::cout << "BM(H) Skip Table <boost:array>:" << std::endl;
-            typename skip_map::const_iterator it = skip_.begin ();
             for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
-                std::cout << "  " << std::distance (it, skip_.begin ()) << ": " << *it << std::endl;
+                if ( *it != k_default_value )
+                    std::cout << "  " << std::distance (skip_.begin (), it) << ": " << *it << std::endl;
             std::cout << std::endl;
             }
 #endif
         };
 
+//  If Iter is a real iterator, then we want to use these traits.
     template<typename Iter>
     struct BM_traits {
-        typedef typename Iter::value_type value_type;
-        typedef boost::algorithm::detail::skip_table<Iter, 
+        typedef typename ValueType<Iter>::value_type value_type;
+        typedef boost::algorithm::detail::skip_table<value_type, 
                 boost::is_integral<value_type>::value && (sizeof(value_type)==1)> skip_table_t;
         };
-    }
+
+    }   // end of detail namespace
 
 /*
     A templated version of the boyer-moore searching algorithm.
@@ -183,14 +198,17 @@ Requirements:
 
     template <typename patIter, typename traits = detail::BM_traits<patIter> >
     class boyer_moore {
-                
+        typedef typename detail::ValueType<patIter>::value_type    pattern_value_type; 
     public:
         boyer_moore ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length, -1 ),
-                  suffix_ ( k_pattern_length + 1 )
+                  suffix_ ( k_pattern_length + 1, 0xDEADBEEF )
             {
+#ifdef  B_ALGO_DEBUG
+            std::cout << "Pattern length: " << k_pattern_length << std::endl;
+#endif
             this->build_bm_tables ();
             }
             
@@ -204,11 +222,15 @@ Requirements:
         ///
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
-            BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
+            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename detail::ValueType<corpusIter>::value_type>::value ));
+
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
 
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
+#ifdef  B_ALGO_DEBUG
+            std::cout << "Corpus length: " << k_corpus_length << std::endl;
+#endif
         //  If the pattern is larger than the corpus, we can't find it!
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;
@@ -233,7 +255,11 @@ Requirements:
                 
 #ifdef B_ALGO_DEBUG
             skip_.PrintSkipTable ();
-            detail::PrintTable ( suffix_.begin (), suffix_.end ());
+            std::cout << "Boyer Moore suffix table:" << std::endl;
+            for ( i = 0; i < suffix_.size (); ++i )
+                if ( suffix_[i] != k_pattern_length )
+                    std::cout << "  " << i << ": " << suffix_[i] << std::endl;
+//          detail::PrintTable ( suffix_.begin (), suffix_.end ());
 #endif
             }
         
@@ -294,12 +320,11 @@ Requirements:
                 }
             }
 
-        void massage_suffix_table () {}
         void create_suffix_table ( patIter pat_first, patIter pat_last ) {
             const std::size_t count = (std::size_t) std::distance ( pat_first, pat_last );
             
             if ( count > 0 ) {  // empty pattern
-                std::vector<typename patIter::value_type> reversed(count);     
+                std::vector<pattern_value_type> reversed(count);
                 (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
                 
                 std::vector<std::size_t> prefix (count);
@@ -311,7 +336,7 @@ Requirements:
                 for ( std::size_t i = 0; i <= count; i++ )
                     suffix_[i] = count - prefix [count-1];
          
-                for ( std::size_t i = 0; i < count; i++) {
+                for ( std::size_t i = 0; i < count; i++ ) {
                     const std::size_t j = count - prefix_reversed[i];
                     const std::size_t k = i -     prefix_reversed[i] + 1;
          
@@ -319,13 +344,13 @@ Requirements:
                         suffix_[j] = k;
                     }
                 }
-            }        
+            }
         };
     
-//	All in one step: Setup, search, return.
+//  All in one step: Setup, search, return.
     template <typename patIter, typename corpusIter>
     corpusIter boyer_moore_search ( corpusIter corpus_first, corpusIter corpus_last, 
-								            patIter pat_first, patIter pat_last ) {
+                                            patIter pat_first, patIter pat_last ) {
         boyer_moore<patIter> bm ( pat_first, pat_last );
         return bm ( corpus_first, corpus_last );
         }
@@ -347,6 +372,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
     template <typename patIter, typename traits = detail::BM_traits<patIter> >
     class boyer_moore_horspool {
+        typedef typename detail::ValueType<patIter>::value_type pattern_value_type; 
     public:
         boyer_moore_horspool ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
@@ -374,13 +400,14 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         ///
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
-            BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
+            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename detail::ValueType<corpusIter>::value_type>::value ));
+
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
 
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
         //  If the pattern is larger than the corpus, we can't find it!
-            if ( k_corpus_length < k_pattern_length ) 
+            if ( k_corpus_length < k_pattern_length )
                 return corpus_last;
     
         //  Do the search 
@@ -441,9 +468,9 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
     http://www.inf.fh-flensburg.de/lang/algorithmen/pattern/kmpen.htm
 */
 
-    template <typename patIter, typename Pred=std::equal_to<typename patIter::value_type> >
+    template <typename patIter>
     class knuth_morris_pratt {
-
+        typedef typename detail::ValueType<patIter>::value_type pattern_value_type;
     public:
         knuth_morris_pratt ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ), 
@@ -466,7 +493,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         ///
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
-            BOOST_STATIC_ASSERT (( boost::is_same<typename patIter::value_type, typename corpusIter::value_type>::value ));
+            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename detail::ValueType<corpusIter>::value_type>::value ));
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
 
@@ -535,7 +562,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                     }
                 skip_ [ i ] = j + 1;
                 }
-            }    
+            }
         };
     
 /// \fn knuth_morris_pratt_search ( corpusIter corpus_first, corpusIter corpus_last, 
