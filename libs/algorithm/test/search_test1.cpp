@@ -24,14 +24,14 @@ std::string make_str ( Iter first, std::size_t len ) {
 
 namespace {
 
-//	Check using iterators
+//  Check using iterators
     template<typename Container>
     void check_one_iter ( const Container &haystack, const std::string &needle, int expected ) {
-    	typedef typename Container::const_iterator iter_type;
-    	iter_type hBeg = haystack.begin ();
-    	iter_type hEnd = haystack.end ();
-    	iter_type nBeg = needle.begin ();
-    	iter_type nEnd = needle.end ();
+        typedef typename Container::const_iterator iter_type;
+        iter_type hBeg = haystack.begin ();
+        iter_type hEnd = haystack.end ();
+        iter_type nBeg = needle.begin ();
+        iter_type nEnd = needle.end ();
 
         iter_type it0  = std::search                                  (hBeg, hEnd, nBeg, nEnd);
         iter_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
@@ -71,14 +71,14 @@ namespace {
         BOOST_CHECK_EQUAL ( dist, expected );
         }
 
-//	Check using pointers
+//  Check using pointers
     template<typename Container>
     void check_one_pointer ( const Container &haystack, const std::string &needle, int expected ) {
-    	typedef const typename Container::value_type *ptr_type;
-    	ptr_type hBeg = &*haystack.begin ();
-    	ptr_type hEnd = &*haystack.end ();
-    	ptr_type nBeg = &*needle.begin ();
-    	ptr_type nEnd = &*needle.end ();
+        typedef const typename Container::value_type *ptr_type;
+        ptr_type hBeg = &*haystack.begin ();
+        ptr_type hEnd = &*haystack.end ();
+        ptr_type nBeg = &*needle.begin ();
+        ptr_type nEnd = &*needle.end ();
 
         ptr_type it0  = std::search                                  (hBeg, hEnd, nBeg, nEnd);
         ptr_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
