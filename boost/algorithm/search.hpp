@@ -260,6 +260,7 @@ Requirements:
 #ifdef B_ALGO_DEBUG
             skip_.PrintSkipTable ();
             std::cout << "Boyer Moore suffix table:" << std::endl;
+            std::cout << "  " << 0 << ": " << suffix_[0] << std::endl;
             for ( i = 0; i < suffix_.size (); ++i )
                 if ( suffix_[i] != suffix_[0] )
                     std::cout << "  " << i << ": " << suffix_[i] << std::endl;
@@ -333,7 +334,7 @@ Requirements:
             
             if ( count > 0 ) {  // empty pattern
                 std::vector<pattern_value_type> reversed(count);
-                (void) std::copy_backward ( pat_first, pat_last, reversed.end ());
+                (void) std::reverse_copy ( pat_first, pat_last, reversed.begin ());
                 
                 std::vector<std::size_t> prefix (count);
                 compute_bm_prefix ( pat_first, pat_last, prefix );
@@ -354,7 +355,7 @@ Requirements:
                 }
             }
         };
-    
+
 //  All in one step: Setup, search, return.
     template <typename patIter, typename corpusIter>
     corpusIter boyer_moore_search ( corpusIter corpus_first, corpusIter corpus_last, 
