@@ -186,6 +186,10 @@ Explanations:   boostinspect:noascii (test tool complains)
     http://www.movsd.com/bm.htm
     http://www.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
 
+The Boyer-Moore search algorithm uses two tables, a "bad character" table
+to tell how far to skip ahead when it hits a character that is not in the pattern,
+and a "good character" table to tell how far to skip ahead when it hits a
+mismatch on a character that _is_ in the pattern.
 
 Requirements:
         * Random access iterators
@@ -204,7 +208,7 @@ Requirements:
                 : pat_first ( first ), pat_last ( last ),
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length, -1 ),
-                  suffix_ ( k_pattern_length + 1, 0xDEADBEEF )
+                  suffix_ ( k_pattern_length + 1 )
             {
 #ifdef  B_ALGO_DEBUG
             std::cout << "Pattern length: " << k_pattern_length << std::endl;
@@ -257,7 +261,7 @@ Requirements:
             skip_.PrintSkipTable ();
             std::cout << "Boyer Moore suffix table:" << std::endl;
             for ( i = 0; i < suffix_.size (); ++i )
-                if ( suffix_[i] != k_pattern_length )
+                if ( suffix_[i] != suffix_[0] )
                     std::cout << "  " << i << ": " << suffix_[i] << std::endl;
 //          detail::PrintTable ( suffix_.begin (), suffix_.end ());
 #endif
@@ -312,8 +316,12 @@ Requirements:
             prefix[0] = 0;
             std::size_t k = 0;
             for ( std::size_t i = 1; i < count; ++i ) {
-                while ( k > 0 && ( pat_first[k] != pat_first[i] ))
+                BOOST_ASSERT ( k < count );
+                while ( k > 0 && ( pat_first[k] != pat_first[i] )) {
+                    BOOST_ASSERT ( k < count );
                     k = prefix [ k - 1 ];
+                    }
+                    
                 if ( pat_first[k] == pat_first[i] )
                     k++;
                 prefix [ i ] = k;
