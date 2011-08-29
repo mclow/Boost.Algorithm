@@ -41,10 +41,11 @@
 
 #include <vector>
 #include <functional>   // for std::equal_to
-#include <limits>
+#include <climits>
 #include <tr1/unordered_map>
 
 #include <boost/assert.hpp>
+#include <boost/iterator/iterator_traits.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_integral.hpp>
@@ -75,16 +76,6 @@ namespace detail {
         return retVal;
         }
 #endif
-
-//  We can use either pointers or iterators
-//  In either case, we want the underlying type (w/o any const)
-    template <typename Iter, bool=boost::is_pointer<Iter>::value > struct ValueType;
-    template <typename Iter> struct ValueType<Iter, true> {
-        typedef typename boost::remove_const<typename boost::remove_pointer<Iter>::type >::type value_type;
-        };
-    template <typename Iter> struct ValueType<Iter, false> {
-        typedef typename Iter::value_type value_type;
-        };
 
 //
 //  Default implementations of the skip tables for B-M and B-M-H
@@ -156,10 +147,9 @@ namespace detail {
 #endif
         };
 
-//  If Iter is a real iterator, then we want to use these traits.
     template<typename Iter>
     struct BM_traits {
-        typedef typename ValueType<Iter>::value_type value_type;
+        typedef typename boost::iterator_value<Iter>::type value_type;
         typedef boost::algorithm::detail::skip_table<value_type, 
                 boost::is_integral<value_type>::value && (sizeof(value_type)==1)> skip_table_t;
         };
@@ -194,7 +184,7 @@ Requirements:
 
     template <typename patIter, typename traits = detail::BM_traits<patIter> >
     class boyer_moore {
-        typedef typename detail::ValueType<patIter>::value_type    pattern_value_type; 
+        typedef typename boost::iterator_value<patIter>::type pattern_value_type;
     public:
         boyer_moore ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
@@ -218,7 +208,7 @@ Requirements:
         ///
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
-            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename detail::ValueType<corpusIter>::value_type>::value ));
+            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename boost::iterator_value<corpusIter>::type>::value ));
 
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
@@ -373,7 +363,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
     template <typename patIter, typename traits = detail::BM_traits<patIter> >
     class boyer_moore_horspool {
-        typedef typename detail::ValueType<patIter>::value_type pattern_value_type; 
+        typedef typename boost::iterator_value<patIter>::type pattern_value_type;
     public:
         boyer_moore_horspool ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
@@ -401,7 +391,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         ///
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
-            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename detail::ValueType<corpusIter>::value_type>::value ));
+            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename boost::iterator_value<corpusIter>::type>::value ));
 
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
@@ -471,7 +461,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
     template <typename patIter>
     class knuth_morris_pratt {
-        typedef typename detail::ValueType<patIter>::value_type pattern_value_type;
+        typedef typename boost::iterator_value<patIter>::type pattern_value_type;
     public:
         knuth_morris_pratt ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ), 
@@ -494,7 +484,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         ///
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
-            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename detail::ValueType<corpusIter>::value_type>::value ));
+            BOOST_STATIC_ASSERT (( boost::is_same<pattern_value_type, typename boost::iterator_value<corpusIter>::type>::value ));
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
 
