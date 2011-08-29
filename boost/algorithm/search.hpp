@@ -42,11 +42,7 @@
 #include <vector>
 #include <functional>   // for std::equal_to
 #include <limits>
-#if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
 #include <tr1/unordered_map>
-#else
-#include <unordered_map>
-#endif
 
 #include <boost/assert.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
@@ -99,11 +95,7 @@ namespace detail {
     template<typename value_type>
     class skip_table<value_type, false> {
     private:
-#if BOOST_ALGORITHM_SEARCH_USE_TR1_MAP
         typedef std::tr1::unordered_map<value_type, int> skip_map;
-#else
-        typedef std::unordered_map<value_type, int> skip_map;
-#endif
         const int k_default_value;
         skip_map skip_;
         
