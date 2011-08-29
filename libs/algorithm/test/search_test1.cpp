@@ -163,17 +163,17 @@ int test_main( int , char* [] )
     check_one ( haystack1, needle13, 0 );   // find the empty string 
     check_one ( haystack4, needle1, -1 );  // can't find in an empty haystack
 
-//	Mikhail Levin <svarneticist@gmail.com> found a problem, and this was the test
-//	that triggered it.
+//  Mikhail Levin <svarneticist@gmail.com> found a problem, and this was the test
+//  that triggered it.
 
-  const std::string mikhail_pattern =	
+  const std::string mikhail_pattern =   
 "GATACACCTACCTTCACCAGTTACTCTATGCACTAGGTGCGCCAGGCCCATGCACAAGGGCTTGAGTGGATGGGAAGGA"
 "TGTGCCCTAGTGATGGCAGCATAAGCTACGCAGAGAAGTTCCAGGGCAGAGTCACCATGACCAGGGACACATCCACGAG"
 "CACAGCCTACATGGAGCTGAGCAGCCTGAGATCTGAAGACACGGCCATGTATTACTGTGGGAGAGATGTCTGGAGTGGT"
 "TATTATTGCCCCGGTAATATTACTACTACTACTACTACATGGACGTCTGGGGCAAAGGGACCACG"
 ;
-	const std::string mikhail_corpus = std::string (8, 'a') + mikhail_pattern;
+    const std::string mikhail_corpus = std::string (8, 'a') + mikhail_pattern;
 
-	check_one ( mikhail_corpus, mikhail_pattern, 8 );
+    check_one ( mikhail_corpus, mikhail_pattern, 8 );
     return 0;
     }
