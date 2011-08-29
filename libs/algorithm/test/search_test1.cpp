@@ -171,7 +171,8 @@ int test_main( int , char* [] )
 "TGTGCCCTAGTGATGGCAGCATAAGCTACGCAGAGAAGTTCCAGGGCAGAGTCACCATGACCAGGGACACATCCACGAG"
 "CACAGCCTACATGGAGCTGAGCAGCCTGAGATCTGAAGACACGGCCATGTATTACTGTGGGAGAGATGTCTGGAGTGGT"
 "TATTATTGCCCCGGTAATATTACTACTACTACTACTACATGGACGTCTGGGGCAAAGGGACCACG"
-	const std::string mikhail_corpus = std::string s2(8, 'a') + mikhail_pattern;
+;
+	const std::string mikhail_corpus = std::string (8, 'a') + mikhail_pattern;
 
 	check_one ( mikhail_corpus, mikhail_pattern, 8 );
     return 0;
