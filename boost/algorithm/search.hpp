@@ -42,7 +42,7 @@
 #include <vector>
 #include <functional>   // for std::equal_to
 #include <climits>
-#include <tr1/unordered_map>
+#include <boost/tr1/tr1/unordered_map>
 
 #include <boost/assert.hpp>
 #include <boost/iterator/iterator_traits.hpp>
