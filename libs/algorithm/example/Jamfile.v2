@@ -1,0 +1,16 @@
+import os ;
+
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
+
+project /boost/algorithm/example
+    : requirements
+      <include>../../../
+      <include>$(BOOST_ROOT)
+      <optimization>speed
+      <link>static
+    :
+    ;
+
+exe ordered_example : ordered_example.cpp ;
+exe clamp_example   : clamp_example.cpp ;
+exe all_example     : all_example.cpp ;
