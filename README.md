@@ -16,3 +16,5 @@ The algorithms here fall into three basic categories:
 1. Miscellaneous
 	* Constrain a value between two 'boundaries' (minmax)
 	
+TONGARI has been nice enough to put a copy of the [generated documentation online](http://jamboree.zzl.org/boost_algorithm/)
+
