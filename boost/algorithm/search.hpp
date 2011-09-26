@@ -24,16 +24,6 @@
 
 // #define  B_ALGO_DEBUG
 
-/// \cond DOXYGEN_HIDE
-//  Old versions of gcc (4.2 and before) put unordered_map in tr1
-#if defined(__GNUC__) && ((__GNUC__ < 4 ) || ((__GNUC__ == 4 && (__GNUC_MINOR__ <= 2))))
-#define BOOST_ALGORITHM_SEARCH_USE_TR1_MAP  1
-#else
-#define BOOST_ALGORITHM_SEARCH_USE_TR1_MAP  0
-#endif
-/// \endcond
-
-
 #ifdef  B_ALGO_DEBUG
 #include <iostream>
 #include <string>
@@ -226,6 +216,7 @@ Requirements:
             }
             
     private:
+/// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
         typename traits::skip_table_t skip_;
@@ -336,9 +327,18 @@ Requirements:
                     }
                 }
             }
+/// \endcond
         };
 
-//  All in one step: Setup, search, return.
+/// \fn boyer_moore_search ( corpusIter corpus_first, corpusIter corpus_last, 
+///       patIter pat_first, patIter pat_last )
+/// \brief Searches the corpus for the pattern.
+/// 
+/// \param corpus_first The start of the data to search (Random Access Iterator)
+/// \param corpus_last  One past the end of the data to search
+/// \param pat_first    The start of the pattern to search for (Random Access Iterator)
+/// \param pat_last     One past the end of the data to search for
+///
     template <typename patIter, typename corpusIter>
     corpusIter boyer_moore_search ( corpusIter corpus_first, corpusIter corpus_last, 
                                             patIter pat_first, patIter pat_last ) {
@@ -406,6 +406,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             }
             
     private:
+/// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
         typename traits::skip_table_t skip_;
@@ -437,9 +438,18 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             
             return corpus_last;
             }
-
+// \endcond
         };
-    
+
+/// \fn boyer_moore_horspool_search ( corpusIter corpus_first, corpusIter corpus_last, 
+///       patIter pat_first, patIter pat_last )
+/// \brief Searches the corpus for the pattern.
+/// 
+/// \param corpus_first The start of the data to search (Random Access Iterator)
+/// \param corpus_last  One past the end of the data to search
+/// \param pat_first    The start of the pattern to search for (Random Access Iterator)
+/// \param pat_last     One past the end of the data to search for
+///
     template <typename patIter, typename corpusIter>
     corpusIter boyer_moore_horspool_search ( 
             corpusIter corpus_first, corpusIter corpus_last, 
@@ -447,6 +457,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         boyer_moore_horspool<patIter> bmh ( pat_first, pat_last );
         return bmh ( corpus_first, corpus_last );
         }
+
 
 /*
     A templated version of the Knuth-Pratt-Morris searching algorithm.
@@ -497,6 +508,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             }
     
     private:
+/// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
         std::vector <int> skip_;
@@ -554,6 +566,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                 skip_ [ i ] = j + 1;
                 }
             }
+// \endcond
         };
     
 /// \fn knuth_morris_pratt_search ( corpusIter corpus_first, corpusIter corpus_last, 
