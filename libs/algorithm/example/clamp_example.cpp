@@ -7,6 +7,7 @@
     For more information, see http://www.boost.org
 */
 
+#include <string>
 #include <iostream>     // for cout, etc
 
 #include <boost/algorithm/clamp.hpp>
