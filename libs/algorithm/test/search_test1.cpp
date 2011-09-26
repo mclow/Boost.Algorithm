@@ -72,13 +72,14 @@ namespace {
         }
 
 //  Check using pointers
+//    We're assuming that the container implements contiguous storage here.
     template<typename Container>
     void check_one_pointer ( const Container &haystack, const std::string &needle, int expected ) {
         typedef const typename Container::value_type *ptr_type;
-        ptr_type hBeg = &*haystack.begin ();
-        ptr_type hEnd = &*haystack.end ();
-        ptr_type nBeg = &*needle.begin ();
-        ptr_type nEnd = &*needle.end ();
+        ptr_type hBeg = haystack.size () == 0 ? NULL : &*haystack.begin ();
+        ptr_type hEnd = hBeg + haystack.size ();
+        ptr_type nBeg = needle.size () == 0 ? NULL : &*needle.begin ();
+        ptr_type nEnd = nBeg + needle.size ();
 
         ptr_type it0  = std::search                                  (hBeg, hEnd, nBeg, nEnd);
         ptr_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
