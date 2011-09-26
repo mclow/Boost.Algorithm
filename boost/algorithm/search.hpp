@@ -22,9 +22,9 @@
 #define BOOST_ALGORITHM_SEARCH_HPP
 #include <boost/config/warning_disable.hpp> // Disable MS C4996 warnings
 
-// #define  B_ALGO_DEBUG
+// #define  BOOST_ALGO_DEBUG
 
-#ifdef  B_ALGO_DEBUG
+#ifdef  BOOST_ALGO_DEBUG
 #include <iostream>
 #include <string>
 #endif
@@ -49,7 +49,7 @@ namespace boost { namespace algorithm {
 
 namespace detail {
 
-#ifdef  B_ALGO_DEBUG
+#ifdef  BOOST_ALGO_DEBUG
 //  Debugging support
     template <typename Iter>
     void PrintTable ( Iter first, Iter last ) {
@@ -93,7 +93,7 @@ namespace detail {
             return it == skip_.end () ? k_default_value : it->second;
             }
             
-#ifdef  B_ALGO_DEBUG
+#ifdef  BOOST_ALGO_DEBUG
         void PrintSkipTable () const {
             std::cout << "BM(H) Skip Table <unordered_map>:" << std::endl;
             for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
@@ -126,7 +126,7 @@ namespace detail {
             return skip_ [ static_cast<unsigned_value_type> ( val ) ];
             }
 
-#ifdef  B_ALGO_DEBUG
+#ifdef  BOOST_ALGO_DEBUG
         void PrintSkipTable () const {
             std::cout << "BM(H) Skip Table <boost:array>:" << std::endl;
             for ( typename skip_map::const_iterator it = skip_.begin (); it != skip_.end (); ++it )
@@ -182,7 +182,7 @@ Requirements:
                   skip_ ( k_pattern_length, -1 ),
                   suffix_ ( k_pattern_length + 1 )
             {
-#ifdef  B_ALGO_DEBUG
+#ifdef  BOOST_ALGO_DEBUG
             std::cout << "Pattern length: " << k_pattern_length << std::endl;
 #endif
             this->build_bm_tables ();
@@ -204,7 +204,7 @@ Requirements:
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
 
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
-#ifdef  B_ALGO_DEBUG
+#ifdef  BOOST_ALGO_DEBUG
             std::cout << "Corpus length: " << k_corpus_length << std::endl;
 #endif
         //  If the pattern is larger than the corpus, we can't find it!
@@ -230,7 +230,7 @@ Requirements:
     
             this->create_suffix_table ( pat_first, pat_last );
                 
-#ifdef B_ALGO_DEBUG
+#ifdef BOOST_ALGO_DEBUG
             skip_.PrintSkipTable ();
             std::cout << "Boyer Moore suffix table:" << std::endl;
             std::cout << "  " << 0 << ": " << suffix_[0] << std::endl;
@@ -375,7 +375,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             if ( first != last )    // empty pattern?
                 for ( patIter iter = first; iter != last-1; ++iter, ++i )
                     skip_.insert ( *iter, k_pattern_length - 1 - i );
-#ifdef B_ALGO_DEBUG
+#ifdef BOOST_ALGO_DEBUG
             skip_.PrintSkipTable ();
 #endif
             }
@@ -479,7 +479,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
                   k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length + 1 ) {
             init_skip_table ( pat_first, pat_last );
-#ifdef B_ALGO_DEBUG
+#ifdef BOOST_ALGO_DEBUG
             detail::PrintTable ( skip_.begin (), skip_.end ());
 #endif
             }
