@@ -23,7 +23,7 @@ bool is_even ( int val ) { return val % 2 == 0; }
 
 namespace ba = boost::algorithm;
 
-int main ( int /*argc*/, char */*argv*/ [] ) {
+int main ( int /*argc*/, char * /*argv*/ [] ) {
 //  The routines in all.hpp let you test a sequence of values to see if they satisfy a property
     if ( ba::all_of ( one, less_than_x<10> ))
         std::cout << "They're all less than 10" << std::endl;

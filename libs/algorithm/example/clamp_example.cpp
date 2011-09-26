@@ -18,7 +18,7 @@ bool compare_string_lengths ( const std::string &one, const std::string &two )
     return one.length () < two.length ();
 }
 
-int main ( int /*argc*/, char */*argv*/ [] ) {
+int main ( int /*argc*/, char * /*argv*/ [] ) {
 //  Clamp takes a value and two "fenceposts", and brings the value "between" the fenceposts.
 
 //  If the input value is "between" the fenceposts, then it is returned unchanged.

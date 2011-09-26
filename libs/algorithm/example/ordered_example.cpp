@@ -20,7 +20,7 @@ namespace ba = boost::algorithm;
 
 const int one []   = { 1, 2, 2, 2, 5 };
 
-int main ( int /*argc*/, char */*argv*/ [] ) {
+int main ( int /*argc*/, char * /*argv*/ [] ) {
 //  The routines in ordered.hpp let you test a sequence of values
 //  to see if they are "ordered"
 

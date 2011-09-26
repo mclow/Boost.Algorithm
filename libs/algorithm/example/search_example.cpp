@@ -20,7 +20,7 @@ const std::string needle2  ( "not ABA" );
 
 
 
-int main ( int /*argc*/, char */*argv*/ [] ) {
+int main ( int /*argc*/, char * /*argv*/ [] ) {
 //  In search.hpp, there are generic implementations of three classic sequence search
 //  algorithms. They all have the same (dual) interface.
 
