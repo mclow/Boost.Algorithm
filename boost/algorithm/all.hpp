@@ -47,11 +47,9 @@ using std::none_of;     // Section 25.2.3
   template<typename InputIterator, typename Predicate> 
   bool all_of ( InputIterator first, InputIterator last, Predicate p )
   {
-    while (first != last)
-    {
-      if ( !p(*first++)) 
-        return false;
-    } 
+    for ( ; first != last; ++first )
+        if ( !p(*first)) 
+          return false;
     return true; 
   } 
 
@@ -66,11 +64,9 @@ using std::none_of;     // Section 25.2.3
   template<typename InputIterator, typename Predicate> 
   bool any_of ( InputIterator first, InputIterator last, Predicate p) 
   {
-    while (first != last)
-    {
-      if ( p(*first++)) 
-        return true;
-    } 
+    for ( ; first != last; ++first )
+        if ( p(*first)) 
+          return true;
     return false; 
   } 
 
@@ -85,12 +81,10 @@ using std::none_of;     // Section 25.2.3
   template<typename InputIterator, typename Predicate> 
   bool none_of ( InputIterator first, InputIterator last, Predicate p )
   {
-    while (first != last)
-    {
-      if ( p(*first++)) 
-        return false;
-    } 
-    return true; 
+    for ( ; first != last; ++first )
+        if ( p(*first)) 
+          return false;
+    return true;
   } 
 
 
@@ -178,11 +172,9 @@ using std::none_of;     // Section 25.2.3
   template<typename InputIterator, typename V> 
   bool all_of_equal ( InputIterator first, InputIterator last, const V &val )
   {
-    while (first != last)
-    {
-      if ( *first++ != val ) 
-        return false;
-    } 
+    for ( ; first != last; ++first )
+        if ( val != *first ) 
+          return false;
     return true; 
   } 
 
@@ -209,11 +201,9 @@ using std::none_of;     // Section 25.2.3
   template<typename InputIterator, typename V> 
   bool any_of_equal ( InputIterator first, InputIterator last, const V &val ) 
   {
-    while (first != last)
-    {
-      if ( *first++ == val ) 
-        return true;
-    } 
+    for ( ; first != last; ++first )
+        if ( val == *first )
+          return true;
     return false; 
   } 
 
@@ -239,11 +229,9 @@ using std::none_of;     // Section 25.2.3
   template<typename InputIterator, typename V> 
   bool none_of_equal ( InputIterator first, InputIterator last, const V &val ) 
   {
-    while (first != last)
-    {
-      if ( *first++ == val ) 
-        return false;
-    } 
+    for ( ; first != last; ++first )
+        if ( val == *first )
+          return false;
     return true; 
   } 
 
