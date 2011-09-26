@@ -168,7 +168,7 @@ using std::none_of;     // Section 25.2.3
 
 #pragma mark --Value based versions--
 
-/// \fn all_of_val ( InputIterator first, InputIterator last, const V &val )
+/// \fn all_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if all elements in [first, last) are equal to 'val'
 /// 
 /// \param first The start of the input sequence
@@ -176,7 +176,7 @@ using std::none_of;     // Section 25.2.3
 /// \param val   A value to compare against
 ///
   template<typename InputIterator, typename V> 
-  bool all_of_val ( InputIterator first, InputIterator last, const V &val )
+  bool all_of_equal ( InputIterator first, InputIterator last, const V &val )
   {
     while (first != last)
     {
@@ -187,19 +187,19 @@ using std::none_of;     // Section 25.2.3
   } 
 
 
-/// \fn all_of_val ( const R &range, const V &val )
+/// \fn all_of_equal ( const R &range, const V &val )
 /// \return true if all elements in the range are equal to 'val'
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
 ///
   template<typename R, typename V> 
-  bool all_of_val ( const R &range, const V &val ) 
+  bool all_of_equal ( const R &range, const V &val ) 
   {
-    return (all_of_val) ( boost::begin ( range ), boost::end ( range ), val );
+    return (all_of_equal) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
-/// \fn any_of_val ( InputIterator first, InputIterator last, const V &val )
+/// \fn any_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if any of the elements in [first, last) are equal to 'val'
 /// 
 /// \param first The start of the input sequence
@@ -207,7 +207,7 @@ using std::none_of;     // Section 25.2.3
 /// \param val   A value to compare against
 ///
   template<typename InputIterator, typename V> 
-  bool any_of_val ( InputIterator first, InputIterator last, const V &val ) 
+  bool any_of_equal ( InputIterator first, InputIterator last, const V &val ) 
   {
     while (first != last)
     {
@@ -217,19 +217,19 @@ using std::none_of;     // Section 25.2.3
     return false; 
   } 
 
-/// \fn any_of_val ( const R &range, const V &val )
+/// \fn any_of_equal ( const R &range, const V &val )
 /// \return true if any of the elements in the range are equal to 'val'
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
 ///
   template<typename R, typename V> 
-  bool any_of_val ( const R &range, const V &val ) 
+  bool any_of_equal ( const R &range, const V &val ) 
   {
-    return (any_of_val) ( boost::begin ( range ), boost::end ( range ), val );
+    return (any_of_equal) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
-/// \fn none_of_val ( InputIterator first, InputIterator last, const V &val )
+/// \fn none_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if none of the elements in [first, last) are equal to 'val'
 /// 
 /// \param first The start of the input sequence
@@ -237,7 +237,7 @@ using std::none_of;     // Section 25.2.3
 /// \param val   A value to compare against
 ///
   template<typename InputIterator, typename V> 
-  bool none_of_val ( InputIterator first, InputIterator last, const V &val ) 
+  bool none_of_equal ( InputIterator first, InputIterator last, const V &val ) 
   {
     while (first != last)
     {
@@ -247,20 +247,20 @@ using std::none_of;     // Section 25.2.3
     return true; 
   } 
 
-/// \fn none_of_val ( const R &range, const V &val )
+/// \fn none_of_equal ( const R &range, const V &val )
 /// \return true if none of the elements in the range are equal to 'val'
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
 ///
   template<typename R, typename V> 
-  bool none_of_val ( const R &range, const V & val ) 
+  bool none_of_equal ( const R &range, const V & val ) 
   {
-    return (none_of_val) ( boost::begin ( range ), boost::end ( range ), val );
+    return (none_of_equal) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
 
-/// \fn one_of_val ( InputIterator first, InputIterator last, const V &val )
+/// \fn one_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if the value 'val' exists only once in [first, last).
 /// 
 /// \param first The start of the input sequence
@@ -268,23 +268,23 @@ using std::none_of;     // Section 25.2.3
 /// \param val   A value to compare against
 ///
   template<typename InputIterator, typename V> 
-  bool one_of_val ( InputIterator first, InputIterator last, const V &val )
+  bool one_of_equal ( InputIterator first, InputIterator last, const V &val )
   {
     InputIterator i = std::find (first, last, val); // find first occurrence of 'val'
     if (i == last) return false;                    // Didn't occur at all
-    return (none_of_val) (++i, last, val);
+    return (none_of_equal) (++i, last, val);
   }
 
-/// \fn one_of_val ( const R &range, const V &val )
+/// \fn one_of_equal ( const R &range, const V &val )
 /// \return true if the value 'val' exists only once in the range.
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
 ///
   template<typename R, typename V> 
-  bool one_of_val ( const R &range, const V &val )
+  bool one_of_equal ( const R &range, const V &val )
   {
-    return (one_of_val) ( boost::begin ( range ), boost::end ( range ), val );
+    return (one_of_equal) ( boost::begin ( range ), boost::end ( range ), val );
   } 
 
 }} // namespace boost and algorithm

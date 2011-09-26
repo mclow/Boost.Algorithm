@@ -22,7 +22,7 @@ Iterator requirements: The algorithms in this file should work on all kinds of i
 
 [heading all_of]
 
-The function `all_of` returns true iff the predicate returns true for every item in the sequence..
+The function `all_of` returns true if the predicate returns true for every item in the sequence..
 
 ``
 template<typename InputIterator, typename Pred>
@@ -32,7 +32,7 @@ template<typename R, typename Pred>
 ``
 
 [heading any_of]
-The function `any_of` returns true iff the predicate returns true for any item in the sequence.
+The function `any_of` returns true if the predicate returns true for any item in the sequence.
 
 ``
 template<typename InputIterator, typename Pred>
@@ -42,7 +42,7 @@ template<typename R, typename Pred>
 ``
 
 [heading none_of]
-The function `none_of` returns true iff the predicate returns false for every item in the sequence.
+The function `none_of` returns true if the predicate returns false for every item in the sequence.
 
 ``
 template<typename InputIterator, typename Pred>
@@ -52,7 +52,7 @@ template<typename R, typename Pred>
 ``
 
 [heading one_of]
-The function `one_of` returns true iff the predicate returns true for exactly one item in the sequence.
+The function `one_of` returns true if the predicate returns true for exactly one item in the sequence.
 
 ``
 template<typename InputIterator, typename Pred>
@@ -63,51 +63,59 @@ template<typename R, typename Pred>
 
 
 
+Examples: Given the container `c` containing `{ 0, 1, 2, 3, 4, 5 }`, then
+``
+bool isOdd ( int i ) { return i % 2 == 1; }
+bool lessThan10 ( int i ) { return i < 10; }
+
+one_of ( c.begin (), c.end (), 3 ) --> true
+one_of ( c, 3 ) --> true
+none_of ( c, 9 ) --> true
+any_of ( c.begin (), c.end (), 9 ) --> false
+all_of ( c, isOdd ) --> false
+all_of ( c.begin (), c.end (), lessThan10 ) --> true
+``
 
 
 
-
-
-
-
-[heading all_of_val]
-The function `all_of_val` returns true iff each item in the sequence compares equal to the value `val`:
+[heading all_of_equal]
+The function `all_of_equal` returns true if each item in the sequence compares equal to the value `val`:
 
 ``
 template<typename InputIterator, typename V>
-	bool all_of_val ( InputIterator first, InputIterator last, const V &val );
+	bool all_of_equal ( InputIterator first, InputIterator last, const V &val );
 template<typename R, typename V> 
-	bool all_of_val ( const R &range,  const V &val );
+	bool all_of_equal ( const R &range,  const V &val );
 ``
 
-[heading any_of_val]
-The function `any_of_val` returns true iff any item in the sequence compares equal to the value `val`:
+[heading any_of_equal]
+The function `any_of_equal` returns true if any item in the sequence compares equal to the value `val`:
 
 ``
 template<typename InputIterator, typename V>
-	bool any_of_val ( InputIterator first, InputIterator last, const V &val );
+	bool any_of_equal ( InputIterator first, InputIterator last, const V &val );
 template<typename R, typename V> 
-	bool any_of_val ( const R &range,  const V &val );
+	bool any_of_equal ( const R &range,  const V &val );
 ``
   
-[heading none_of_val]
-The function `none_of_val` returns true iff no item in the sequence compares equal to the value `val`:
+[heading none_of_equal]
+The function `none_of_equal` returns true if no item in the sequence compares equal to the value `val`:
 
 ``
 template<typename InputIterator, typename V>
-	bool none_of_val ( InputIterator first, InputIterator last, const V &val );
+	bool none_of_equal ( InputIterator first, InputIterator last, const V &val );
 template<typename R, typename V> 
-	bool none_of_val ( const R &range,  const V &val );
+	bool none_of_equal ( const R &range,  const V &val );
 ``
   
-[heading one_of_val]
-The function `one_of` returns true iff exactly one item in the sequence compares equal to the value `val`:
+[heading one_of_equal]
+The function `one_of` returns true if exactly one item in the sequence compares equal to the value `val`:
 
 ``
 template<typename InputIterator, typename V>
-	bool none_of_val ( InputIterator first, InputIterator last, const V &val );
+	bool none_of_equal ( InputIterator first, InputIterator last, const V &val );
 template<typename R, typename V> 
-	bool none_of_val ( const R &range,  const V &val );
+	bool none_of_equal ( const R &range,  const V &val );
 ``
 
 
