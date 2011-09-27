@@ -91,8 +91,6 @@ using std::none_of;     // Section 25.2.3
 #endif
 
 
-#pragma mark --Range-based versions--
-
 /// \fn all_of ( const R &range, Predicate p )
 /// \return true if all elements in the range satisfy the predicate 'p'
 /// 
@@ -129,7 +127,6 @@ using std::none_of;     // Section 25.2.3
     return (any_of) ( boost::begin ( range ), boost::end ( range ), p );
   } 
 
-#pragma mark --one_of--
 
 /// \fn one_of ( InputIterator first, InputIterator last, Predicate p )
 /// \return true if the predicate 'p' is true for exactly one item in [first, last).
@@ -159,8 +156,6 @@ using std::none_of;     // Section 25.2.3
   } 
 
 
-
-#pragma mark --Value based versions--
 
 /// \fn all_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if all elements in [first, last) are equal to 'val'
