@@ -78,7 +78,7 @@ void test_ints()
     BOOST_CHECK_EQUAL (  1U, ba::clamp (  0U, 1,  10 ));
     BOOST_CHECK_EQUAL ( 10U, ba::clamp ( 10U, 1,  10 ));
     BOOST_CHECK_EQUAL ( 10U, ba::clamp ( 15U, 1,  10 ));
-	
+    
 //  Mixed (3)
     BOOST_CHECK_EQUAL (  5U, ba::clamp (  5U, 1,  10. ));
     BOOST_CHECK_EQUAL (  1U, ba::clamp (  1U, 1,  10. ));
@@ -86,10 +86,10 @@ void test_ints()
     BOOST_CHECK_EQUAL ( 10U, ba::clamp ( 10U, 1,  10. ));
     BOOST_CHECK_EQUAL ( 10U, ba::clamp ( 15U, 1,  10. ));
     
-	short foo = 50;
-	BOOST_CHECK_EQUAL ( 56,     ba::clamp ( foo, 56.9, 129 ));
-	BOOST_CHECK_EQUAL ( 24910,  ba::clamp ( foo, 12345678, 123456999 ));
-	}
+    short foo = 50;
+    BOOST_CHECK_EQUAL ( 56,     ba::clamp ( foo, 56.9, 129 ));
+    BOOST_CHECK_EQUAL ( 24910,  ba::clamp ( foo, 12345678, 123456999 ));
+    }
 
 
 void test_floats()
@@ -165,44 +165,44 @@ void test_custom()
 
 void test_int_range ()
 {
-	int inputs []  = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 19, 99, 999, -1, -3, -99, 234234 };
-	int outputs [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10,  10, -1, -1, -1,  10 };
-	std::vector<int> results;
-	std::vector<int> in_v;
-	
-	std::copy ( a_begin(inputs), a_end(inputs), std::back_inserter ( in_v ));
-	
-	ba::clamp_range ( a_begin(inputs), a_end(inputs), std::back_inserter ( results ), -1, 10 );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
-	ba::clamp_range ( in_v.begin (), in_v.end (), std::back_inserter ( results ), -1, 10 );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
+    int inputs []  = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 19, 99, 999, -1, -3, -99, 234234 };
+    int outputs [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10,  10, -1, -1, -1,  10 };
+    std::vector<int> results;
+    std::vector<int> in_v;
+    
+    std::copy ( a_begin(inputs), a_end(inputs), std::back_inserter ( in_v ));
+    
+    ba::clamp_range ( a_begin(inputs), a_end(inputs), std::back_inserter ( results ), -1, 10 );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
+    ba::clamp_range ( in_v.begin (), in_v.end (), std::back_inserter ( results ), -1, 10 );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
 
-	ba::clamp_range ( a_begin(inputs), a_end(inputs), std::back_inserter ( results ), 10, -1, intGreater );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
-	ba::clamp_range ( in_v.begin (), in_v.end (), std::back_inserter ( results ), 10, -1, intGreater );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
+    ba::clamp_range ( a_begin(inputs), a_end(inputs), std::back_inserter ( results ), 10, -1, intGreater );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
+    ba::clamp_range ( in_v.begin (), in_v.end (), std::back_inserter ( results ), 10, -1, intGreater );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
 
-	ba::clamp_range ( a_range(inputs), std::back_inserter ( results ), -1, 10 );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
-	ba::clamp_range ( in_v, std::back_inserter ( results ), -1, 10 );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
-		
-	ba::clamp_range ( a_range(inputs), std::back_inserter ( results ), 10, -1, intGreater );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
-	ba::clamp_range ( in_v, std::back_inserter ( results ), 10, -1, intGreater );
-	BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
-	results.clear ();
-	
-	int junk[elementsof(inputs)];
-	ba::clamp_range ( inputs, junk, 10, -1, intGreater );
-	BOOST_CHECK ( std::equal ( b_e(junk), outputs ));
+    ba::clamp_range ( a_range(inputs), std::back_inserter ( results ), -1, 10 );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
+    ba::clamp_range ( in_v, std::back_inserter ( results ), -1, 10 );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
+        
+    ba::clamp_range ( a_range(inputs), std::back_inserter ( results ), 10, -1, intGreater );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
+    ba::clamp_range ( in_v, std::back_inserter ( results ), 10, -1, intGreater );
+    BOOST_CHECK ( std::equal ( results.begin(), results.end (), outputs ));
+    results.clear ();
+    
+    int junk[elementsof(inputs)];
+    ba::clamp_range ( inputs, junk, 10, -1, intGreater );
+    BOOST_CHECK ( std::equal ( b_e(junk), outputs ));
 }
 
 int test_main( int , char* [] )
