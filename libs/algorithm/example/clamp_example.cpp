@@ -46,5 +46,9 @@ int main ( int /*argc*/, char * /*argv*/ [] ) {
     
     }
 
+//	Sometimes, though, you don't get quite what you expect
+//	This is because the two double arguments get converted to int
+	std::cout << "Somewhat unexpected: clamp ( 12, 14.7, 15.9 ) --> " << ba::clamp ( 12, 14.7, 15.9 ) << std::endl;
+	std::cout << "Expected:     clamp ((double)12, 14.7, 15.9 ) --> " << ba::clamp ((double) 12, 14.7, 15.9 ) << std::endl;
     return 0;
     }
