@@ -556,7 +556,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
     
             int j;
             skip_ [ 0 ] = -1;
-            for ( int i = 1; i < count; ++i ) {
+            for ( int i = 1; i <= count; ++i ) {
                 j = skip_ [ i - 1 ];
                 while ( j >= 0 ) {
                     if ( first [ j ] == first [ i - 1 ] )
