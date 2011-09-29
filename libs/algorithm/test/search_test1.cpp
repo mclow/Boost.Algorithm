@@ -65,7 +65,7 @@ namespace {
             std::cout << "  bmh:    " << std::distance ( hBeg, it2 ) << "\n";
             std::cout << "  kpm:    " << std::distance ( hBeg, it3 )<< "\n";
             std::cout << std::flush;
-            BOOST_CHECK_EQUAL ( 0, 1 );     // force a failure
+            throw ;
             }
 
         BOOST_CHECK_EQUAL ( dist, expected );
@@ -113,7 +113,7 @@ namespace {
             std::cout << "  bmh:    " << std::distance ( hBeg, it2 ) << "\n";
             std::cout << "  kpm:    " << std::distance ( hBeg, it3 )<< "\n";
             std::cout << std::flush;
-            BOOST_CHECK_EQUAL ( 0, 1 );     // force a failure
+            throw ;
             }
 
         BOOST_CHECK_EQUAL ( dist, expected );
