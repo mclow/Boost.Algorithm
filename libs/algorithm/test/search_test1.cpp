@@ -37,7 +37,7 @@ namespace {
         iter_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
         iter_type it2  = boost::algorithm::boyer_moore_horspool_search(hBeg, hEnd, nBeg, nEnd);
         iter_type it3  = boost::algorithm::knuth_morris_pratt_search  (hBeg, hEnd, nBeg, nEnd);
-        int dist = it1 == hEnd ? -1 : std::distance ( hBeg, it1 );
+        const int dist = it1 == hEnd ? -1 : std::distance ( hBeg, it1 );
 
         std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; " << std::endl;
         try {
@@ -65,7 +65,7 @@ namespace {
             std::cout << "  bmh:    " << std::distance ( hBeg, it2 ) << "\n";
             std::cout << "  kpm:    " << std::distance ( hBeg, it3 )<< "\n";
             std::cout << std::flush;
-        //  throw;
+            BOOST_CHECK_EQUAL ( 0, 1 );     // force a failure
             }
 
         BOOST_CHECK_EQUAL ( dist, expected );
@@ -85,7 +85,7 @@ namespace {
         ptr_type it1  = boost::algorithm::boyer_moore_search         (hBeg, hEnd, nBeg, nEnd);
         ptr_type it2  = boost::algorithm::boyer_moore_horspool_search(hBeg, hEnd, nBeg, nEnd);
         ptr_type it3  = boost::algorithm::knuth_morris_pratt_search  (hBeg, hEnd, nBeg, nEnd);
-        int dist = it1 == hEnd ? -1 : std::distance ( hBeg, it1 );
+        const int dist = it1 == hEnd ? -1 : std::distance ( hBeg, it1 );
 
         std::cout << "Pattern is " << needle.length () << ", haysstack is " << haystack.length () << " chars long; " << std::endl;
         try {
@@ -113,7 +113,7 @@ namespace {
             std::cout << "  bmh:    " << std::distance ( hBeg, it2 ) << "\n";
             std::cout << "  kpm:    " << std::distance ( hBeg, it3 )<< "\n";
             std::cout << std::flush;
-        //  throw;
+            BOOST_CHECK_EQUAL ( 0, 1 );     // force a failure
             }
 
         BOOST_CHECK_EQUAL ( dist, expected );
