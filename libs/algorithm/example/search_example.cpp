@@ -25,7 +25,7 @@ int main ( int /*argc*/, char * /*argv*/ [] ) {
 //  algorithms. They all have the same (dual) interface.
 
 //  There is a procedural interface, based on std::search:
-    if ( ba::boyer_moore_search ( needle1.begin (), needle1.end (), haystack.begin (), haystack.end ()) != haystack.end ())
+    if ( ba::boyer_moore_search ( haystack.begin (), haystack.end (), needle1.begin (), needle1.end ()) != haystack.end ())
         std::cout << "Found '" << needle1 << "'  in '" << haystack << "' (boyer-moore 1)" << std::endl;
     else
         std::cout << "Did NOT find '" << needle1 << "'  in '" << haystack << "' (boyer-moore 1)" << std::endl;
@@ -40,13 +40,13 @@ int main ( int /*argc*/, char * /*argv*/ [] ) {
         std::cout << "Did NOT find '" << needle1 << "'  in '" << haystack << "' (boyer-moore 2)" << std::endl;
 
 //  There is also an implementation of boyer-moore-horspool searching
-    if ( ba::boyer_moore_horspool_search ( needle1.begin (), needle1.end (), haystack.begin (), haystack.end ()) != haystack.end ())
+    if ( ba::boyer_moore_horspool_search ( haystack.begin (), haystack.end (), needle1.begin (), needle1.end ()) != haystack.end ())
         std::cout << "Found '" << needle1 << "'  in '" << haystack << "' (boyer-moore-horspool)" << std::endl;
     else
         std::cout << "Did NOT find '" << needle1 << "'  in '" << haystack << "' (boyer-moore-horspool)" << std::endl;
 
 //  And also the knuth-pratt-morris search algorithm
-    if ( ba::knuth_morris_pratt_search ( needle1.begin (), needle1.end (), haystack.begin (), haystack.end ()) != haystack.end ())
+    if ( ba::knuth_morris_pratt_search ( haystack.begin (), haystack.end (), needle1.begin (), needle1.end ()) != haystack.end ())
         std::cout << "Found '" << needle1 << "'  in '" << haystack << "' (knuth_morris_pratt)" << std::endl;
     else
         std::cout << "Did NOT find '" << needle1 << "'  in '" << haystack << "' (knuth_morris_pratt)" << std::endl;
