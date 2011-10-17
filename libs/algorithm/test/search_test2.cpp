@@ -5,7 +5,9 @@
    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 */
 
-#include <boost/algorithm/search.hpp>
+#include <boost/algorithm/searching/boyer_moore.hpp>
+#include <boost/algorithm/searching/boyer_moore_horspool.hpp>
+#include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 
 #include <boost/test/included/test_exec_monitor.hpp>
 

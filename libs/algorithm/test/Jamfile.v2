@@ -23,6 +23,10 @@ project /boost/algorithm/test
 
 
 run all_test.cpp ;
+run all_of_test.cpp ;
+run any_of_test.cpp ;
+run none_of_test.cpp ;
+run one_of_test.cpp ;
 run clamp_test.cpp ;
 run ordered_test.cpp ;
 
