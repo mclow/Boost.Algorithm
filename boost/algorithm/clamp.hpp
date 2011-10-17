@@ -21,11 +21,13 @@
 
 #include <functional>       //  For std::less
 #include <iterator>         //  For std::iterator_traits
+#include <cassert>
 
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/mpl/identity.hpp>      // for identity
 #include <boost/utility/enable_if.hpp> // for boost::disable_if
+
 namespace boost { namespace algorithm {
 
 /// \fn clamp ( T const& val, 
@@ -44,10 +46,11 @@ namespace boost { namespace algorithm {
 ///                 p ( a, b ) returns a boolean.
 ///
   template<typename T, typename Pred> 
-  const T& clamp ( T const& val, 
+  T const & clamp ( T const& val, 
     typename boost::mpl::identity<T>::type const & lo, 
     typename boost::mpl::identity<T>::type const & hi, Pred p )
   {
+//    assert ( !p ( hi, lo ));    // Can't assert p ( lo, hi ) b/c they might be equal
     return p ( val, lo ) ? lo : p ( hi, val ) ? hi : val;
   } 
 
@@ -65,7 +68,7 @@ namespace boost { namespace algorithm {
 /// \param hi    The upper bound of the range to be clamped to
 ///
   template<typename T> 
-  const T& clamp ( const T& val, 
+  T const& clamp ( const T& val, 
     typename boost::mpl::identity<T>::type const & lo, 
     typename boost::mpl::identity<T>::type const & hi )
   {
