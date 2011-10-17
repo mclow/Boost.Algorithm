@@ -37,6 +37,7 @@ test_ordered(void)
     const int randomValues[] = { 3, 6, 1, 2, 7 };
     const int constantValues[] = { 7, 7, 7, 7, 7 };
           int nonConstantArray[] = { 7, 7, 7, 7, 7 };
+    const int inOrderUntilTheEnd [] = { 0, 1, 2, 3, 4, 5, 6, 7, 6 };
 
     // Test a strictly increasing sequence
     BOOST_CHECK (  ba::is_strictly_increasing (b_e(strictlyIncreasingValues)));
@@ -103,7 +104,19 @@ test_ordered(void)
 
     BOOST_CHECK ( ba::is_ordered ( b_e(nonConstantArray),     std::less<int>()) !=      a_end(nonConstantArray));
     BOOST_CHECK ( ba::is_ordered ( a_range(nonConstantArray), std::less<int>()) != boost::end(nonConstantArray));
-    
+
+    BOOST_CHECK ( ba::is_ordered ( b_e(randomValues),     std::less<int>()) == &randomValues[2] );
+    BOOST_CHECK ( ba::is_ordered ( a_range(randomValues), std::less<int>()) == &randomValues[2] );
+
+    BOOST_CHECK ( ba::is_ordered ( b_e(randomValues),     std::less<int>()) == &randomValues[2] );
+    BOOST_CHECK ( ba::is_ordered ( a_range(randomValues), std::less<int>()) == &randomValues[2] );
+
+    BOOST_CHECK ( ba::is_ordered ( a_range(inOrderUntilTheEnd), std::less<int>()) == &inOrderUntilTheEnd[8] );
+
+//  For zero and one element collections, the comparison predicate should never be called
+    BOOST_CHECK ( ba::is_ordered ( a_begin(randomValues), a_begin(randomValues),     std::equal_to<int>()) == a_begin(randomValues));
+    BOOST_CHECK ( ba::is_ordered ( a_begin(randomValues), a_begin(randomValues) + 1, std::equal_to<int>()) == a_begin(randomValues) + 1);
+
 }
 
 int test_main( int, char * [] )
