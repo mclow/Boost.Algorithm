@@ -21,7 +21,9 @@ The function `clamp (v, lo, hi)` returns:
 * lo if v < lo
 * hi if hi < v
 * otherwise, v
-	
+
+Note: using `clamp` with floating point numbers may give unexpected results if one of the values is `NaN`.
+
 There is also a version that allows the caller to specify a comparison predicate to use instead of `operator <`.
 
 ``
