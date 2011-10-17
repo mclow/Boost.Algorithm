@@ -32,7 +32,7 @@
 
 namespace boost { namespace algorithm {
 
-/// \fn is_ordered ( FI first, FI last, Pred p )
+/// \fn is_ordered ( ForwardIterator first, ForwardIterator last, Pred p )
 /// \return the point in the sequence [first, last) where the elements are unordered
 ///     (according to the comparison predicate 'p').
 /// 
@@ -40,15 +40,15 @@ namespace boost { namespace algorithm {
 /// \param last  One past the end of the sequence
 /// \param p     A binary predicate that returns true if two elements are ordered.
 ///
-    template <typename FI, typename Pred>
-    FI is_ordered ( FI first, FI last, Pred p )
+    template <typename ForwardIterator, typename Pred>
+    ForwardIterator is_ordered ( ForwardIterator first, ForwardIterator last, Pred p )
     {
-        if ( first == last ) return first;  // the empty sequence is ordered
-        FI next = first;
+        if ( first == last ) return last;  // the empty sequence is ordered
+        ForwardIterator next = first;
         while ( ++next != last )
         {
             if ( !p ( *first, *next ))
-                return first;
+                return next;
             first = next;
         }
         return last;    
@@ -62,14 +62,14 @@ namespace boost { namespace algorithm {
 /// \param p     A binary predicate that returns true if two elements are ordered.
 ///
     template <typename R, typename Pred>
-    typename boost::range_const_iterator<R>::type is_ordered ( const R &range, Pred p )
+    typename boost::range_iterator<const R>::type is_ordered ( const R &range, Pred p )
     {
         return (is_ordered) ( boost::begin ( range ), boost::end ( range ), p );
     }
 
 
 
-/// \fn is_increasing ( FI first, FI last )
+/// \fn is_increasing ( ForwardIterator first, ForwardIterator last )
 /// \return true if the entire sequence is increasing; i.e, each item is greater than or  
 ///     equal to the previous one.
 /// 
@@ -78,10 +78,10 @@ namespace boost { namespace algorithm {
 ///
 /// \note This function will return true for sequences that contain items that compare
 ///     equal. If that is not what you intended, you should use is_strictly_increasing instead.
-    template <typename FI>
-    bool is_increasing ( FI first, FI last )
+    template <typename ForwardIterator>
+    bool is_increasing ( ForwardIterator first, ForwardIterator last )
     {
-        typedef typename std::iterator_traits<FI>::value_type value_type;
+        typedef typename std::iterator_traits<ForwardIterator>::value_type value_type;
         return (is_ordered) (first, last, std::less_equal<value_type>()) == last;
     }
 
@@ -102,7 +102,7 @@ namespace boost { namespace algorithm {
 
 
 
-/// \fn is_decreasing ( FI first, FI last )
+/// \fn is_decreasing ( ForwardIterator first, ForwardIterator last )
 /// \return true if the entire sequence is decreasing; i.e, each item is less than 
 ///     or equal to the previous one.
 /// 
@@ -111,10 +111,10 @@ namespace boost { namespace algorithm {
 ///
 /// \note This function will return true for sequences that contain items that compare
 ///     equal. If that is not what you intended, you should use is_strictly_decreasing instead.
-    template <typename FI>
-    bool is_decreasing ( FI first, FI last )
+    template <typename ForwardIterator>
+    bool is_decreasing ( ForwardIterator first, ForwardIterator last )
     {
-        typedef typename std::iterator_traits<FI>::value_type value_type;
+        typedef typename std::iterator_traits<ForwardIterator>::value_type value_type;
         return (is_ordered) (first, last, std::greater_equal<value_type>()) == last;
     }
 
@@ -134,7 +134,7 @@ namespace boost { namespace algorithm {
 
 
 
-/// \fn is_strictly_increasing ( FI first, FI last )
+/// \fn is_strictly_increasing ( ForwardIterator first, ForwardIterator last )
 /// \return true if the entire sequence is strictly increasing; i.e, each item is greater
 ///     than the previous one
 /// 
@@ -143,10 +143,10 @@ namespace boost { namespace algorithm {
 ///
 /// \note This function will return false for sequences that contain items that compare
 ///     equal. If that is not what you intended, you should use is_increasing instead.
-    template <typename FI>
-    bool is_strictly_increasing ( FI first, FI last )
+    template <typename ForwardIterator>
+    bool is_strictly_increasing ( ForwardIterator first, ForwardIterator last )
     {
-        typedef typename std::iterator_traits<FI>::value_type value_type;
+        typedef typename std::iterator_traits<ForwardIterator>::value_type value_type;
         return (is_ordered) (first, last, std::less<value_type>()) == last;
     }
 
@@ -165,7 +165,7 @@ namespace boost { namespace algorithm {
     }
 
 
-/// \fn is_strictly_decreasing ( FI first, FI last )
+/// \fn is_strictly_decreasing ( ForwardIterator first, ForwardIterator last )
 /// \return true if the entire sequence is strictly decreasing; i.e, each item is less than
 ///     the previous one
 /// 
@@ -174,10 +174,10 @@ namespace boost { namespace algorithm {
 ///
 /// \note This function will return false for sequences that contain items that compare
 ///     equal. If that is not what you intended, you should use is_decreasing instead.
-    template <typename FI>
-    bool is_strictly_decreasing ( FI first, FI last )
+    template <typename ForwardIterator>
+    bool is_strictly_decreasing ( ForwardIterator first, ForwardIterator last )
     {
-        typedef typename std::iterator_traits<FI>::value_type value_type;
+        typedef typename std::iterator_traits<ForwardIterator>::value_type value_type;
         return (is_ordered) (first, last, std::greater<value_type>()) == last;
     }
 
