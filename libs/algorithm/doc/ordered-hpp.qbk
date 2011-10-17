@@ -16,20 +16,26 @@ The header file ordered.hpp functions for determining if a sequence is ordered (
 
 [heading ordered]
 
-The function `is_ordered(sequence, predicate)` returns the point in the sequence where the predicate does not hold. It does that by comparing adjacent pairs of elements in the sequence to see if the predicate is satisfied. If all adjacent pairs satisfy the predicate, then it will return one past the last element of the sequence. If the sequence has less than two elements, it returns the last element of the sequence. In other words, sequences of length zero and one are considered to be ordered - using any possible criteria.
+The function `is_ordered(sequence, predicate)` compares each sequential pair of elements in the sequence, checking if they satisfy the predicate. it returns the first element of the sequence that does not satisfy the predicate with its' predecessor. In short, it returns the element in the sequence that is "out of order". If all adjacent pairs satisfy the predicate, then it will return one past the last element of the sequence. If the sequence has less than two elements, it returns one past the last element of the sequence. In other words, sequences of length zero and one are considered to be ordered - using any possible criteria.
 
 ``
-template <typename FI, typename Pred>
-FI is_ordered ( FI first, FI last, Pred p );
+template <typename ForwardIterator, typename Pred>
+FI is_ordered ( ForwardIterator first, ForwardIterator last, Pred p );
 
-template <typename R, typename Pred>
-typename boost::range_const_iterator<R>::type is_ordered ( const R &range, Pred p );
+template <typename Range, typename Pred>
+typename boost::range_const_iterator<R>::type is_ordered ( const Range &r, Pred p );
 ``
 
-Iterator requirements: The `is_ordered` functions will work on forward iterators or better. Since they have to return a place in the input sequence, input iterators are will not suffice.
+Iterator requirements: The `is_ordered` functions will work on forward iterators or better. Since they have to return a place in the input sequence, input iterators will not suffice.
 
 Complexity:
 	`is_ordered` will make at most ['N-1] calls to the predicate (given a sequence of length ['N]).
+
+Examples:
+
+Given the sequence `{ 1, 2, 3, 4, 5, 3 }`, `is_ordered ( beg, end, std::less<int> ())` would return an iterator pointing at the second `3`.
+
+Given the sequence `{ 1, 2, 3, 4, 5, 9 }`, `is_ordered ( beg, end, std::less<int> ())` would return `end`.
 
 
 There are also a set of "wrapper functions" for is_ordered which make it easy to see if an entire sequence is ordered. These functions return a boolean indicating success or failure rather than an iterator to where the out of order items were found.
