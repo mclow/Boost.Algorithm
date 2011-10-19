@@ -10,7 +10,9 @@
 #include <string>
 #include <iostream>     //  for cout, etc.
 
-#include <boost/algorithm/search.hpp>
+#include <boost/algorithm/searching/boyer_moore.hpp>
+#include <boost/algorithm/searching/boyer_moore_horspool.hpp>
+#include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 
 namespace ba = boost::algorithm;
 

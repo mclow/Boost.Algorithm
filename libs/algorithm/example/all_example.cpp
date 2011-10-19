@@ -9,12 +9,13 @@
 
 #include <iostream>     // for cout, etc
 
-#include <boost/algorithm/all.hpp>
+#include <boost/algorithm/all_of.hpp>
+#include <boost/algorithm/none_of.hpp>
+#include <boost/algorithm/any_of.hpp>
 
 const int one []   = { 1, 2, 2, 2, 5 };
 
 #define elementsof(v)   (sizeof (v) / sizeof (v[0]))
-
 template <int x>
 bool less_than_x ( int val ) { return val < x; }
 
@@ -24,7 +25,7 @@ bool is_even ( int val ) { return val % 2 == 0; }
 namespace ba = boost::algorithm;
 
 int main ( int /*argc*/, char * /*argv*/ [] ) {
-//  The routines in all.hpp let you test a sequence of values to see if they satisfy a property
+//  These routines let you test a sequence of values to see if they satisfy a property
     if ( ba::all_of ( one, less_than_x<10> ))
         std::cout << "They're all less than 10" << std::endl;
     else
@@ -49,16 +50,34 @@ int main ( int /*argc*/, char * /*argv*/ [] ) {
         std::cout << "At least one of them is even (2)" << std::endl;
 
 //  Besides the predicate-based tests, there are value based tests.
-    if ( ba::all_of_val ( one, one + elementsof(one), 2 ))
+    if ( ba::all_of_equal ( one, one + elementsof(one), 2 ))
         std::cout << "All your values are two" << std::endl;
     else
         std::cout << "NOT all your values are two" << std::endl;
 
 //  And, of course, you don't have to test the entire container
-    if ( ba::all_of_val ( one + 1, one + 4, 2 ))
+    if ( ba::all_of_equal ( one + 1, one + 4, 2 ))
         std::cout << "All your values are two" << std::endl;
     else
         std::cout << "NOT all your values are two" << std::endl;
         
+//	all_of returns TRUE for the empty range
+    if ( ba::all_of_equal ( one, one, 4 ))
+        std::cout << "All of the empty range are four" << std::endl;
+    else
+        std::cout << "NOT all of the empty range are four" << std::endl;
+    
+//	none_of returns TRUE for the empty range
+    if ( ba::none_of_equal ( one, one, 4 ))
+        std::cout << "None of the empty range are four" << std::endl;
+    else
+        std::cout << "NOT none of the empty range are four" << std::endl;
+
+//	any_of returns FALSE for the empty range
+    if ( ba::any_of_equal ( one, one, 4 ))
+        std::cout << "At least one of the empty range is four" << std::endl;
+    else
+        std::cout << "None of the empty range is four" << std::endl;
+
     return 0;
     }
