@@ -39,17 +39,17 @@ for ( ; first != last; ++first )
 } 
 #endif
 
-/// \fn none_of ( const R &range, Predicate p )
+/// \fn none_of ( const Range &r, Predicate p )
 /// \return true if none of the elements in the range satisfy the predicate 'p'
 /// \note returns true on an empty range
 /// 
 /// \param range The input range
 /// \param p     A predicate for testing the elements of the range
 ///
-template<typename R, typename Predicate> 
-bool none_of ( const R &range, Predicate p )
+template<typename Range, typename Predicate> 
+bool none_of ( const Range &r, Predicate p )
 {
-    return (none_of) ( boost::begin ( range ), boost::end ( range ), p );
+    return none_of (boost::begin (r), boost::end (r), p );
 } 
 
 /// \fn none_of_equal ( InputIterator first, InputIterator last, const V &val )
@@ -69,17 +69,17 @@ bool none_of_equal ( InputIterator first, InputIterator last, const V &val )
     return true; 
 } 
 
-/// \fn none_of_equal ( const R &range, const V &val )
+/// \fn none_of_equal ( const Range &r, const V &val )
 /// \return true if none of the elements in the range are equal to 'val'
 /// \note returns true on an empty range
 /// 
 /// \param range The input range
 /// \param val   A value to compare against
 ///
-template<typename R, typename V> 
-bool none_of_equal ( const R &range, const V & val ) 
+template<typename Range, typename V> 
+bool none_of_equal ( const Range &r, const V & val ) 
 {
-    return (none_of_equal) ( boost::begin ( range ), boost::end ( range ), val );
+    return none_of_equal (boost::begin (r), boost::end (r), val);
 } 
 
 }} // namespace boost and algorithm
