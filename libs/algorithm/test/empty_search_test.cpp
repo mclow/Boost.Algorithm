@@ -20,57 +20,57 @@ int test_main( int argc, char *argv [] )
     std::string str ( "abc" );
     
 //  empty corpus, empty pattern
-	BOOST_CHECK ( 
-		boost::algorithm::boyer_moore_search (
+    BOOST_CHECK ( 
+        boost::algorithm::boyer_moore_search (
             cs.begin (), cs.end (), estr.begin (), estr.end ())
-		== cs.begin ()
+        == cs.begin ()
         );
 
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::boyer_moore_horspool_search (
             cs.begin (), cs.end (), estr.begin (), estr.end ())
-		== cs.begin ()
+        == cs.begin ()
         );
 
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::knuth_morris_pratt_search (
             cs.begin (), cs.end (), estr.begin (), estr.end ())
-		== cs.begin ()
+        == cs.begin ()
         );
 
 //  empty corpus, non-empty pattern
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::boyer_moore_search (
             estr.begin (), estr.end (), str.begin (), str.end ())
         == estr.end ()
         );
 
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::boyer_moore_horspool_search (
             estr.begin (), estr.end (), str.begin (), str.end ())
         == estr.end ()
         );
 
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::knuth_morris_pratt_search (
             estr.begin (), estr.end (), str.begin (), str.end ())
         == estr.end ()
         );
 
 //  non-empty corpus, empty pattern
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::boyer_moore_search (
             str.begin (), str.end (), estr.begin (), estr.end ())
         == str.begin ()
         );
 
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::boyer_moore_horspool_search (
             str.begin (), str.end (), estr.begin (), estr.end ())
         == str.begin ()
         );
 
-	BOOST_CHECK ( 
+    BOOST_CHECK ( 
         boost::algorithm::knuth_morris_pratt_search (
             str.begin (), str.end (), estr.begin (), estr.end ())
         == str.begin ()

@@ -29,7 +29,7 @@ using std::all_of;      // Section 25.2.1
 /// \param last  One past the end of the input sequence
 /// \param p     A predicate for testing the elements of the sequence
 ///
-/// \note			This function is part of the C++2011 standard library.
+/// \note           This function is part of the C++2011 standard library.
 ///  We will use the standard one if it is available, 
 ///  otherwise we have our own implementation.
 template<typename InputIterator, typename Predicate> 

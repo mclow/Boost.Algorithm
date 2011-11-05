@@ -32,10 +32,10 @@ using std::any_of;      // Section 25.2.2
 template<typename InputIterator, typename Predicate> 
 bool any_of ( InputIterator first, InputIterator last, Predicate p ) 
 {
-	for ( ; first != last; ++first )
-		if ( p(*first)) 
-			return true;
-	return false; 
+    for ( ; first != last; ++first )
+        if ( p(*first)) 
+            return true;
+    return false; 
 } 
 #endif
 
@@ -49,7 +49,7 @@ bool any_of ( InputIterator first, InputIterator last, Predicate p )
 template<typename Range, typename Predicate> 
 bool any_of ( const Range &r, Predicate p )
 {
-	return any_of (boost::begin (r), boost::end (r), p);
+    return any_of (boost::begin (r), boost::end (r), p);
 } 
 
 /// \fn any_of_equal ( InputIterator first, InputIterator last, const V &val )
@@ -63,10 +63,10 @@ bool any_of ( const Range &r, Predicate p )
 template<typename InputIterator, typename V> 
 bool any_of_equal ( InputIterator first, InputIterator last, const V &val ) 
 {
-	for ( ; first != last; ++first )
-		if ( val == *first )
-			return true;
-	return false; 
+    for ( ; first != last; ++first )
+        if ( val == *first )
+            return true;
+    return false; 
 } 
 
 /// \fn any_of_equal ( const Range &r, const V &val )
@@ -79,7 +79,7 @@ bool any_of_equal ( InputIterator first, InputIterator last, const V &val )
 template<typename Range, typename V> 
 bool any_of_equal ( const Range &r, const V &val ) 
 {
-	return any_of_equal (boost::begin (r), boost::end (r), val);
+    return any_of_equal (boost::begin (r), boost::end (r), val);
 }
 
 }} // namespace boost and algorithm

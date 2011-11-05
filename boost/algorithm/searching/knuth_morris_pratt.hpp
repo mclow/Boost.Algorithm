@@ -19,11 +19,11 @@
 
 #include <boost/algorithm/searching/detail/debugging.hpp>
 
-// #define	BOOST_ALGORITHM_KNUTH_MORRIS_PRATT_DEBUG
+// #define  BOOST_ALGORITHM_KNUTH_MORRIS_PRATT_DEBUG
 
 namespace boost { namespace algorithm {
 
-// #define	NEW_KMP
+// #define  NEW_KMP
 
 /*
     A templated version of the Knuth-Morris-Pratt searching algorithm.
@@ -65,8 +65,8 @@ namespace boost { namespace algorithm {
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
             BOOST_STATIC_ASSERT (( boost::is_same<
-            	typename std::iterator_traits<patIter>::value_type, 
-            	typename std::iterator_traits<corpusIter>::value_type>::value ));
+                typename std::iterator_traits<patIter>::value_type, 
+                typename std::iterator_traits<corpusIter>::value_type>::value ));
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
 
@@ -97,17 +97,17 @@ namespace boost { namespace algorithm {
             std::size_t match_start = 0;  // position in the corpus that we're matching
             
 #ifdef NEW_KMP
-			int patternIdx = 0;
-			while ( match_start < k_corpus_length ) {
-				while ( patternIdx > -1 && pat_first[patternIdx] != corpus_first [match_start] )
-					patternIdx = skip_ [patternIdx]; //<--- Shifting the pattern on mismatch
+            int patternIdx = 0;
+            while ( match_start < k_corpus_length ) {
+                while ( patternIdx > -1 && pat_first[patternIdx] != corpus_first [match_start] )
+                    patternIdx = skip_ [patternIdx]; //<--- Shifting the pattern on mismatch
 
-				patternIdx++;
-				match_start++; //<--- corpus is always increased by 1
+                patternIdx++;
+                match_start++; //<--- corpus is always increased by 1
 
-				if ( patternIdx >= (int) k_pattern_length )
-					return corpus_first + match_start - patternIdx;
-				}
+                if ( patternIdx >= (int) k_pattern_length )
+                    return corpus_first + match_start - patternIdx;
+                }
             
 #else
 //  At this point, we know:
@@ -139,24 +139,24 @@ namespace boost { namespace algorithm {
             }
     
 
-		void preKmp ( patIter first, patIter last ) {
-		   const /*std::size_t*/ int count = std::distance ( first, last );
-		
-		   int i, j;
-		
-		   i = 0;
-		   j = skip_[0] = -1;
-		   while (i < count) {
-			  while (j > -1 && first[i] != first[j])
-				 j = skip_[j];
-			  i++;
-			  j++;
-			  if (first[i] == first[j])
-				 skip_[i] = skip_[j];
-			  else
-				 skip_[i] = j;
-		   }
-		}
+        void preKmp ( patIter first, patIter last ) {
+           const /*std::size_t*/ int count = std::distance ( first, last );
+        
+           int i, j;
+        
+           i = 0;
+           j = skip_[0] = -1;
+           while (i < count) {
+              while (j > -1 && first[i] != first[j])
+                 j = skip_[j];
+              i++;
+              j++;
+              if (first[i] == first[j])
+                 skip_[i] = skip_[j];
+              else
+                 skip_[i] = j;
+           }
+        }
 
 
         void init_skip_table ( patIter first, patIter last ) {
@@ -196,4 +196,4 @@ namespace boost { namespace algorithm {
         }
 }}
 
-#endif	// BOOST_ALGORITHM_KNUTH_MORRIS_PRATT_SEARCH_HPP
+#endif  // BOOST_ALGORITHM_KNUTH_MORRIS_PRATT_SEARCH_HPP

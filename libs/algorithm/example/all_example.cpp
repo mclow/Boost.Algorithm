@@ -61,19 +61,19 @@ int main ( int /*argc*/, char * /*argv*/ [] ) {
     else
         std::cout << "NOT all your values are two" << std::endl;
         
-//	all_of returns TRUE for the empty range
+//  all_of returns TRUE for the empty range
     if ( ba::all_of_equal ( one, one, 4 ))
         std::cout << "All of the empty range are four" << std::endl;
     else
         std::cout << "NOT all of the empty range are four" << std::endl;
     
-//	none_of returns TRUE for the empty range
+//  none_of returns TRUE for the empty range
     if ( ba::none_of_equal ( one, one, 4 ))
         std::cout << "None of the empty range are four" << std::endl;
     else
         std::cout << "NOT none of the empty range are four" << std::endl;
 
-//	any_of returns FALSE for the empty range
+//  any_of returns FALSE for the empty range
     if ( ba::any_of_equal ( one, one, 4 ))
         std::cout << "At least one of the empty range is four" << std::endl;
     else

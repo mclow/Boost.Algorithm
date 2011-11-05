@@ -10,7 +10,7 @@
 #ifndef BOOST_ALGORITHM_SEARCH_DETAIL_BM_TRAITS_HPP
 #define BOOST_ALGORITHM_SEARCH_DETAIL_BM_TRAITS_HPP
 
-#include <climits>		// for CHAR_BIT
+#include <climits>      // for CHAR_BIT
 #include <vector>
 #include <iterator>     // for std::iterator_traits
 
@@ -100,6 +100,6 @@ namespace boost { namespace algorithm { namespace detail {
                 boost::is_integral<key_type>::value && (sizeof(key_type)==1)> skip_table_t;
         };
 
-}}}	// namespaces
+}}} // namespaces
 
-#endif	//	BOOST_ALGORITHM_SEARCH_DETAIL_BM_TRAITS_HPP
+#endif  //  BOOST_ALGORITHM_SEARCH_DETAIL_BM_TRAITS_HPP

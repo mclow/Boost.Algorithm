@@ -68,8 +68,8 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         template <typename corpusIter>
         corpusIter operator () ( corpusIter corpus_first, corpusIter corpus_last ) const {
             BOOST_STATIC_ASSERT (( boost::is_same<
-            	typename std::iterator_traits<patIter>::value_type, 
-            	typename std::iterator_traits<corpusIter>::value_type>::value ));
+                typename std::iterator_traits<patIter>::value_type, 
+                typename std::iterator_traits<corpusIter>::value_type>::value ));
 
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
@@ -138,4 +138,4 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
 }}
 
-#endif	//	BOOST_ALGORITHM_BOYER_MOORE_HORSPOOOL_SEARCH_HPP
+#endif  //  BOOST_ALGORITHM_BOYER_MOORE_HORSPOOOL_SEARCH_HPP

@@ -25,4 +25,4 @@ namespace boost { namespace algorithm { namespace detail {
     
 }}}
 
-#endif	//	BOOST_ALGORITHM_SEARCH_DETAIL_DEBUG_HPP
+#endif  //  BOOST_ALGORITHM_SEARCH_DETAIL_DEBUG_HPP

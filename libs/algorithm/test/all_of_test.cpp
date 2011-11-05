@@ -21,7 +21,7 @@ struct is_ : public std::unary_function<T, bool> {
     ~is_ () {}
     bool operator () ( T comp ) const { return val_ == comp; }
 private:
-	is_ ();	// need a value
+    is_ (); // need a value
 
     T val_;
     };
