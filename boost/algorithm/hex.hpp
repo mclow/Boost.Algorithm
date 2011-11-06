@@ -144,8 +144,8 @@ namespace detail {
 template <typename InputIterator, typename OutputIterator>
 typename boost::enable_if<boost::is_integral<typename detail::hex_iterator_traits<InputIterator>::value_type>, OutputIterator>::type
 hex ( InputIterator first, InputIterator last, OutputIterator out ) {
-    for ( ; first != last; ++first )
-        out = detail::encode_one ( *first, out );
+    while ( first != last )
+        out = detail::encode_one ( *first++, out );
     return out;
     }
     
