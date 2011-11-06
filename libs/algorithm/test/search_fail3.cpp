@@ -6,7 +6,6 @@
 */
 
 #include <vector>
-#include <boost/algorithm/search.hpp>
 #include <boost/algorithm/searching/boyer_moore.hpp>
 
 int main( int argc, char *argv [] )
