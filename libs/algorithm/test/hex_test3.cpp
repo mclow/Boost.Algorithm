@@ -25,20 +25,24 @@ const wchar_t *tohex [] = {
 
 void test_to_hex () {
     for ( const wchar_t **p = tohex; *p; p++ ) {
-        std::wstring arg, argh, one, two, three;
+        std::wstring arg, argh, one, two, three, four;
         arg.assign ( *p );
         boost::algorithm::hex ( *p, std::back_inserter ( one ));
         boost::algorithm::hex ( arg, std::back_inserter ( two ));
         boost::algorithm::hex ( arg.begin (), arg.end (), std::back_inserter ( three ));
+        four = boost::algorithm::hex ( arg );
         BOOST_CHECK ( one == two );
-        BOOST_CHECK ( two == three );
+        BOOST_CHECK ( one == three );
+        BOOST_CHECK ( one == four );
         argh = one;
-        one.clear (); two.clear (); three.clear ();
+        one.clear (); two.clear (); three.clear (); four.clear ();
         boost::algorithm::unhex ( argh.c_str (), std::back_inserter ( one ));
         boost::algorithm::unhex ( argh, std::back_inserter ( two ));
         boost::algorithm::unhex ( argh.begin (), argh.end (), std::back_inserter ( three ));
+        four = boost::algorithm::unhex ( argh );
         BOOST_CHECK ( one == two );
-        BOOST_CHECK ( two == three );
+        BOOST_CHECK ( one == three );
+        BOOST_CHECK ( one == four );
         BOOST_CHECK ( one == arg );
         }
     }
@@ -52,20 +56,24 @@ const wchar_t *fromhex [] = {
 
 void test_from_hex_success () {
     for ( const wchar_t **p = fromhex; *p; p++ ) {
-        std::wstring arg, argh, one, two, three;
+        std::wstring arg, argh, one, two, three, four;
         arg.assign ( *p );
         boost::algorithm::unhex ( *p, std::back_inserter ( one ));
         boost::algorithm::unhex ( arg, std::back_inserter ( two ));
         boost::algorithm::unhex ( arg.begin (), arg.end (), std::back_inserter ( three ));
+        four = boost::algorithm::unhex ( arg );
         BOOST_CHECK ( one == two );
-        BOOST_CHECK ( two == three );
+        BOOST_CHECK ( one == three );
+        BOOST_CHECK ( one == four );
         argh = one;
-        one.clear (); two.clear (); three.clear ();
+        one.clear (); two.clear (); three.clear (); four.clear ();
         boost::algorithm::hex ( argh.c_str (), std::back_inserter ( one ));
         boost::algorithm::hex ( argh, std::back_inserter ( two ));
         boost::algorithm::hex ( argh.begin (), argh.end (), std::back_inserter ( three ));
+        four = boost::algorithm::hex ( argh );
         BOOST_CHECK ( one == two );
-        BOOST_CHECK ( two == three );
+        BOOST_CHECK ( one == three );
+        BOOST_CHECK ( one == four );
         BOOST_CHECK ( one == arg );
         }
     }
@@ -89,11 +97,11 @@ void test_from_hex_failure () {
         num_catches = 0;
 
         try { boost::algorithm::unhex ( *p, std::back_inserter ( one )); }
-        catch ( const std::runtime_error &ex ) { num_catches++; }
+        catch ( const boost::algorithm::hex_decode_error &ex ) { num_catches++; }
         try { boost::algorithm::unhex ( arg, std::back_inserter ( one )); }
-        catch ( const std::runtime_error &ex ) { num_catches++; }
+        catch ( const boost::algorithm::hex_decode_error &ex ) { num_catches++; }
         try { boost::algorithm::unhex ( arg.begin (), arg.end (), std::back_inserter ( one )); }
-        catch ( const std::runtime_error &ex ) { num_catches++; }
+        catch ( const boost::algorithm::hex_decode_error &ex ) { num_catches++; }
         BOOST_CHECK ( num_catches == 3 );
         }
     }

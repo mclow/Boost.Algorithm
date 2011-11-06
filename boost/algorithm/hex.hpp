@@ -31,12 +31,18 @@ TO DO:
 
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
+#include <boost/exception/all.hpp>
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_integral.hpp>
 
 
 namespace boost { namespace algorithm {
+
+//  exceptions for these routines to throw
+struct hex_decode_error: virtual boost::exception, virtual std::exception {};
+struct non_hex_input : public hex_decode_error {};
+struct not_enough_input : public hex_decode_error {};
 
 namespace detail {
 
@@ -53,7 +59,7 @@ namespace detail {
         if ( c >= '0' && c <= '9' ) return c - '0';
         if ( c >= 'A' && c <= 'F' ) return c - 'A' + 10;
         if ( c >= 'a' && c <= 'f' ) return c - 'a' + 10;
-        throw std::runtime_error ( "Non-hex char");
+        BOOST_THROW_EXCEPTION (non_hex_input ());
         return 0;   // keep dumb compilers happy
         }
     
@@ -123,7 +129,7 @@ namespace detail {
     //  Need to make sure that we get can read that many chars here.
         for ( std::size_t i = 0; i < 2 * sizeof ( T ); ++i ) {
             if ( first == last ) 
-                throw std::runtime_error ( "Not enough input" );
+                BOOST_THROW_EXCEPTION (not_enough_input ());
             res <<= 4;
             res += hex_char_to_int ( *first++ );
             }
@@ -165,7 +171,6 @@ OutputIterator unhex ( InputIterator first, InputIterator last, OutputIterator o
     return out;
     }
 
-//  See comments on decode_one - what can we assume about T?
 template <typename T, typename OutputIterator>
 OutputIterator unhex ( const T *ptr, OutputIterator out ) {
     typedef typename detail::iterator_value_type<OutputIterator>::value_type OutputType;
@@ -184,6 +189,24 @@ template <typename Range, typename OutputIterator>
 OutputIterator unhex ( const Range &r, OutputIterator out ) {
     return unhex (boost::begin(r), boost::end(r), out);
     }
+
+
+//	Simple wrappers
+template<typename String>
+String hex ( const String &input ) {
+	String output;
+	output.reserve (input.size () * (2 * sizeof (typename String::value_type)));
+	hex (input, std::back_inserter (output));
+	return output;
+	}
+
+template<typename String>
+String unhex ( const String &input ) {
+	String output;
+	output.reserve (input.size () / (2 * sizeof (typename String::value_type)));
+	unhex (input, std::back_inserter (output));
+	return output;
+	}
 
 }}
 
