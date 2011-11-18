@@ -13,19 +13,10 @@
 #include <iostream>
 
 
-const char *tohex [] = {
-    "",
-    "a",
-    "\001",
-    "12",
-    "asdfadsfsad",
-    "01234567890ABCDEF",
-    NULL        // End of the list
-    };
-
-void test_to_hex () {
-    for ( const char **p = tohex; *p; p++ ) {
-        std::string arg, argh, one, two, three, four;
+template<typename String>
+void test_to_hex ( const typename String::value_type ** tests ) {
+    for ( const typename String::value_type **p = tests; *p; p++ ) {
+        String arg, argh, one, two, three, four;
         arg.assign ( *p );
         boost::algorithm::hex ( *p, std::back_inserter ( one ));
         boost::algorithm::hex ( arg, std::back_inserter ( two ));
@@ -47,16 +38,11 @@ void test_to_hex () {
         }
     }
 
-const char *fromhex [] = {
-    "20",
-    "2122234556FF",
-    NULL        // End of the list
-    };
 
-
-void test_from_hex_success () {
-    for ( const char **p = fromhex; *p; p++ ) {
-        std::string arg, argh, one, two, three, four;
+template<typename String>
+void test_from_hex_success ( const typename String::value_type ** tests ) {
+    for ( const typename String::value_type **p = tests; *p; p++ ) {
+        String arg, argh, one, two, three, four;
         arg.assign ( *p );
         boost::algorithm::unhex ( *p, std::back_inserter ( one ));
         boost::algorithm::unhex ( arg, std::back_inserter ( two ));
@@ -78,20 +64,11 @@ void test_from_hex_success () {
         }
     }
 
-
-const char *fromhex_fail [] = {
-    "2",
-    "H",
-    "234",
-    "21222G4556FF",
-    NULL        // End of the list
-    };
-
-
-void test_from_hex_failure () {
+template<typename String>
+void test_from_hex_failure ( const typename String::value_type ** tests ) {
     int num_catches;
-    for ( const char **p = fromhex_fail; *p; p++ ) {
-        std::string arg, one;
+    for ( const typename String::value_type **p = tests; *p; p++ ) {
+        String arg, one;
         arg.assign ( *p );
         num_catches = 0;
 
@@ -106,10 +83,70 @@ void test_from_hex_failure () {
     }
 
 
+
+const char *tohex [] = {
+    "",
+    "a",
+    "\001",
+    "12",
+    "asdfadsfsad",
+    "01234567890ABCDEF",
+    NULL        // End of the list
+    };
+
+
+const wchar_t *tohex_w [] = {
+    L"",
+    L"a",
+    L"\001",
+    L"12",
+    L"asdfadsfsad",
+    L"01234567890ABCDEF",
+    NULL        // End of the list
+    };
+
+
+const char *fromhex [] = {
+    "20",
+    "2122234556FF",
+    NULL        // End of the list
+    };
+
+
+const wchar_t *fromhex_w [] = {
+    L"00000020",
+    L"2122234556FF3456",
+    NULL        // End of the list
+    };
+
+
+const char *fromhex_fail [] = {
+    "2",
+    "H",
+    "234",
+    "21222G4556FF",
+    NULL        // End of the list
+    };
+
+
+const wchar_t *fromhex_fail_w [] = {
+    L"2",
+    L"12",
+    L"H",
+    L"234",
+    L"21222G4556FF",
+    NULL        // End of the list
+    };
+
+
 int test_main( int , char* [] )
 {
-  test_to_hex ();
-  test_from_hex_success ();
-  test_from_hex_failure ();
+  test_to_hex<std::string> ( tohex );
+  test_from_hex_success<std::string> ( fromhex );
+  test_from_hex_failure<std::string> ( fromhex_fail );
+
+  test_to_hex<std::wstring> ( tohex_w );
+  test_from_hex_success<std::wstring> ( fromhex_w );
+  test_from_hex_failure<std::wstring> ( fromhex_fail_w );
   return 0;
 }
