@@ -72,20 +72,20 @@ minmax_element ( ForwardIterator first, ForwardIterator last, Compare comp )
     			ForwardIterator one = first;
     			if ( ++first == last ) { // one item left
 	    	//		std::cout << "One element = " << *one << std::endl;
-  					if      ( comp ( *one, *min_element )) min_element = one;
-    				else if ( comp ( *max_element, *one )) max_element = one;
+  					if      (  comp ( *one, *min_element )) min_element = one;
+    				else if ( !comp ( *one, *max_element )) max_element = one;
     				break;
     				}
     			else {	// More than one item left, grab two
     				ForwardIterator two = first;
 	    	//		std::cout << "Two elements = " << *one << ", " << *two << std::endl;
-    				if ( comp ( *one, *two )) {
-    					if ( comp ( *one, *min_element )) min_element = one;
-    					if ( comp ( *max_element, *two )) max_element = two;
+    				if ( !comp ( *two, *one )) {
+    					if (  comp ( *one, *min_element )) min_element = one;
+    					if ( !comp ( *two, *max_element )) max_element = two;
     					}
     				else {
-    					if ( comp ( *two, *min_element )) min_element = two;
-    					if ( comp ( *max_element, *one )) max_element = one;
+    					if (  comp ( *two, *min_element )) min_element = two;
+    					if ( !comp ( *one, *max_element )) max_element = one;
     					}
 					}
 				}
