@@ -87,26 +87,19 @@ namespace detail {
         typedef typename Container::value_type value_type;
     };
 
-//  TODO: Would this work for ostream_iterators ?
-//  template<typename T>
-//  struct hex_iterator_traits< std::ostream_iterator<T> > {
-//      typedef T value_type;
-//  };
+//	ostream_iterators have three template parameters.
+//	The first one is the output type, the second one is the character type of
+//	the underlying stream, the third is the character traits.
+//		We only care about the first one.
+  template<typename T, typename charType, typename traits>
+  struct hex_iterator_traits< std::ostream_iterator<T, charType, traits> > {
+      typedef T value_type;
+  };
 
-//  TODO: Would this work for ostreambuf_iterators ?
-//  template<typename T>
-//  struct hex_iterator_traits< std::ostreambuf_iterators<T> > {
-//      typedef T value_type;
-//  };
-
-/*
 //  Output Iterators have a value type of 'void'. Kinda sucks. 
-//      In that case, we assume that you want to output chars.
+//	We special case some output iterators, but we can't enumerate them all.
+//  If we can't figure it out, we assume that you want to output chars.
 //  If you don't, pass in an iterator with a real value_type.
-    template <typename T, bool = boost::is_void<T>::value> struct value_type_or_char;
-    template <typename T> struct value_type_or_char<T, false> { typedef T value_type; };
-    template <typename T> struct value_type_or_char<T, true>  { typedef char value_type; };
-*/
     template <typename T> struct value_type_or_char       { typedef T value_type; };
     template <>           struct value_type_or_char<void> { typedef char value_type; };
     
@@ -127,11 +120,11 @@ namespace detail {
         T res = 0;
 
     //  Need to make sure that we get can read that many chars here.
-        for ( std::size_t i = 0; i < 2 * sizeof ( T ); ++i ) {
+        for ( std::size_t i = 0; i < 2 * sizeof ( T ); ++i, ++first ) {
             if ( first == last ) 
                 BOOST_THROW_EXCEPTION (not_enough_input ());
             res <<= 4;
-            res += hex_char_to_int ( *first++ );
+            res += hex_char_to_int ( *first );
             }
         
         *out++ = res;
