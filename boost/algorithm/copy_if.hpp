@@ -12,6 +12,7 @@
 #ifndef BOOST_ALGORITHM_COPY_IF_HPP
 #define BOOST_ALGORITHM_COPY_IF_HPP
 
+#include <algorithm>	// for std::copy_if, if available
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 
@@ -20,7 +21,6 @@ namespace boost { namespace algorithm {
 #if __cplusplus >= 201103L
 //  Use the C++11 versions of copy_if if it is available
 using std::copy_if;         // Section 25.3.1
-using std::copy_n;          // Section 25.3.1
 #else
 /// \fn copy_if(InputIterator first, InputIterator last, OutputIterator result, Predicate p)
 /// \desc Copies all the elements from the input range that satisfy the
@@ -40,14 +40,6 @@ OutputIterator copy_if ( InputIterator first, InputIterator last, OutputIterator
     for ( ; first != last; ++first )
         if (p(*first))
             *result++ = first;
-    return result;
-}
-
-template<typename InputIterator, typename Size, typename OutputIterator>
-OutputIterator copy_n ( InputIterator first, Size n, OutputIterator result )
-{
-    while ( n-- > 0 )
-        *result++ = *first++;
     return result;
 }
 #endif
