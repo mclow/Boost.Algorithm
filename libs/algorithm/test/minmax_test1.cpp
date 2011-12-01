@@ -6,7 +6,7 @@
 */
 
 #include <boost/config.hpp>
-#include <boost/algorithm/minmax.hpp>
+#include <boost/algorithm/minmax_element.hpp>
 #include <boost/test/included/test_exec_monitor.hpp>
 
 #include <string>
