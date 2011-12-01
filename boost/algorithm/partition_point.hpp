@@ -55,11 +55,11 @@ ForwardIterator partition_point ( ForwardIterator first, ForwardIterator last, P
 }
 #endif
 
-/// \fn is_partititioned ( const Range &r, Predicate p )
+/// \fn partition_point ( const Range &r, Predicate p )
 /// \desc Given a partitioned range, returns the partition point
 /// 
-/// \param range The input range
-/// \param value    The initial value of the sequence to be generated
+/// \param range	The input range
+/// \param p        The predicicate to test the values with
 ///
 template <typename Range, typename Predicate>
 typename boost::range_iterator<Range> partition_point ( Range &r, Predicate p )
