@@ -5,14 +5,14 @@
    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 */
 
-/// \file  is_partititioned.hpp
+/// \file  is_partitioned.hpp
 /// \brief Tell if a sequence is partitioned
 /// \author Marshall Clow
 
 #ifndef BOOST_ALGORITHM_IS_PARTITIONED_HPP
 #define BOOST_ALGORITHM_IS_PARTITIONED_HPP
 
-#include <algorithm>	// for std::is_partititioned, if available
+#include <algorithm>	// for std::is_partitioned, if available
 
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
@@ -23,7 +23,7 @@ namespace boost { namespace algorithm {
 //  Use the C++11 versions of iota if it is available
 using std::is_partitioned;      // Section 25.3.13
 #else
-/// \fn is_partititioned ( ForwardIterator first, ForwardIterator last, Predicate p )
+/// \fn is_partitioned ( ForwardIterator first, ForwardIterator last, UnaryPredicate p )
 /// \desc Tests to see if a sequence is partititioned according to a predicate
 /// 
 /// \param first    The start of the input sequence
@@ -32,8 +32,8 @@ using std::is_partitioned;      // Section 25.3.13
 /// \note           This function is part of the C++2011 standard library.
 ///  We will use the standard one if it is available, 
 ///  otherwise we have our own implementation.
-template <typename InputIterator, typename Predicate>
-bool is_partitioned ( InputIterator first, InputIterator last, Predicate p )
+template <typename InputIterator, typename UnaryPredicate>
+bool is_partitioned ( InputIterator first, InputIterator last, UnaryPredicate p )
 {
 //	Run through the part that satisfy the predicate
     for ( ; first != last; ++first )
@@ -47,14 +47,14 @@ bool is_partitioned ( InputIterator first, InputIterator last, Predicate p )
 }
 #endif
 
-/// \fn is_partititioned ( const Range &r, Predicate p )
+/// \fn is_partitioned ( const Range &r, Predicate p )
 /// \desc Generates an increasing sequence of values, and stores them in the input Range.
 /// 
 /// \param range The input range
 /// \param value    The initial value of the sequence to be generated
 ///
-template <typename Range, typename Predicate>
-bool is_partitioned ( Range &r, Predicate p )
+template <typename Range, typename UnaryPredicate>
+bool is_partitioned ( const Range &r, UnaryPredicate p )
 {
     return is_partitioned (boost::begin(r), boost::end(r), p);
 }
