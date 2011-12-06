@@ -22,7 +22,7 @@ void test_sequence1 () {
     std::vector<int> v, v1;
     
     v.clear ();
-    for ( int i = 5; i < 15; ++i )
+    for ( std::size_t i = 5; i < 15; ++i )
         v.push_back ( i );
     v1 = v;
     BOOST_CHECK ( ba::is_permutation ( v.begin (), v.end (), v.begin ()));	// better be a permutation of itself!
@@ -33,7 +33,7 @@ void test_sequence1 () {
     std::copy ( v.begin (), v.end (), std::back_inserter ( l ));
     BOOST_CHECK ( ba::is_permutation ( l.begin (), l.end (), l.begin ()));	// better be a permutation of itself!
     BOOST_CHECK ( ba::is_permutation ( l.begin (), l.end (), v1.begin ()));
-    for ( int i = 0; i < l.size (); ++i ) {
+    for ( std::size_t i = 0; i < l.size (); ++i ) {
     	l.push_back ( *l.begin ());	l.pop_front (); // rotation
 	    BOOST_CHECK ( ba::is_permutation ( l.begin (), l.end (), v1.begin ()));
     	}	
