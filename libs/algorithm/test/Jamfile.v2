@@ -30,6 +30,9 @@ run one_of_test.cpp ;
 run clamp_test.cpp ;
 run ordered_test.cpp ;
 
+run copy_n_test1.cpp ;
+run is_permutation_test1.cpp ;
+
 run empty_search_test.cpp ;
 run search_test1.cpp ;
 run search_test2.cpp ;
@@ -38,3 +41,23 @@ run search_test3.cpp ;
 compile-fail search_fail1.cpp ;
 compile-fail search_fail2.cpp ;
 compile-fail search_fail3.cpp ;
+
+run hex_test1.cpp ;
+run hex_test2.cpp ;
+run hex_test3.cpp ;
+
+compile-fail hex_fail1.cpp ;
+
+run iota_test1.cpp ;
+
+run minmax_test1.cpp ;
+run minmax_test2.cpp ;
+
+run move_test1.cpp ;
+run partition_point_test1.cpp ;
+
+run is_partitioned_test1.cpp ;
+
+run partition_copy_test1.cpp ;
+
+run find_if_not_test1.cpp ;
