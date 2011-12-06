@@ -38,11 +38,17 @@ Thanks to all the people who have reviewed this library and made suggestions for
 [endsect]
 
 [/ include toc.qbk]
-[include all-hpp.qbk]
 [include clamp-hpp.qbk]
 [include ordered-hpp.qbk]
+[include boyer_moore.qbk]
 [include search-hpp.qbk]
 
+[include all_of.qbk]
+[include any_of.qbk]
+[include none_of.qbk]
+[include one_of.qbk]
+[include is_partitioned.qbk]
+[include partition_point.qbk]
 
 [xinclude autodoc.xml]
 
