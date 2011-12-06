@@ -14,13 +14,15 @@
 
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
+
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+
+#include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 #include <boost/algorithm/searching/detail/bm_traits.hpp>
 #include <boost/algorithm/searching/detail/debugging.hpp>
-
-
-// #define  BOOST_ALGORITHM_BOYER_MOORE_DEBUG_HPP
 
 namespace boost { namespace algorithm {
 
@@ -59,10 +61,8 @@ Requirements:
                   skip_ ( k_pattern_length, -1 ),
                   suffix_ ( k_pattern_length + 1 )
             {
-#ifdef  BOOST_ALGORITHM_BOYER_MOORE_DEBUG_HPP
-            std::cout << "Pattern length: " << k_pattern_length << std::endl;
-#endif
-            this->build_bm_tables ();
+            this->build_skip_table   ( first, last );
+            this->build_suffix_table ( first, last );
             }
             
         ~boyer_moore () {}
@@ -83,9 +83,6 @@ Requirements:
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
 
             const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
-#ifdef  BOOST_ALGORITHM_BOYER_MOORE_DEBUG_HPP
-            std::cout << "Corpus length: " << k_corpus_length << std::endl;
-#endif
         //  If the pattern is larger than the corpus, we can't find it!
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;
@@ -94,32 +91,17 @@ Requirements:
             return this->do_search   ( corpus_first, corpus_last, k_corpus_length );
             }
             
+        template <typename Range>
+        typename boost::range_iterator<Range>::type operator () ( Range &r ) const {
+            return (*this) (boost::begin(r), boost::end(r));
+            }
+
     private:
 /// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
         const std::size_t k_pattern_length;
         typename traits::skip_table_t skip_;
         std::vector <std::size_t> suffix_;
-
-        void build_bm_tables () {
-        //  Build the skip table
-            std::size_t i = 0;
-            for ( patIter iter = pat_first; iter != pat_last; ++iter, ++i )
-                skip_.insert ( *iter, i );
-    
-            this->create_suffix_table ( pat_first, pat_last );
-                
-#ifdef BOOST_ALGORITHM_BOYER_MOORE_DEBUG_HPP
-            skip_.PrintSkipTable ();
-            std::cout << "Boyer Moore suffix table:" << std::endl;
-            std::cout << "  " << 0 << ": " << suffix_[0] << std::endl;
-            for ( i = 0; i < suffix_.size (); ++i )
-                if ( suffix_[i] != suffix_[0] )
-                    std::cout << "  " << i << ": " << suffix_[i] << std::endl;
-//          detail::PrintTable ( suffix_.begin (), suffix_.end ());
-#endif
-            }
-        
 
         /// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
         /// \brief Searches the corpus for the pattern that was passed into the constructor
@@ -160,6 +142,12 @@ Requirements:
             }
 
 
+        void build_skip_table ( patIter first, patIter last ) {
+            for ( std::size_t i = 0; first != last; ++first, ++i )
+                skip_.insert ( *first, i );
+            }
+        
+
         template<typename Iter, typename Container>
         void compute_bm_prefix ( Iter pat_first, Iter pat_last, Container &prefix ) {
             const std::size_t count = std::distance ( pat_first, pat_last );
@@ -181,7 +169,7 @@ Requirements:
                 }
             }
 
-        void create_suffix_table ( patIter pat_first, patIter pat_last ) {
+        void build_suffix_table ( patIter pat_first, patIter pat_last ) {
             const std::size_t count = (std::size_t) std::distance ( pat_first, pat_last );
             
             if ( count > 0 ) {  // empty pattern
@@ -209,6 +197,10 @@ Requirements:
 /// \endcond
         };
 
+
+/*  Two ranges as inputs gives us four possibilities; with 2,3,3,4 parameters
+    Use a bit of TMP to disambiguate the 3-argument templates */
+
 /// \fn boyer_moore_search ( corpusIter corpus_first, corpusIter corpus_last, 
 ///       patIter pat_first, patIter pat_last )
 /// \brief Searches the corpus for the pattern.
@@ -219,10 +211,56 @@ Requirements:
 /// \param pat_last     One past the end of the data to search for
 ///
     template <typename patIter, typename corpusIter>
-    corpusIter boyer_moore_search ( corpusIter corpus_first, corpusIter corpus_last, 
-                                            patIter pat_first, patIter pat_last ) {
+    corpusIter boyer_moore_search ( 
+                  corpusIter corpus_first, corpusIter corpus_last, 
+                  patIter pat_first, patIter pat_last )
+    {
         boyer_moore<patIter> bm ( pat_first, pat_last );
         return bm ( corpus_first, corpus_last );
+    }
+
+    template <typename PatternRange, typename corpusIter>
+    corpusIter boyer_moore_search ( 
+        corpusIter corpus_first, corpusIter corpus_last, const PatternRange &pattern )
+    {
+        typedef typename boost::range_iterator<PatternRange> pattern_iterator;
+        boyer_moore<pattern_iterator> bm ( boost::begin(pattern), boost::end (pattern));
+        return bm ( corpus_first, corpus_last );
+    }
+    
+    template <typename patIter, typename CorpusRange>
+    typename boost::lazy_disable_if_c<
+        boost::is_same<CorpusRange, patIter>::value, typename boost::range_iterator<CorpusRange> >
+    ::type
+    boyer_moore_search ( CorpusRange &corpus, patIter pat_first, patIter pat_last )
+    {
+        boyer_moore<patIter> bm ( pat_first, pat_last );
+        return bm (boost::begin (corpus), boost::end (corpus));
+    }
+    
+    template <typename PatternRange, typename CorpusRange>
+    typename boost::range_iterator<CorpusRange>::type
+    boyer_moore_search ( CorpusRange &corpus, const PatternRange &pattern )
+    {
+        typedef typename boost::range_iterator<PatternRange> pattern_iterator;
+        boyer_moore<pattern_iterator> bm ( boost::begin(pattern), boost::end (pattern));
+        return bm (boost::begin (corpus), boost::end (corpus));
+    }
+
+
+    //  Creator functions -- take a pattern range, return an object
+    template <typename Range>
+    boost::algorithm::boyer_moore<typename boost::range_iterator<const Range>::type>
+    make_boyer_moore ( const Range &r ) {
+        return boost::algorithm::boyer_moore
+            <typename boost::range_iterator<const Range>::type> (boost::begin(r), boost::end(r));
+        }
+    
+    template <typename Range>
+    boost::algorithm::boyer_moore<typename boost::range_iterator<Range>::type>
+    make_boyer_moore ( Range &r ) {
+        return boost::algorithm::boyer_moore
+            <typename boost::range_iterator<Range>::type> (boost::begin(r), boost::end(r));
         }
 
 }}
