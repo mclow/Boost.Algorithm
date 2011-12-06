@@ -23,8 +23,8 @@ namespace boost { namespace algorithm {
 //  Use the C++11 versions of iota if it is available
 using std::is_partitioned;      // Section 25.3.13
 #else
-/// \fn is_partitioned ( ForwardIterator first, ForwardIterator last, UnaryPredicate p )
-/// \desc Tests to see if a sequence is partititioned according to a predicate
+/// \fn is_partitioned ( InputIterator first, InputIterator last, UnaryPredicate p )
+/// \brief Tests to see if a sequence is partititioned according to a predicate
 /// 
 /// \param first    The start of the input sequence
 /// \param last     One past the end of the input sequence
@@ -47,11 +47,11 @@ bool is_partitioned ( InputIterator first, InputIterator last, UnaryPredicate p 
 }
 #endif
 
-/// \fn is_partitioned ( const Range &r, Predicate p )
-/// \desc Generates an increasing sequence of values, and stores them in the input Range.
+/// \fn is_partitioned ( const Range &r, UnaryPredicate p )
+/// \brief Generates an increasing sequence of values, and stores them in the input Range.
 /// 
-/// \param range The input range
-/// \param value    The initial value of the sequence to be generated
+/// \param r        The input range
+/// \param p        The predicicate to test the values with
 ///
 template <typename Range, typename UnaryPredicate>
 bool is_partitioned ( const Range &r, UnaryPredicate p )

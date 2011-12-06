@@ -73,7 +73,7 @@ bool any_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if any of the elements in the range are equal to 'val'
 /// \note returns false on an empty range
 /// 
-/// \param range The input range
+/// \param r     The input range
 /// \param val   A value to compare against
 ///
 template<typename Range, typename V> 

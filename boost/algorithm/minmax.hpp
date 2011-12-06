@@ -26,7 +26,15 @@ namespace boost { namespace algorithm {
 //  Use the C++11 versions of minmax if it is available
 using std::minmax;      		// Section 26.7.6
 #else
-//
+/// \fn minmax ( const T& a, const T& b, Compare comp )
+/// \brief Returns the min and max of a pair of values
+/// 
+/// \param a    	The first value
+/// \param b		The second value
+/// \param comp     A predicate used to compare the values.
+/// \note           This function is part of the C++2011 standard library.
+///  We will use the standard one if it is available, 
+///  otherwise we have our own implementation.
 template <typename T, typename Compare>
 std::pair<const T&, const T&> 
 minmax ( const T& a, const T&b, Compare comp )
@@ -37,7 +45,7 @@ minmax ( const T& a, const T&b, Compare comp )
 }
 
 /// \fn minmax ( const T& a, const T& b )
-/// \desc Returns the min and max of a pair of values
+/// \brief Returns the min and max of a pair of values
 /// 
 /// \param a    	The first value
 /// \param b		The second value

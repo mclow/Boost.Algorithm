@@ -24,7 +24,7 @@ namespace boost { namespace algorithm {
 using std::iota;      // Section 26.7.6
 #else
 /// \fn iota ( ForwardIterator first, ForwardIterator last, T value )
-/// \desc Generates an increasing sequence of values, and stores them in [first, last)
+/// \brief Generates an increasing sequence of values, and stores them in [first, last)
 /// 
 /// \param first    The start of the input sequence
 /// \param last     One past the end of the input sequence
@@ -40,10 +40,10 @@ void iota ( ForwardIterator first, ForwardIterator last, T value )
 }
 #endif
 
-/// \fn iota ( const Range &r, T value )
-/// \desc Generates an increasing sequence of values, and stores them in the input Range.
+/// \fn iota ( Range &r, T value )
+/// \brief Generates an increasing sequence of values, and stores them in the input Range.
 /// 
-/// \param range The input range
+/// \param r        The input range
 /// \param value    The initial value of the sequence to be generated
 ///
 template <typename Range, typename T>
@@ -54,7 +54,7 @@ void iota ( Range &r, T value )
 
 
 /// \fn iota_n ( OutputIterator out, T value, std::size_t n )
-/// \desc Generates an increasing sequence of values, and stores them in the input Range.
+/// \brief Generates an increasing sequence of values, and stores them in the input Range.
 /// 
 /// \param out      An output iterator to write the results into
 /// \param value    The initial value of the sequence to be generated

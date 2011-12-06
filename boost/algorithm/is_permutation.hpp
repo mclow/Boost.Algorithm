@@ -30,6 +30,7 @@ namespace boost { namespace algorithm {
 using std::is_permutation;      		// Section 25.2.12
 #else
 namespace detail {
+/// \cond DOXYGEN_HIDE
 	template <typename Predicate, typename T>
 	struct value_predicate {
 		value_predicate ( Predicate p, T t ) : p_ ( p ), t_ ( t ) {}
@@ -39,9 +40,21 @@ namespace detail {
 		Predicate &p_;
 		const T& t_;
 		};
+/// \endcond
 }
 	
 	
+/// \fn is_permutation ( ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 first2, BinaryPredicate p )
+/// \brief Tests to see if a the sequence [first,last) is a permutation of the sequence starting at first2
+/// 
+/// \param first    The start of the input sequence
+/// \param last     One past the end of the input sequence
+/// \param first2   The start of the second sequence
+/// \param p        The predicate to compare elements with
+///
+/// \note           This function is part of the C++2011 standard library.
+///  We will use the standard one if it is available, 
+///  	otherwise we have our own implementation.
 template< class ForwardIterator1, class ForwardIterator2, class BinaryPredicate >
 bool is_permutation ( ForwardIterator1 first1, ForwardIterator1 last1,
                       ForwardIterator2 first2, BinaryPredicate p )
@@ -63,7 +76,7 @@ bool is_permutation ( ForwardIterator1 first1, ForwardIterator1 last1,
 		/*	For each value we haven't seen yet... */
 			if ( std::find_if ( first1, iter, pred ) == iter ) {
 				std::size_t dest_count = std::count_if ( first2, last2, pred );
-				if ( dest_count == 0 || dest_count != std::count_if ( iter, last1, pred ))
+				if ( dest_count == 0 || dest_count != (std::size_t) std::count_if ( iter, last1, pred ))
 					return false;
 				}
 			}
@@ -73,7 +86,7 @@ bool is_permutation ( ForwardIterator1 first1, ForwardIterator1 last1,
 }
 
 /// \fn is_permutation ( ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 first2 )
-/// \desc Tests to see if a the sequence [first,last) is a permutation of the sequence starting at first2
+/// \brief Tests to see if a the sequence [first,last) is a permutation of the sequence starting at first2
 /// 
 /// \param first    The start of the input sequence
 /// \param last     One past the end of the input sequence
@@ -92,19 +105,31 @@ bool is_permutation ( ForwardIterator1 first, ForwardIterator1 last,
 
 #endif
 
+/// \fn is_permutation ( const Range &r, ForwardIterator first2 )
+/// \brief Tests to see if a the sequence [first,last) is a permutation of the sequence starting at first2
+/// 
+/// \param r        The input range
+/// \param first2   The start of the second sequence
 template <typename Range, typename ForwardIterator>
-bool is_permutation ( const Range &r, ForwardIterator d_first )
+bool is_permutation ( const Range &r, ForwardIterator first2 )
 {
-	return is_permutation (boost::begin (r), boost::end (r), d_first );
+	return is_permutation (boost::begin (r), boost::end (r), first2 );
 }
 
+/// \fn is_permutation ( const Range &r, ForwardIterator first2, BinaryPredicate pred )
+/// \brief Tests to see if a the sequence [first,last) is a permutation of the sequence starting at first2
+/// 
+/// \param r        The input range
+/// \param first2   The start of the second sequence
+/// \param pred     The predicate to compare elements with
+///
 //	Disable this template when the first two parameters are the same type
 //	That way the non-range version will be chosen.
 template <typename Range, typename ForwardIterator, typename BinaryPredicate>
 typename boost::disable_if_c<boost::is_same<Range, ForwardIterator>::value, bool>::type
-is_permutation ( const Range &r, ForwardIterator d_first, BinaryPredicate pred )
+is_permutation ( const Range &r, ForwardIterator first2, BinaryPredicate pred )
 {
-	return is_permutation (boost::begin (r), boost::end (r), d_first, pred );
+	return is_permutation (boost::begin (r), boost::end (r), first2, pred );
 }
 
 }}

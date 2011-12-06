@@ -21,7 +21,7 @@ namespace boost { namespace algorithm {
 using std::copy_n;          // Section 25.3.1
 #else
 /// \fn copy_n ( InputIterator first, Size n, OutputIterator result )
-/// \desc Copies exactly n (n > 0) elements from the range starting at first to
+/// \brief Copies exactly n (n > 0) elements from the range starting at first to
 ///     the range starting at result.
 /// \return         The updated output iterator
 /// 

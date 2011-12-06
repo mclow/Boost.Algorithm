@@ -24,7 +24,7 @@ namespace boost { namespace algorithm {
 using std::find_if_not;      // Section 25.2.5
 #else
 /// \fn find_if_not(InputIterator first, InputIterator last, Predicate p)
-/// \desc Finds the first element in the sequence that does not satisfy the predicate.
+/// \brief Finds the first element in the sequence that does not satisfy the predicate.
 /// \return         The iterator pointing to the desired element.
 /// 
 /// \param first    The start of the input sequence
@@ -44,7 +44,7 @@ InputIterator find_if_not ( InputIterator first, InputIterator last, Predicate p
 #endif
 
 /// \fn find_if_not ( const Range &r, Predicate p )
-/// \desc Finds the first element in the sequence that does not satisfy the predicate.
+/// \brief Finds the first element in the sequence that does not satisfy the predicate.
 /// \return         The iterator pointing to the desired element.
 /// 
 /// \param r        The input range

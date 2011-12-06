@@ -43,7 +43,7 @@ for ( ; first != last; ++first )
 /// \return true if none of the elements in the range satisfy the predicate 'p'
 /// \note returns true on an empty range
 /// 
-/// \param range The input range
+/// \param r     The input range
 /// \param p     A predicate for testing the elements of the range
 ///
 template<typename Range, typename Predicate> 
@@ -73,7 +73,7 @@ bool none_of_equal ( InputIterator first, InputIterator last, const V &val )
 /// \return true if none of the elements in the range are equal to 'val'
 /// \note returns true on an empty range
 /// 
-/// \param range The input range
+/// \param r     The input range
 /// \param val   A value to compare against
 ///
 template<typename Range, typename V> 

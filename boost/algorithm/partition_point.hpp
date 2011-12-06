@@ -24,12 +24,12 @@ namespace boost { namespace algorithm {
 using std::partition_point;      // Section 25.3.13
 #else
 /// \fn partition_point ( ForwardIterator first, ForwardIterator last, Predicate p )
-/// \desc Given a partitioned range, returns the partition point, i.e, the first element 
+/// \brief Given a partitioned range, returns the partition point, i.e, the first element 
 ///		that does not satisfy p
 /// 
 /// \param first    The start of the input sequence
 /// \param last     One past the end of the input sequence
-/// \param p        The predicicate to test the values with
+/// \param p        The predicate to test the values with
 /// \note           This function is part of the C++2011 standard library.
 ///  We will use the standard one if it is available, 
 ///  otherwise we have our own implementation.
@@ -55,11 +55,11 @@ ForwardIterator partition_point ( ForwardIterator first, ForwardIterator last, P
 }
 #endif
 
-/// \fn partition_point ( const Range &r, Predicate p )
-/// \desc Given a partitioned range, returns the partition point
+/// \fn partition_point ( Range &r, Predicate p )
+/// \brief Given a partitioned range, returns the partition point
 /// 
-/// \param range	The input range
-/// \param p        The predicicate to test the values with
+/// \param r        The input range
+/// \param p        The predicate to test the values with
 ///
 template <typename Range, typename Predicate>
 typename boost::range_iterator<Range> partition_point ( Range &r, Predicate p )

@@ -11,6 +11,7 @@
 #define BOOST_ALGORITHM_SEARCH_DETAIL_DEBUG_HPP
 
 #include <iostream>
+/// \cond DOXYGEN_HIDE
 
 namespace boost { namespace algorithm { namespace detail {
 
@@ -24,5 +25,6 @@ namespace boost { namespace algorithm { namespace detail {
         }
     
 }}}
+/// \endcond
 
 #endif  //  BOOST_ALGORITHM_SEARCH_DETAIL_DEBUG_HPP

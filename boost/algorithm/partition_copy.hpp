@@ -21,11 +21,27 @@ namespace boost { namespace algorithm {
 //  Use the C++11 versions of partition_copy if it is available
 using std::partition_copy;  // Section 25.3.13
 #else
+/// \fn partition_copy ( InputIterator first, InputIterator last,
+///     OutputIterator1 out_true, OutputIterator2 out_false, UnaryPredicate p )
+/// \brief Copies the elements that satisfy the predicate p from the range [first, last) 
+///     to the range beginning at d_first_true, and
+///     copies the elements that do not satisfy p to the range beginning at d_first_false.
+///
+/// 
+/// \param first     The start of the input sequence
+/// \param last      One past the end of the input sequence
+/// \param out_true  An output iterator to write the elements that satisfy the predicate into
+/// \param out_false An output iterator to write the elements that do not satisfy the predicate into
+/// \param p         A predicate for dividing the elements of the input sequence.
+///
+/// \note            This function is part of the C++2011 standard library.
+///  We will use the standard one if it is available, 
+///  otherwise we have our own implementation.
 template <typename InputIterator, 
-        typename OutputIterator1, typename OutputIterator2, typename Predicate>
+        typename OutputIterator1, typename OutputIterator2, typename UnaryPredicate>
 std::pair<OutputIterator1, OutputIterator2>
 partition_copy ( InputIterator first, InputIterator last,
-        OutputIterator1 out_true, OutputIterator2 out_false, Predicate p )
+        OutputIterator1 out_true, OutputIterator2 out_false, UnaryPredicate p )
 {
     for ( ; first != last; ++first )
         if ( p (*first))
@@ -36,11 +52,19 @@ partition_copy ( InputIterator first, InputIterator last,
 }
 #endif
 
+/// \fn partition_copy ( const Range &r, 
+///     OutputIterator1 out_true, OutputIterator2 out_false, UnaryPredicate p )
+/// 
+/// \param r         The input range
+/// \param out_true  An output iterator to write the elements that satisfy the predicate into
+/// \param out_false An output iterator to write the elements that do not satisfy the predicate into
+/// \param p         A predicate for dividing the elements of the input sequence.
+///
 template <typename Range, typename OutputIterator1, typename OutputIterator2, 
-            typename Predicate>
+            typename UnaryPredicate>
 std::pair<OutputIterator1, OutputIterator2>
 partition_copy ( const Range &r, OutputIterator1 out_true, OutputIterator2 out_false, 
-                                Predicate p )
+                                UnaryPredicate p )
 {
     return partition_copy (boost::begin(r), boost::end(r), out_true, out_false, p );
 }

@@ -22,8 +22,8 @@ namespace boost { namespace algorithm {
 //  Use the C++11 versions of copy_if if it is available
 using std::copy_if;         // Section 25.3.1
 #else
-/// \fn copy_if(InputIterator first, InputIterator last, OutputIterator result, Predicate p)
-/// \desc Copies all the elements from the input range that satisfy the
+/// \fn copy_if ( InputIterator first, InputIterator last, OutputIterator result, Predicate p )
+/// \brief Copies all the elements from the input range that satisfy the
 /// predicate to the output range.
 /// \return The updated output iterator
 /// 
@@ -45,7 +45,7 @@ OutputIterator copy_if ( InputIterator first, InputIterator last, OutputIterator
 #endif
 
 /// \fn copy_if ( const Range &r, OutputIterator result, Predicate p )
-/// \desc Copies all the elements from the input range that satisfy the
+/// \brief Copies all the elements from the input range that satisfy the
 /// predicate to the output range.
 /// \return The updated output iterator
 /// 
@@ -59,6 +59,17 @@ OutputIterator copy_if ( const Range &r, OutputIterator result, Predicate p )
     return copy_if (boost::begin (r), boost::end(r), result, p);
 }
 
+
+/// \fn copy_while ( InputIterator first, InputIterator last, OutputIterator result, Predicate p )
+/// \brief Copies all the elements at the start of the input range that
+///     satisfy the predicate to the output range.
+/// \return The updated output iterator
+/// 
+/// \param first    The start of the input sequence
+/// \param last     One past the end of the input sequence
+/// \param result   An output iterator to write the results into
+/// \param p        A predicate for testing the elements of the range
+///
 template<typename InputIterator, typename OutputIterator, typename Predicate> 
 OutputIterator copy_while ( InputIterator first, InputIterator last, 
                                 OutputIterator result, Predicate p )
@@ -68,12 +79,32 @@ OutputIterator copy_while ( InputIterator first, InputIterator last,
     return result;
 }
 
+/// \fn copy_while ( const Range &r, OutputIterator result, Predicate p )
+/// \brief Copies all the elements at the start of the input range that
+///     satisfy the predicate to the output range.
+/// \return The updated output iterator
+/// 
+/// \param r        The input range
+/// \param result   An output iterator to write the results into
+/// \param p        A predicate for testing the elements of the range
+///
 template<typename Range, typename OutputIterator, typename Predicate>
 OutputIterator copy_while ( const Range &r, OutputIterator result, Predicate p )
 {
     return copy_while (boost::begin (r), boost::end(r), result, p);
 }
 
+
+/// \fn copy_until ( InputIterator first, InputIterator last, OutputIterator result, Predicate p )
+/// \brief Copies all the elements at the start of the input range that do not
+///     satisfy the predicate to the output range.
+/// \return The updated output iterator
+/// 
+/// \param first    The start of the input sequence
+/// \param last     One past the end of the input sequence
+/// \param result   An output iterator to write the results into
+/// \param p        A predicate for testing the elements of the range
+///
 template<typename InputIterator, typename OutputIterator, typename Predicate> 
 OutputIterator copy_until ( InputIterator first, InputIterator last, OutputIterator result, Predicate p )
 {
@@ -82,6 +113,15 @@ OutputIterator copy_until ( InputIterator first, InputIterator last, OutputItera
     return result;
 }
 
+/// \fn copy_until ( const Range &r, OutputIterator result, Predicate p )
+/// \brief Copies all the elements at the start of the input range that do not
+///     satisfy the predicate to the output range.
+/// \return The updated output iterator
+/// 
+/// \param r        The input range
+/// \param result   An output iterator to write the results into
+/// \param p        A predicate for testing the elements of the range
+///
 template<typename Range, typename OutputIterator, typename Predicate>
 OutputIterator copy_until ( const Range &r, OutputIterator result, Predicate p )
 {
