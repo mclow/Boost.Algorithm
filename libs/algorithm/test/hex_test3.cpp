@@ -104,8 +104,8 @@ const char *fromhex [] = {
     };
 
 const wchar_t *fromhex_w [] = {
-    L"00000020",
-    L"21222345000056FF",
+    L"11223320",
+    L"21222345010256FF",
     NULL        // End of the list
     };
 

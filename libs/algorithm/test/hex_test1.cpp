@@ -73,11 +73,11 @@ void test_from_hex_failure ( const typename String::value_type ** tests ) {
         num_catches = 0;
 
         try { boost::algorithm::unhex ( *p, std::back_inserter ( one )); }
-        catch ( const boost::algorithm::hex_decode_error &ex ) { num_catches++; }
+        catch ( const boost::algorithm::hex_decode_error & /*ex*/ ) { num_catches++; }
         try { boost::algorithm::unhex ( arg, std::back_inserter ( one )); }
-        catch ( const boost::algorithm::hex_decode_error &ex ) { num_catches++; }
+        catch ( const boost::algorithm::hex_decode_error & /*ex*/ ) { num_catches++; }
         try { boost::algorithm::unhex ( arg.begin (), arg.end (), std::back_inserter ( one )); }
-        catch ( const boost::algorithm::hex_decode_error &ex ) { num_catches++; }
+        catch ( const boost::algorithm::hex_decode_error & /*ex*/ ) { num_catches++; }
         BOOST_CHECK ( num_catches == 3 );
         }
     }
@@ -114,7 +114,7 @@ const char *fromhex [] = {
 
 
 const wchar_t *fromhex_w [] = {
-    L"00000020",
+    L"00101020",
     L"2122234556FF3456",
     NULL        // End of the list
     };
