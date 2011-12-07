@@ -66,7 +66,8 @@ std::pair<OutputIterator1, OutputIterator2>
 partition_copy ( const Range &r, OutputIterator1 out_true, OutputIterator2 out_false, 
                                 UnaryPredicate p )
 {
-    return partition_copy (boost::begin(r), boost::end(r), out_true, out_false, p );
+    return boost::algorithm::partition_copy 
+                      (boost::begin(r), boost::end(r), out_true, out_false, p );
 }
 
 }} // namespace boost and algorithm

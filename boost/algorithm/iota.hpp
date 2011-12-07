@@ -49,7 +49,7 @@ void iota ( ForwardIterator first, ForwardIterator last, T value )
 template <typename Range, typename T>
 void iota ( Range &r, T value )
 {
-    iota (boost::begin(r), boost::end(r), value);
+    boost::algorithm::iota (boost::begin(r), boost::end(r), value);
 }
 
 

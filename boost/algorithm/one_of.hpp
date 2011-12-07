@@ -33,7 +33,7 @@ bool one_of ( InputIterator first, InputIterator last, Predicate p )
     InputIterator i = std::find_if (first, last, p);
     if (i == last)
         return false;    // Didn't occur at all
-    return none_of (++i, last, p);
+    return boost::algorithm::none_of (++i, last, p);
 }
 
 /// \fn one_of ( const Range &r, Predicate p )
@@ -45,7 +45,7 @@ bool one_of ( InputIterator first, InputIterator last, Predicate p )
 template<typename Range, typename Predicate> 
 bool one_of ( const Range &r, Predicate p ) 
 {
-    return one_of ( boost::begin (r), boost::end (r), p );
+    return boost::algorithm::one_of ( boost::begin (r), boost::end (r), p );
 }
 
 
@@ -62,7 +62,7 @@ bool one_of_equal ( InputIterator first, InputIterator last, const V &val )
     InputIterator i = std::find (first, last, val); // find first occurrence of 'val'
     if (i == last)
         return false;                    // Didn't occur at all
-    return none_of_equal (++i, last, val);
+    return boost::algorithm::none_of_equal (++i, last, val);
 }
 
 /// \fn one_of_equal ( const Range &r, const V &val )
@@ -74,7 +74,7 @@ bool one_of_equal ( InputIterator first, InputIterator last, const V &val )
 template<typename Range, typename V> 
 bool one_of_equal ( const Range &r, const V &val )
 {
-    return one_of_equal ( boost::begin (r), boost::end (r), val );
+    return boost::algorithm::one_of_equal ( boost::begin (r), boost::end (r), val );
 } 
 
 }} // namespace boost and algorithm

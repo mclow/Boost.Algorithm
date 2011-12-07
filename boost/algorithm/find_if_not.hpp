@@ -53,7 +53,7 @@ InputIterator find_if_not ( InputIterator first, InputIterator last, Predicate p
 template<typename Range, typename Predicate>
 typename boost::range_iterator<const Range>::type find_if_not ( const Range &r, Predicate p )
 {
-    return find_if_not (boost::begin (r), boost::end(r), p);
+    return boost::algorithm::find_if_not (boost::begin (r), boost::end(r), p);
 }
 
 }}

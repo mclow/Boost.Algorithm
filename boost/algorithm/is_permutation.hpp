@@ -100,7 +100,8 @@ bool is_permutation ( ForwardIterator1 first, ForwardIterator1 last,
 {
 //	How should I deal with the idea that ForwardIterator1::value_type
 //	and ForwardIterator2::value_type could be different? Define my own comparison predicate?
-	return is_permutation ( first, last, first2, std::equal_to<typename ForwardIterator1::value_type> ());
+	return boost::algorithm::is_permutation ( first, last, first2, 
+                          std::equal_to<typename ForwardIterator1::value_type> ());
 }
 
 #endif
@@ -113,7 +114,7 @@ bool is_permutation ( ForwardIterator1 first, ForwardIterator1 last,
 template <typename Range, typename ForwardIterator>
 bool is_permutation ( const Range &r, ForwardIterator first2 )
 {
-	return is_permutation (boost::begin (r), boost::end (r), first2 );
+	return boost::algorithm::is_permutation (boost::begin (r), boost::end (r), first2 );
 }
 
 /// \fn is_permutation ( const Range &r, ForwardIterator first2, BinaryPredicate pred )
@@ -129,7 +130,7 @@ template <typename Range, typename ForwardIterator, typename BinaryPredicate>
 typename boost::disable_if_c<boost::is_same<Range, ForwardIterator>::value, bool>::type
 is_permutation ( const Range &r, ForwardIterator first2, BinaryPredicate pred )
 {
-	return is_permutation (boost::begin (r), boost::end (r), first2, pred );
+	return boost::algorithm::is_permutation (boost::begin (r), boost::end (r), first2, pred );
 }
 
 }}

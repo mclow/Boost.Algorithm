@@ -92,7 +92,7 @@ template<class ForwardIterator>
 std::pair<ForwardIterator, ForwardIterator>
 minmax_element ( ForwardIterator first, ForwardIterator last )
 {
-    return minmax_element ( first, last, 
+    return boost::algorithm::minmax_element ( first, last, 
         std::less<typename std::iterator_traits<ForwardIterator>::value_type> ());
 }
    
@@ -130,7 +130,7 @@ template<class Range>
 typename detail::range_pair<Range>::type
 minmax_element ( Range &r )
 {
-    return minmax_element (boost::begin (r), boost::end (r));
+    return boost::algorithm::minmax_element (boost::begin (r), boost::end (r));
 }
 
 
@@ -148,7 +148,7 @@ typename boost::lazy_disable_if_c<
     ::type
 minmax_element ( Range &r, Compare comp )
 {
-    return minmax_element (boost::begin (r), boost::end (r), comp );
+    return boost::algorithm::minmax_element (boost::begin (r), boost::end (r), comp );
 }
 
 }}

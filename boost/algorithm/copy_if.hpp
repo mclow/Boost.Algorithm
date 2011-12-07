@@ -56,7 +56,7 @@ OutputIterator copy_if ( InputIterator first, InputIterator last, OutputIterator
 template<typename Range, typename OutputIterator, typename Predicate>
 OutputIterator copy_if ( const Range &r, OutputIterator result, Predicate p )
 {
-    return copy_if (boost::begin (r), boost::end(r), result, p);
+    return boost::algorithm::copy_if (boost::begin (r), boost::end(r), result, p);
 }
 
 
@@ -91,7 +91,7 @@ OutputIterator copy_while ( InputIterator first, InputIterator last,
 template<typename Range, typename OutputIterator, typename Predicate>
 OutputIterator copy_while ( const Range &r, OutputIterator result, Predicate p )
 {
-    return copy_while (boost::begin (r), boost::end(r), result, p);
+    return boost::algorithm::copy_while (boost::begin (r), boost::end(r), result, p);
 }
 
 
@@ -125,7 +125,7 @@ OutputIterator copy_until ( InputIterator first, InputIterator last, OutputItera
 template<typename Range, typename OutputIterator, typename Predicate>
 OutputIterator copy_until ( const Range &r, OutputIterator result, Predicate p )
 {
-    return copy_until (boost::begin (r), boost::end(r), result, p);
+    return boost::algorithm::copy_until (boost::begin (r), boost::end(r), result, p);
 }
 
 }} // namespace boost and algorithm

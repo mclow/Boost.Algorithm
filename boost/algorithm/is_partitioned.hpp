@@ -56,7 +56,7 @@ bool is_partitioned ( InputIterator first, InputIterator last, UnaryPredicate p 
 template <typename Range, typename UnaryPredicate>
 bool is_partitioned ( const Range &r, UnaryPredicate p )
 {
-    return is_partitioned (boost::begin(r), boost::end(r), p);
+    return boost::algorithm::is_partitioned (boost::begin(r), boost::end(r), p);
 }
 
 

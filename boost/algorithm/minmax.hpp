@@ -56,7 +56,7 @@ template <typename T>
 std::pair<const T&, const T&> 
 minmax ( const T& a, const T& b )
 {
-	return minmax ( a, b, std::less<T> ());
+	return boost::algorithm::minmax ( a, b, std::less<T> ());
 }   
 #endif
 

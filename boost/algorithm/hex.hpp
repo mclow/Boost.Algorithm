@@ -142,7 +142,7 @@ namespace detail {
             if ( first == last ) 
                 BOOST_THROW_EXCEPTION (not_enough_input ());
             res <<= 4;
-            res += hex_char_to_int ( *first );
+            res += hex_char_to_int (static_cast<char> (*first));
             }
         
         *out++ = res;

@@ -49,7 +49,7 @@ for ( ; first != last; ++first )
 template<typename Range, typename Predicate> 
 bool none_of ( const Range &r, Predicate p )
 {
-    return none_of (boost::begin (r), boost::end (r), p );
+    return boost::algorithm::none_of (boost::begin (r), boost::end (r), p );
 } 
 
 /// \fn none_of_equal ( InputIterator first, InputIterator last, const V &val )
@@ -79,7 +79,7 @@ bool none_of_equal ( InputIterator first, InputIterator last, const V &val )
 template<typename Range, typename V> 
 bool none_of_equal ( const Range &r, const V & val ) 
 {
-    return none_of_equal (boost::begin (r), boost::end (r), val);
+    return boost::algorithm::none_of_equal (boost::begin (r), boost::end (r), val);
 } 
 
 }} // namespace boost and algorithm

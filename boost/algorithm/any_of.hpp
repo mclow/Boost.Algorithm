@@ -49,7 +49,7 @@ bool any_of ( InputIterator first, InputIterator last, Predicate p )
 template<typename Range, typename Predicate> 
 bool any_of ( const Range &r, Predicate p )
 {
-    return any_of (boost::begin (r), boost::end (r), p);
+    return boost::algorithm::any_of (boost::begin (r), boost::end (r), p);
 } 
 
 /// \fn any_of_equal ( InputIterator first, InputIterator last, const V &val )
@@ -79,7 +79,7 @@ bool any_of_equal ( InputIterator first, InputIterator last, const V &val )
 template<typename Range, typename V> 
 bool any_of_equal ( const Range &r, const V &val ) 
 {
-    return any_of_equal (boost::begin (r), boost::end (r), val);
+    return boost::algorithm::any_of_equal (boost::begin (r), boost::end (r), val);
 }
 
 }} // namespace boost and algorithm

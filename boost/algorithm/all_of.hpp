@@ -52,7 +52,7 @@ bool all_of ( InputIterator first, InputIterator last, Predicate p )
 template<typename Range, typename Predicate> 
 bool all_of ( const Range &r, Predicate p )
 {
-    return all_of ( boost::begin (r), boost::end (r), p );
+    return boost::algorithm::all_of ( boost::begin (r), boost::end (r), p );
 } 
 
 /// \fn all_of_equal ( InputIterator first, InputIterator last, const T &val )
@@ -82,7 +82,7 @@ bool all_of_equal ( InputIterator first, InputIterator last, const T &val )
 template<typename Range, typename T> 
 bool all_of_equal ( const Range &r, const T &val ) 
 {
-    return all_of_equal ( boost::begin (r), boost::end (r), val );
+    return boost::algorithm::all_of_equal ( boost::begin (r), boost::end (r), val );
 } 
 
 }} // namespace boost and algorithm
