@@ -17,6 +17,8 @@ project /boost/algorithm/test
       <include>../../../
       <include>$(BOOST_ROOT)
       <optimization>speed
+      <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+      <toolset>msvc:<define>NOMINMAX
       <link>static
     :
     ;
