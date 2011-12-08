@@ -31,15 +31,15 @@ using std::is_permutation;              // Section 25.2.12
 #else
 namespace detail {
 /// \cond DOXYGEN_HIDE
-    template <typename Predicate, typename T>
+    template <typename Predicate, typename Iterator>
     struct value_predicate {
-        value_predicate ( Predicate p, T *t ) : p_ ( p ), t_ ( t ) {}
+        value_predicate ( Predicate p, Iterator it ) : p_ ( p ), it_ ( it ) {}
 
         template <typename T1>
-        bool operator () ( const T1 &t1 ) const { return p_ ( *t_, t1 ); }
+        bool operator () ( const T1 &t1 ) const { return p_ ( *it_, t1 ); }
     private:
         Predicate &p_;
-        const T *t_;
+        Iterator it_;
         };
 /// \endcond
 }
@@ -73,7 +73,7 @@ bool is_permutation ( ForwardIterator1 first1, ForwardIterator1 last1,
     //  for each unique value in the sequence [first1,last1), count how many times
     //  it occurs, and make sure it occurs the same number of times in [first2, last2)
         for ( ForwardIterator1 iter = first1; iter != last1; ++iter ) {
-            detail::value_predicate<BinaryPredicate, typename ForwardIterator1::value_type> pred ( p, &*iter );
+            detail::value_predicate<BinaryPredicate, ForwardIterator1> pred ( p, iter );
 
         /*  For each value we haven't seen yet... */
             if ( std::find_if ( first1, iter, pred ) == iter ) {
