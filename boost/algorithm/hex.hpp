@@ -73,7 +73,8 @@ namespace detail {
 //      return out;
 //         }
 // 
-    unsigned hex_char_to_int ( char c ) {
+    template <typename T>
+    T hex_char_to ( char c ) {
         if ( c >= '0' && c <= '9' ) return c - '0';
         switch ( c ) {
         case 'A': case 'a': return 10;
@@ -148,7 +149,7 @@ namespace detail {
             if ( first == last ) 
                 BOOST_THROW_EXCEPTION (not_enough_input ());
             res <<= 4;
-            res += hex_char_to_int (static_cast<char> (*first));
+            res += hex_char_to<T> (static_cast<char> (*first));
             }
         
         *out++ = res;
