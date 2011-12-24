@@ -73,10 +73,17 @@ namespace detail {
 //      return out;
 //         }
 // 
-    unsigned hex_char_to_int ( char c ) {
+    template <typename T>
+    T hex_char_to ( char c ) {
         if ( c >= '0' && c <= '9' ) return c - '0';
-        if ( c >= 'A' && c <= 'F' ) return c - 'A' + 10;
-        if ( c >= 'a' && c <= 'f' ) return c - 'a' + 10;
+        switch ( c ) {
+        case 'A': case 'a': return 10;
+        case 'B': case 'b': return 11;
+        case 'C': case 'c': return 12;
+        case 'D': case 'd': return 13;
+        case 'E': case 'e': return 14;
+        case 'F': case 'f': return 15;
+        }
         BOOST_THROW_EXCEPTION (non_hex_input ());
         return 0;   // keep dumb compilers happy
         }
@@ -142,7 +149,7 @@ namespace detail {
             if ( first == last ) 
                 BOOST_THROW_EXCEPTION (not_enough_input ());
             res <<= 4;
-            res += hex_char_to_int (static_cast<char> (*first));
+            res += hex_char_to<T> (static_cast<char> (*first));
             }
         
         *out++ = res;
