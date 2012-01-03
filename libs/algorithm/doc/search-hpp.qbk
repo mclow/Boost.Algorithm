@@ -4,7 +4,7 @@
 
 [/license
 
-Copyright (c) 2010-2011 Marshall Clow
+Copyright (c) 2010-2012 Marshall Clow
 
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
@@ -37,7 +37,7 @@ public:
     };
 ``
 
-and here are the corresponding procedural interface:
+and here is the corresponding procedural interface:
 
 ``
 template <typename patIter, typename corpusIter>

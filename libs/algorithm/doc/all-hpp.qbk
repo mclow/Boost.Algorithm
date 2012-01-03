@@ -4,7 +4,7 @@
 
 [/license
 
-Copyright (c) 2010-2011 Marshall Clow
+Copyright (c) 2010-2012 Marshall Clow
 
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
@@ -16,29 +16,31 @@ The header file 'all.hpp' contains a series of algorithms for testing properties
 
 Some of these algorithms are defined to be part of the C++11 standard library in section 25.2 (Non-modifying sequence algorithms). If we are building with a C++11 compiler, the standard library versions will be used.
 
+In general, the three algorithms `any_of`, `all_of`, and `none_of` are more than sufficient to test the contents of a range. In particular, `all_of ( range, pred )` is almost always a synonym for `none_of ( range, !pred )`. The only case in which this is not true is when the range is empty - in which case both `none_of` and `all_of` will return `true`.
+
 Complexity: Unless otherwise noted, these routines all run in ['O(N)] (linear) time. Each of the routines in this file will either compare against the value or call the predicate for each element in the sequence. If any of the values in the range fails the test, the algorithm will return false immediately, without examining the remaining items in the sequence.
 
 Iterator requirements: The algorithms in this file should work on all kinds of iterators.
 
 [heading all_of]
 
-The function `all_of` returns true if the predicate returns true for every item in the sequence..
+The function `all_of` returns true if the predicate returns true for every item in the sequence. 
 
 ``
 template<typename InputIterator, typename Pred>
 	bool all_of ( InputIterator first, InputIterator last, Pred p );
 template<typename R, typename Pred> 
-	bool all_of ( const R &range,  Pred p );
+	bool all_of ( const R &range, Pred p );
 ``
 
 [heading any_of]
-The function `any_of` returns true if the predicate returns true for any item in the sequence.
+The function `any_of` returns true if the predicate returns true for at least one item in the sequence. If any item in the sequence satisfies the predicate, `any_of` returns immediately, without examining the remaining items in the sequence.
 
 ``
 template<typename InputIterator, typename Pred>
 	bool any_of ( InputIterator first, InputIterator last, Pred p );
 template<typename R, typename Pred> 
-	bool any_of ( const R &range,  Pred p );
+	bool any_of ( const R &range, Pred p );
 ``
 
 [heading none_of]
@@ -48,7 +50,7 @@ The function `none_of` returns true if the predicate returns false for every ite
 template<typename InputIterator, typename Pred>
 	bool none_of ( InputIterator first, InputIterator last, Pred p );
 template<typename R, typename Pred> 
-	bool none_of ( const R &range,  Pred p );
+	bool none_of ( const R &range, Pred p );
 ``
 
 [heading one_of]
@@ -58,7 +60,7 @@ The function `one_of` returns true if the predicate returns true for exactly one
 template<typename InputIterator, typename Pred>
 	bool one_of ( InputIterator first, InputIterator last, Pred p );
 template<typename R, typename Pred> 
-	bool one_of ( const R &range,  Pred p );
+	bool one_of ( const R &range, Pred p );
 ``
 
 
@@ -68,10 +70,10 @@ Examples: Given the container `c` containing `{ 0, 1, 2, 3, 4, 5 }`, then
 bool isOdd ( int i ) { return i % 2 == 1; }
 bool lessThan10 ( int i ) { return i < 10; }
 
-one_of ( c.begin (), c.end (), 3 ) --> true
-one_of ( c, 3 ) --> true
-none_of ( c, 9 ) --> true
-any_of ( c.begin (), c.end (), 9 ) --> false
+one_of_equal ( c.begin (), c.end (), 3 ) --> true
+one_of_equal ( c, 3 ) --> true
+none_of_equal ( c, 9 ) --> true
+any_of_equal ( c.begin (), c.end (), 9 ) --> false
 all_of ( c, isOdd ) --> false
 all_of ( c.begin (), c.end (), lessThan10 ) --> true
 ``
