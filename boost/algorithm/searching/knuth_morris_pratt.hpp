@@ -38,10 +38,11 @@ namespace boost { namespace algorithm {
 
     template <typename patIter>
     class knuth_morris_pratt {
+        typedef typename std::iterator_traits<patIter>::difference_type difference_type;
     public:
         knuth_morris_pratt ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ), 
-                  k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
+                  k_pattern_length ( std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length + 1 ) {
 #ifdef NEW_KMP
             preKmp ( pat_first, pat_last );
@@ -70,7 +71,7 @@ namespace boost { namespace algorithm {
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if ( pat_first == pat_last )       return corpus_first; // empty pattern matches at start
 
-            const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
+            const difference_type k_corpus_length = std::distance ( corpus_first, corpus_last );
         //  If the pattern is larger than the corpus, we can't find it!
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;
@@ -81,8 +82,8 @@ namespace boost { namespace algorithm {
     private:
 /// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
-        const std::size_t k_pattern_length;
-        std::vector <int> skip_;
+        const difference_type k_pattern_length;
+        std::vector <difference_type> skip_;
 
         /// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
         /// \brief Searches the corpus for the pattern that was passed into the constructor
@@ -93,8 +94,8 @@ namespace boost { namespace algorithm {
         ///
         template <typename corpusIter>
         corpusIter do_search ( corpusIter corpus_first, corpusIter corpus_last, 
-                                                std::size_t k_corpus_length ) const {
-            std::size_t match_start = 0;  // position in the corpus that we're matching
+                                                difference_type k_corpus_length ) const {
+            difference_type match_start = 0;  // position in the corpus that we're matching
             
 #ifdef NEW_KMP
             int patternIdx = 0;
@@ -118,8 +119,8 @@ namespace boost { namespace algorithm {
 //              idx is in the range 0 .. k_pattern_length
 //              match_start is in the range 0 .. k_corpus_length - k_pattern_length + 1
 
-            const std::size_t last_match = k_corpus_length - k_pattern_length;
-            std::size_t idx = 0;          // position in the pattern we're comparing
+            const difference_type last_match = k_corpus_length - k_pattern_length;
+            difference_type idx = 0;          // position in the pattern we're comparing
 
             while ( match_start <= last_match ) {
                 while ( pat_first [ idx ] == corpus_first [ match_start + idx ] ) {
@@ -160,7 +161,7 @@ namespace boost { namespace algorithm {
 
 
         void init_skip_table ( patIter first, patIter last ) {
-            const /*std::size_t*/ int count = std::distance ( first, last );
+            const difference_type count = std::distance ( first, last );
     
             int j;
             skip_ [ 0 ] = -1;

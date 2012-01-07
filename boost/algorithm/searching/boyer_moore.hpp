@@ -52,12 +52,13 @@ Requirements:
         ** Hashable type (map-based skip table)
 */
 
-    template <typename patIter, typename traits = detail::BM_traits<typename std::iterator_traits<patIter>::value_type> >
+    template <typename patIter, typename traits = detail::BM_traits<patIter> >
     class boyer_moore {
+        typedef typename std::iterator_traits<patIter>::difference_type difference_type;
     public:
         boyer_moore ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
-                  k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
+                  k_pattern_length ( std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length, -1 ),
                   suffix_ ( k_pattern_length + 1 )
             {
@@ -82,13 +83,13 @@ Requirements:
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
 
-            const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
+            const difference_type k_corpus_length  = std::distance ( corpus_first, corpus_last );
         //  If the pattern is larger than the corpus, we can't find it!
             if ( k_corpus_length < k_pattern_length ) 
                 return corpus_last;
 
         //  Do the search 
-            return this->do_search   ( corpus_first, corpus_last, k_corpus_length );
+            return this->do_search   ( corpus_first, corpus_last );
             }
             
         template <typename Range>
@@ -99,9 +100,9 @@ Requirements:
     private:
 /// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
-        const std::size_t k_pattern_length;
+        const difference_type k_pattern_length;
         typename traits::skip_table_t skip_;
-        std::vector <std::size_t> suffix_;
+        std::vector <difference_type> suffix_;
 
         /// \fn operator ( corpusIter corpus_first, corpusIter corpus_last, Pred p )
         /// \brief Searches the corpus for the pattern that was passed into the constructor
@@ -111,13 +112,12 @@ Requirements:
         /// \param p            A predicate used for the search comparisons.
         ///
         template <typename corpusIter>
-        corpusIter do_search ( corpusIter corpus_first, corpusIter corpus_last, std::size_t k_corpus_length ) const {
+        corpusIter do_search ( corpusIter corpus_first, corpusIter corpus_last ) const {
         /*  ---- Do the matching ---- */
             corpusIter curPos = corpus_first;
             const corpusIter lastPos = corpus_last - k_pattern_length;
-            std::size_t j;
-            int k;
-            int m;
+            difference_type j, k, m;
+
             while ( curPos <= lastPos ) {
         /*  while ( std::distance ( curPos, corpus_last ) >= k_pattern_length ) { */
             //  Do we match right where we are?
@@ -132,7 +132,7 @@ Requirements:
             //  Since we didn't match, figure out how far to skip forward
                 k = skip_ [ curPos [ j - 1 ]];
                 m = j - k - 1;
-                if ( k < (int) j && m > (int) suffix_ [ j ] )
+                if ( k < j && m > suffix_ [ j ] )
                     curPos += m;
                 else
                     curPos += suffix_ [ j ];
@@ -176,18 +176,18 @@ Requirements:
                 std::vector<typename std::iterator_traits<patIter>::value_type> reversed(count);
                 (void) std::reverse_copy ( pat_first, pat_last, reversed.begin ());
                 
-                std::vector<std::size_t> prefix (count);
+                std::vector<difference_type> prefix (count);
                 compute_bm_prefix ( pat_first, pat_last, prefix );
         
-                std::vector<std::size_t> prefix_reversed (count);
+                std::vector<difference_type> prefix_reversed (count);
                 compute_bm_prefix ( reversed.begin (), reversed.end (), prefix_reversed );
                 
                 for ( std::size_t i = 0; i <= count; i++ )
                     suffix_[i] = count - prefix [count-1];
          
                 for ( std::size_t i = 0; i < count; i++ ) {
-                    const std::size_t j = count - prefix_reversed[i];
-                    const std::size_t k = i -     prefix_reversed[i] + 1;
+                    const std::size_t     j = count - prefix_reversed[i];
+                    const difference_type k = i -     prefix_reversed[i] + 1;
          
                     if (suffix_[j] > k)
                         suffix_[j] = k;

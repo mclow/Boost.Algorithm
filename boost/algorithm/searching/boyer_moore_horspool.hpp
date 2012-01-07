@@ -38,12 +38,13 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
 
 */
 
-    template <typename patIter, typename traits = detail::BM_traits<typename std::iterator_traits<patIter>::value_type> >
+    template <typename patIter, typename traits = detail::BM_traits<patIter> >
     class boyer_moore_horspool {
+        typedef typename std::iterator_traits<patIter>::difference_type difference_type;
     public:
         boyer_moore_horspool ( patIter first, patIter last ) 
                 : pat_first ( first ), pat_last ( last ),
-                  k_pattern_length ( (std::size_t) std::distance ( pat_first, pat_last )),
+                  k_pattern_length ( std::distance ( pat_first, pat_last )),
                   skip_ ( k_pattern_length, k_pattern_length ) {
                   
         //  Build the skip table
@@ -74,22 +75,22 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
             if ( corpus_first == corpus_last ) return corpus_last;  // if nothing to search, we didn't find it!
             if (    pat_first ==    pat_last ) return corpus_first; // empty pattern matches at start
 
-            const std::size_t k_corpus_length  = (std::size_t) std::distance ( corpus_first, corpus_last );
+            const difference_type k_corpus_length  = std::distance ( corpus_first, corpus_last );
         //  If the pattern is larger than the corpus, we can't find it!
             if ( k_corpus_length < k_pattern_length )
                 return corpus_last;
     
         //  Do the search 
-            return this->do_search   ( corpus_first, corpus_last, k_corpus_length );
+            return this->do_search ( corpus_first, corpus_last );
             }
             
     private:
 /// \cond DOXYGEN_HIDE
         patIter pat_first, pat_last;
-        const std::size_t k_pattern_length;
+        const difference_type k_pattern_length;
         typename traits::skip_table_t skip_;
 
-        /// \fn do_search ( corpusIter corpus_first, corpusIter corpus_last, std::size_t k_corpus_length )
+        /// \fn do_search ( corpusIter corpus_first, corpusIter corpus_last )
         /// \brief Searches the corpus for the pattern that was passed into the constructor
         /// 
         /// \param corpus_first The start of the data to search (Random Access Iterator)
@@ -97,8 +98,7 @@ http://www-igm.univ-mlv.fr/%7Elecroq/string/node18.html
         /// \param k_corpus_length The length of the corpus to search
         ///
         template <typename corpusIter>
-        corpusIter do_search ( corpusIter corpus_first, corpusIter corpus_last, 
-                                                std::size_t k_corpus_length ) const {
+        corpusIter do_search ( corpusIter corpus_first, corpusIter corpus_last ) const {
             corpusIter curPos = corpus_first;
             const corpusIter lastPos = corpus_last - k_pattern_length;
             while ( curPos <= lastPos ) {

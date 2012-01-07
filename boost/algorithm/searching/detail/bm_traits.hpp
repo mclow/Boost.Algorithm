@@ -29,25 +29,25 @@ namespace boost { namespace algorithm { namespace detail {
 //
 //  Default implementations of the skip tables for B-M and B-M-H
 //
-    template<typename key_type, bool /*useArray*/> class skip_table;
+    template<typename key_type, typename value_type, bool /*useArray*/> class skip_table;
 
 //  General case for data searching other than bytes; use a map
-    template<typename key_type>
-    class skip_table<key_type, false> {
+    template<typename key_type, typename value_type>
+    class skip_table<key_type, value_type, false> {
     private:
-        typedef std::tr1::unordered_map<key_type, int> skip_map;
-        const int k_default_value;
+        typedef std::tr1::unordered_map<key_type, value_type> skip_map;
+        const value_type k_default_value;
         skip_map skip_;
         
     public:
-        skip_table ( std::size_t patSize, int default_value ) 
+        skip_table ( std::size_t patSize, value_type default_value ) 
             : k_default_value ( default_value ), skip_ ( patSize ) {}
         
-        void insert ( key_type key, int val ) {
+        void insert ( key_type key, value_type val ) {
             skip_ [ key ] = val;    // Would skip_.insert (val) be better here?
             }
 
-        int operator [] ( key_type key ) const {
+        value_type operator [] ( key_type key ) const {
             typename skip_map::const_iterator it = skip_.find ( key );
             return it == skip_.end () ? k_default_value : it->second;
             }
@@ -63,23 +63,23 @@ namespace boost { namespace algorithm { namespace detail {
         
     
 //  Special case small numeric values; use an array
-    template<typename key_type>
-    class skip_table<key_type, true> {
+    template<typename key_type, typename value_type>
+    class skip_table<key_type, value_type, true> {
     private:
         typedef typename boost::make_unsigned<key_type>::type unsigned_key_type;
-        typedef boost::array<int, 1U << (CHAR_BIT * sizeof(key_type))> skip_map;
+        typedef boost::array<value_type, 1U << (CHAR_BIT * sizeof(key_type))> skip_map;
         skip_map skip_;
-        const int k_default_value;
+        const value_type k_default_value;
     public:
-        skip_table ( std::size_t patSize, int default_value ) : k_default_value ( default_value ) {
+        skip_table ( std::size_t patSize, value_type default_value ) : k_default_value ( default_value ) {
             std::fill_n ( skip_.begin(), skip_.size(), default_value );
             }
         
-        void insert ( key_type key, int val ) {
+        void insert ( key_type key, value_type val ) {
             skip_ [ static_cast<unsigned_key_type> ( key ) ] = val;
             }
 
-        int operator [] ( key_type key ) const {
+        value_type operator [] ( key_type key ) const {
             return skip_ [ static_cast<unsigned_key_type> ( key ) ];
             }
 
@@ -92,11 +92,11 @@ namespace boost { namespace algorithm { namespace detail {
             }
         };
 
-    template<typename pattern_type>
+    template<typename Iterator>
     struct BM_traits {
-        typedef pattern_type value_type;
-        typedef pattern_type key_type;
-        typedef boost::algorithm::detail::skip_table<key_type, 
+        typedef typename std::iterator_traits<Iterator>::difference_type value_type;
+        typedef typename std::iterator_traits<Iterator>::value_type key_type;
+        typedef boost::algorithm::detail::skip_table<key_type, value_type, 
                 boost::is_integral<key_type>::value && (sizeof(key_type)==1)> skip_table_t;
         };
 
