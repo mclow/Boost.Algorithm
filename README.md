@@ -1,4 +1,5 @@
 # This is the proposed Boost.Algorithm library
+## Update: Jan 2012 The library has been approved, and the contents are being migrated to the Boost subversion server at svn.boost.org
 
 It will be reviewed by the [Boost](<http://www.boost.org>) community from September 22nd through October 1st, 2011. It is licensed under the [Boost Software License, Version 1.0](http://www.boost.org/LICENSE_1_0.txt)
 
