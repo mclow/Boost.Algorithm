@@ -12,13 +12,17 @@ template <typename BidirectionalIterator, typename Comp>
 bool is_palindromic(BidirectionalIterator begin, BidirectionalIterator end, Comp comp)
 {
     --end;
-    while(std::distance(begin, end) > 0)
+    while(begin != end)
     {
         if(!comp(*begin, *end))
         {
             return false;
         }
         ++begin;
+        if(begin == end)
+        {
+            break;
+        }
         --end;
     }
     return true;
