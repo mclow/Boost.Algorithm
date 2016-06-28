@@ -11,6 +11,11 @@ namespace boost {  namespace algorithm {
 template <typename BidirectionalIterator, typename Comp>
 bool is_palindromic(BidirectionalIterator begin, BidirectionalIterator end, Comp comp)
 {
+    if(begin == end)
+    {
+        return true;
+    }
+
     --end;
     while(begin != end)
     {
