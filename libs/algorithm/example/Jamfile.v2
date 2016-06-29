@@ -25,3 +25,4 @@ exe ordered_example : ordered_example.cpp ;
 exe clamp_example   : clamp_example.cpp ;
 exe all_example     : all_example.cpp ;
 exe search_example  : search_example.cpp ;
+exe is_palindromic_example : is_palindromic_example.cpp;

@@ -63,3 +63,5 @@ run is_partitioned_test1.cpp ;
 run partition_copy_test1.cpp ;
 
 run find_if_not_test1.cpp ;
+
+run is_palindromic_test.cpp ;
