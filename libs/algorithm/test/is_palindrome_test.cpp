@@ -13,7 +13,7 @@
 #include <list>
 #include <vector>
 
-#include <boost/algorithm/is_palindromic.hpp>
+#include <boost/algorithm/is_palindrome.hpp>
 #include <boost/test/included/test_exec_monitor.hpp>
 
 namespace ba = boost::algorithm;
@@ -35,32 +35,32 @@ struct functorComparator
 };
 
 
-static void test_is_palindromic()
+static void test_is_palindrome()
 {
     const std::list<int> empty;
     const std::vector<char> singleElement{'z'};
-    int oddNonPalindromic[] = {3,2,2};
-    const int evenPalindromic[] = {1,2,2,1};
+    int oddNonPalindrome[] = {3,2,2};
+    const int evenPalindrome[] = {1,2,2,1};
 
     // Test a default operator==
-    BOOST_CHECK ( ba::is_palindromic(empty));
-    BOOST_CHECK ( ba::is_palindromic(singleElement));
-    BOOST_CHECK (!ba::is_palindromic(std::begin(oddNonPalindromic), std::end(oddNonPalindromic)));
-    BOOST_CHECK ( ba::is_palindromic(std::begin(evenPalindromic), std::end(evenPalindromic)));
+    BOOST_CHECK ( ba::is_palindrome(empty));
+    BOOST_CHECK ( ba::is_palindrome(singleElement));
+    BOOST_CHECK (!ba::is_palindrome(std::begin(oddNonPalindrome), std::end(oddNonPalindrome)));
+    BOOST_CHECK ( ba::is_palindrome(std::begin(evenPalindrome), std::end(evenPalindrome)));
 
     //Test the custom comparators
-    BOOST_CHECK ( ba::is_palindromic(empty.begin(), empty.end(), functorComparator()));
-    BOOST_CHECK (!ba::is_palindromic(std::begin(oddNonPalindromic), std::end(oddNonPalindromic), funcComparator<int>));
-    BOOST_CHECK ( ba::is_palindromic(evenPalindromic, std::equal_to<int>()));
+    BOOST_CHECK ( ba::is_palindrome(empty.begin(), empty.end(), functorComparator()));
+    BOOST_CHECK (!ba::is_palindrome(std::begin(oddNonPalindrome), std::end(oddNonPalindrome), funcComparator<int>));
+    BOOST_CHECK ( ba::is_palindrome(evenPalindrome, std::equal_to<int>()));
 
     //Only C++14 or newer
     //auto lambdaComparator = [](const auto& v1, const auto& v2){ return v1 == v2; };
-    //BOOST_CHECK ( ba::is_palindromic(singleElement, lambdaComparator));
+    //BOOST_CHECK ( ba::is_palindrome(singleElement, lambdaComparator));
 }
 
 int test_main( int, char * [] )
 {
-    test_is_palindromic();
+    test_is_palindrome();
 
     return 0;
 }
