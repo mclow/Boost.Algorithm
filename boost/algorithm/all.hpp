@@ -7,8 +7,7 @@
  Revision history:
    05 May 2008 mtc First version - as part of BoostCon 2008
    07 May 2009 mtc Changed names to match n2666
-   02 Jul 2010 mtc Changed namespace to boost::algorithm::sequence
-   16 Nov 2010 mtc Changed name of "exists_and_only" to "one_of" based
+   02 Jul 2010 mtc Changed namespace t
         on a suggestion by Sean Parent.
    24 May 2011 mtc Changed the names to match the ones in the C++11 standard,
         and to use those when available.
